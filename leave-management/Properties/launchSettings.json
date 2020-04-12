@@ -1,0 +1,28 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:55332",
+      "sslPort": 44327
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "AppSettings.ConnectionStrings.DefaultConnectionString": "Data Source=(localdb)\\\\MSSQLLocalDB;Initial Catalog=leavemanagentusers;Integrated Security=False;User ID=aspnetcore;Password=NetCoreCheckAuth/Manager",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "leave_management": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    }
+  }
+}

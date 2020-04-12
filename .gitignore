@@ -12,6 +12,9 @@ wing command works for downloading when using Git for Windows:
 *.suo
 *.user
 *.sln.docstates
+*.mdf
+*.ldf
+appsettings.Development.json
 
 # Build results
 [Dd]ebug/

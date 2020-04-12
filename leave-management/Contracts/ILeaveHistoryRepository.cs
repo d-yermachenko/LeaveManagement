@@ -1,0 +1,10 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using LeaveManagement.Data.Entities;
+
+namespace LeaveManagement.Contracts {
+    public interface ILeaveHistoryRepository : IRepositoryBase<LeaveHistory, long> {
+       
+    }
+}
