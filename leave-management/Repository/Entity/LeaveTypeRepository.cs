@@ -15,44 +15,38 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public bool Create(LeaveType entity) {
-            bool result = false;
             try {
-                ApplicationDbContext.LeaveTypesData.Add(entity);
-                ApplicationDbContext.Save();
-                result = true;
+                ApplicationDbContext.LeaveTypes.Add(entity);
+                return ApplicationDbContext.Save();
             }
             catch {
                 throw;
             }
-            return result;
         }
 
         public bool Delete(LeaveType entity) {
-            bool result = false;
             try {
-                ApplicationDbContext.LeaveTypesData.Remove(entity);
-                ApplicationDbContext.Save();
-                result = true;
+                ApplicationDbContext.LeaveTypes.Remove(entity);
+                return ApplicationDbContext.Save();
             }
             catch {
                 throw;
             }
-            return result;
         }
 
-        public ICollection<LeaveType> FindAll() => ApplicationDbContext.LeaveTypesData.ToArray();
+        public ICollection<LeaveType> FindAll() => ApplicationDbContext.LeaveTypes.ToArray();
 
         public LeaveType FindById(int id) {
-            return ApplicationDbContext.LeaveTypesData.Find(new object[] { id });
+            return ApplicationDbContext.LeaveTypes.Find( id );
         }
 
         public ICollection<LeaveType> GetLeaveTypesByEmployeeId(string employeeId) {
             Func<LeaveType, bool> selectExpression = (leaveType) => {
-                var historyOfEmployee = ApplicationDbContext.LeaveHistoriesData.Where(lh => lh.RequestingEmployeeId.Equals(employeeId));
+                var historyOfEmployee = ApplicationDbContext.LeaveHistories.Where(lh => lh.RequestingEmployeeId.Equals(employeeId));
                 var leaveTypesIds = historyOfEmployee.Select(hoe => hoe.LeaveTypeId).GroupBy(lti => lti).Select(gr => gr.Key);
                 return leaveTypesIds.Contains(leaveType.Id);
             };
-            return ApplicationDbContext.LeaveTypesData.Where(x=> selectExpression.Invoke(x)).ToArray();
+            return ApplicationDbContext.LeaveTypes.Where(x=> selectExpression.Invoke(x)).ToArray();
         }
 
         public bool Save() {
@@ -68,15 +62,13 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public bool Update(LeaveType entity) {
-            bool result = false;
             try {
-                ApplicationDbContext.LeaveTypesData.Update(entity);
-                result = true;
+                ApplicationDbContext.LeaveTypes.Update(entity);
+                return Save();
             }
             catch {
                 throw;
             }
-            return result;
         }
     }
 }

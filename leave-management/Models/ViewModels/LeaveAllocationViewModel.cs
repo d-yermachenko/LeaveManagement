@@ -17,7 +17,7 @@ namespace LeaveManagement.Models.ViewModels {
 
         public string AllocationEmployeeId { get; set; }
 
-        public LeaveTypeDefaultViewModel AllocationLeaveType { get; set; }
+        public LeaveTypeNavigationViewModel AllocationLeaveType { get; set; }
 
         public int AllocationLeaveTypeId { get; set; }
 
@@ -38,7 +38,7 @@ namespace LeaveManagement.Models.ViewModels {
 
         public IEnumerable<SelectListItem> Employees { get; set; }
 
-        public LeaveTypeDefaultViewModel AllocationLeaveType { get; set; }
+        public LeaveTypeNavigationViewModel AllocationLeaveType { get; set; }
 
         public int AllocationLeaveTypeId { get; set; }
 

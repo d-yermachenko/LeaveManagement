@@ -9,7 +9,7 @@ namespace LeaveManagement.Models.ViewModels {
         public long Id { get; set; }
         public EmployeePresentationDefaultViewModel RequestingEmployee { get; set; }
         public string RequestingEmployeeId { get; set; }
-        public LeaveTypeDefaultViewModel LeaveType { get; set; }
+        public LeaveTypeNavigationViewModel LeaveType { get; set; }
         public int LeaveTypeId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDateDate { get; set; }
@@ -34,7 +34,7 @@ namespace LeaveManagement.Models.ViewModels {
         public EmployeePresentationDefaultViewModel RequestingEmployeeDatails { get; set; }
         public string LeaveType { get => LeaveTypeDetails.LeaveTypeName; }
 
-        public LeaveTypeDefaultViewModel LeaveTypeDetails { get; set; }
+        public LeaveTypeNavigationViewModel LeaveTypeDetails { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDateDate { get; set; }
         public DateTime RequestedDateDate { get; set; }

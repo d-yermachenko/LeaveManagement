@@ -17,18 +17,18 @@ namespace LeaveManagement.Repository.Entity {
 
 
         public bool Create(LeaveHistory entity) {
-            ApplicationDbContext.LeaveHistoriesData.Add(entity);
+            ApplicationDbContext.LeaveHistories.Add(entity);
             return true;
         }
 
         public bool Delete(LeaveHistory entity) {
-            ApplicationDbContext.LeaveHistoriesData.Remove(entity);
+            ApplicationDbContext.LeaveHistories.Remove(entity);
             return true;
         }
 
-        public ICollection<LeaveHistory> FindAll() => ApplicationDbContext.LeaveHistoriesData.ToArray();
+        public ICollection<LeaveHistory> FindAll() => ApplicationDbContext.LeaveHistories.ToArray();
 
-        public LeaveHistory FindById(long id) => ApplicationDbContext.LeaveHistoriesData.Find(new object[] { id });
+        public LeaveHistory FindById(long id) => ApplicationDbContext.LeaveHistories.Find(new object[] { id });
 
         public bool Save() {
             ApplicationDbContext.Save();
@@ -36,7 +36,7 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public bool Update(LeaveHistory entity) {
-            ApplicationDbContext.LeaveHistoriesData.Update(entity);
+            ApplicationDbContext.LeaveHistories.Update(entity);
             return true;
         }
     }

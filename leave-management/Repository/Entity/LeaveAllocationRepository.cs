@@ -17,8 +17,8 @@ namespace LeaveManagement.Repository.Entity {
 
         public bool Create(LeaveAllocation entity) {
             try {
-                ApplicationDbContext.LeaveAllocationsData.Add(entity);
-                return true;
+                ApplicationDbContext.LeaveAllocations.Add(entity);
+                return ApplicationDbContext.SaveChanges() > 0;
             }
             catch {
                 throw;
@@ -28,7 +28,7 @@ namespace LeaveManagement.Repository.Entity {
 
         public bool Delete(LeaveAllocation entity) {
             try {
-                ApplicationDbContext.LeaveAllocationsData.Remove(entity);
+                ApplicationDbContext.LeaveAllocations.Remove(entity);
                 return true;
             }
             catch {
@@ -36,9 +36,9 @@ namespace LeaveManagement.Repository.Entity {
             }
         }
 
-        public ICollection<LeaveAllocation> FindAll() => ApplicationDbContext.LeaveAllocationsData.ToList();
+        public ICollection<LeaveAllocation> FindAll() => ApplicationDbContext.LeaveAllocations.ToList();
 
-        public LeaveAllocation FindById(long id) => ApplicationDbContext.LeaveAllocationsData.Find(new long[] { id });
+        public LeaveAllocation FindById(long id) => ApplicationDbContext.LeaveAllocations.Find(new long[] { id });
 
         public bool Save() {
             ApplicationDbContext.Save();
@@ -46,7 +46,7 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public bool Update(LeaveAllocation entity) {
-            ApplicationDbContext.LeaveAllocationsData.Update(entity);
+            ApplicationDbContext.LeaveAllocations.Update(entity);
             return true;
         }
     }
