@@ -20,6 +20,8 @@ namespace LeaveManagement.Models.ViewModels {
         [Required]
         public string LeaveTypeName { get; set; }
 
+        public DateTime DateCreated { get; set; }
+
     }
 
     public class LeaveTypeNotFoundViewModel {
