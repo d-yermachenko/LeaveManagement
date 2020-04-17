@@ -14,7 +14,9 @@ namespace LeaveManagement.Controllers {
 
         private readonly AutoMapper.IMapper _Mapper;
 
-        public LeaveTypesController(Contracts.ILeaveTypeRepository repository, AutoMapper.IMapper mapper, ILogger<LeaveTypesController> logger) {
+        public LeaveTypesController(Contracts.ILeaveTypeRepository repository, 
+            AutoMapper.IMapper mapper,
+            ILogger<LeaveTypesController> logger) {
             _Repository = repository;
             _Mapper = mapper;
             _Logger = logger;
@@ -63,8 +65,8 @@ namespace LeaveManagement.Controllers {
         //}
 
         //POST: LeaveTypes/Create
-       [HttpPost]
-       [ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Models.ViewModels.LeaveTypeCreation creationModel) {
             try {
                 if (!ModelState.IsValid) {
@@ -112,18 +114,18 @@ namespace LeaveManagement.Controllers {
                 if (!ModelState.IsValid) {
                     return View();
                 }
-                var leaveTypeToChange= _Repository.FindById(id);
-                if(leaveTypeToChange == null) {
+                var leaveTypeToChange = _Repository.FindById(id);
+                if (leaveTypeToChange == null) {
                     var notFoundInfo = new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave type");
                     return LeaveTypeNotFound(notFoundInfo);
                 }
-                if(leaveTypeToChange != null) {
+                if (leaveTypeToChange != null) {
                     leaveTypeToChange.LeaveTypeName = collection["LeaveTypeName"];
                     if (!_Repository.Update(leaveTypeToChange)) {
                         ModelState.AddModelError("UpdateFailed", "Something went wrong");
                         return View();
                     }
-                        
+
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -145,7 +147,7 @@ namespace LeaveManagement.Controllers {
                 var leaveTypeViewModel = _Mapper.Map<Models.ViewModels.LeaveTypeCreation>(leaveTypeModel);
                 return VulnerableEdit(leaveTypeViewModel);
             }
-            catch(Exception e) {
+            catch (Exception e) {
                 ModelState.AddModelError("Exception", e.Message);
                 return RedirectToAction(nameof(Index));
             }
@@ -166,7 +168,7 @@ namespace LeaveManagement.Controllers {
                 }
                 return RedirectToAction(nameof(Index));
             }
-            catch(Exception e) {
+            catch (Exception e) {
                 ModelState.AddModelError("Exception", e.Message);
                 return View(leaveTypeViewModel);
             }
@@ -177,20 +179,41 @@ namespace LeaveManagement.Controllers {
         #region Remove
         // GET: LeaveTypes/Delete/5
         public ActionResult Delete(int id) {
-            return View();
+            var instanceForDelete = _Repository.FindById(id);
+            if (instanceForDelete == null) {
+                Models.ViewModels.LeaveTypeNotFoundViewModel notFoundView =
+                    new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave Type");
+                return LeaveTypeNotFound(notFoundView);
+            }
+            var leaveTypeViewModel = _Mapper.Map<Models.ViewModels.LeaveTypeNavigationViewModel>(instanceForDelete);
+            return View(leaveTypeViewModel);
         }
 
         // POST: LeaveTypes/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection) {
+        public ActionResult Delete(int id, Models.ViewModels.LeaveTypeNavigationViewModel viewModel) {
             try {
-                // TODO: Add delete logic here
-
+                var instanceForDelete = _Repository.FindById(id);
+                if (instanceForDelete == null) {
+                    Models.ViewModels.LeaveTypeNotFoundViewModel notFoundView =
+                        new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave Type");
+                    return LeaveTypeNotFound(notFoundView);
+                }
+                if (!ModelState.IsValid) {
+                    ModelState.AddModelError("ModelInvalid", "Model is not valid");
+                    return View(viewModel);
+                }
+                bool isSucceed = _Repository.Delete(instanceForDelete);
+                if (!isSucceed) {
+                    ModelState.AddModelError("DeleteFailed", "Operation de suppression planté");
+                    return View(viewModel);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch {
-                return View();
+                ModelState.AddModelError("DeleteFailed", "Operation de suppression planté");
+                return View(viewModel);
             }
         }
         #endregion
@@ -199,7 +222,7 @@ namespace LeaveManagement.Controllers {
         public ActionResult Error(Exception error) {
             return View();
         }
-        
+
 
         public ActionResult LeaveTypeNotFound(Models.ViewModels.LeaveTypeNotFoundViewModel notFoundMessage) {
             return View(notFoundMessage);
