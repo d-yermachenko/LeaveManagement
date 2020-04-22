@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using LeaveManagement.ViewModels.LeaveType;
 
 namespace LeaveManagement.Models.ViewModels {
     public class LeaveAllocationPresentationViewModel {
@@ -30,6 +31,8 @@ namespace LeaveManagement.Models.ViewModels {
         [Required]
         public uint NumberOfDays { get; set; }
 
+        [Required(AllowEmptyStrings =false, ErrorMessage ="Must be not empty")]
+        [DataType(DataType.Date, ErrorMessage ="Must be valid Date")]
         public DateTime DateCreated { get; set; }
 
         public EmployeePresentationDefaultViewModel AllocationEmployee { get; set; }

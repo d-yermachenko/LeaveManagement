@@ -31,15 +31,8 @@ namespace LeaveManagement.Data {
         {
             return this.SaveChanges() > 0;
         }
-
-        
-
-
-        public DbSet<LeaveManagement.Models.ViewModels.LeaveTypeNavigationViewModel> LeaveTypeNavigationViewModel { get; set; }
-
-        
+      
 
 
-        public DbSet<LeaveManagement.Models.ViewModels.LeaveTypeCreation> LeaveTypeCreation { get; set; }
     }
 }

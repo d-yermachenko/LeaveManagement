@@ -9,6 +9,9 @@ using Microsoft.Extensions.Hosting;
 using LeaveManagement.Contracts;
 using LeaveManagement.Repository.Entity;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Razor;
+using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement {
     public class Startup {
@@ -28,6 +31,8 @@ namespace LeaveManagement {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            GlobalizationStartup.ConfigureServices(services);
+
             services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
             services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
             services.AddScoped<ILeaveHistoryRepository, LeaveHistoryRepository>();
@@ -40,7 +45,7 @@ namespace LeaveManagement {
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -53,6 +58,8 @@ namespace LeaveManagement {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            GlobalizationStartup.Configure(app, env);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

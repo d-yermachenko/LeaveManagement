@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using LeaveManagement.Data.Entities;
 using LeaveManagement.Models.ViewModels;
+using LeaveManagement.ViewModels.LeaveType;
 
 namespace LeaveManagement.Mappings {
     public class LeaveManagementMappings : Profile {

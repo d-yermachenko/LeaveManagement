@@ -1,7 +1,7 @@
-﻿@model IEnumerable<LeaveManagement.Models.ViewModels.LeaveTypeNavigationViewModel>
+﻿@model IEnumerable<LeaveManagement.ViewModels.LeaveType.LeaveTypeNavigationViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = Localizer["Index"];
 }
 
 <h1>Index</h1>
@@ -22,21 +22,25 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LeaveTypeName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                <a asp-action="VulnerableEdit" asp-route-id="@item.Id">Vulnerable edit</a>|
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LeaveTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateCreated)
+                </td>
+                <td>
+                    <a asp-action="VulnerableEdit" asp-route-id="@item.Id">@CommandLocalizer["Vulnerable edit"]</a>|
+                    <a asp-action="Edit" asp-route-id="@item.Id">
+                        @CommandLocalizer["Edit"]
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">
+                        @CommandLocalizer["Details"]
+                    </a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" onclick="confirm('@CommandLocalizer["Confirm deleting?"]')">@CommandLocalizer["Delete"]</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

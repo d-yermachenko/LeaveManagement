@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,14 +27,14 @@ namespace LeaveManagement.Controllers {
         // GET: LeaveTypes
         public ActionResult Index() {
             List<Data.Entities.LeaveType> leaveTypes = _Repository.FindAll().ToList();
-            var viewModel = _Mapper.Map<List<Data.Entities.LeaveType>, List<Models.ViewModels.LeaveTypeNavigationViewModel>>(leaveTypes);
+            var viewModel = _Mapper.Map<List<Data.Entities.LeaveType>, List<LeaveTypeNavigationViewModel>>(leaveTypes);
             return View(viewModel);
         }
 
         // GET: LeaveTypes/Details/5
         public ActionResult Details(int id) {
             var entry = _Repository.FindById(id);
-            var viewModel = _Mapper.Map<Data.Entities.LeaveType, Models.ViewModels.LeaveTypeNavigationViewModel>(entry);
+            var viewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeNavigationViewModel>(entry);
             return View(viewModel);
         }
         #endregion
@@ -67,7 +68,7 @@ namespace LeaveManagement.Controllers {
         //POST: LeaveTypes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Models.ViewModels.LeaveTypeCreation creationModel) {
+        public ActionResult Create(LeaveTypeCreation creationModel) {
             try {
                 if (!ModelState.IsValid) {
                     ModelState.AddModelError("StateInvalid", "Model state invalid");
@@ -94,10 +95,10 @@ namespace LeaveManagement.Controllers {
             try {
                 var leaveType = _Repository.FindById(id);
                 if (leaveType == null) {
-                    var notFoundInfo = new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave type");
+                    var notFoundInfo = new LeaveTypeNotFoundViewModel(id, "Leave type");
                     return LeaveTypeNotFound(notFoundInfo);
                 }
-                var leaveTypeViewModel = _Mapper.Map<Data.Entities.LeaveType, Models.ViewModels.LeaveTypeCreation>(leaveType);
+                var leaveTypeViewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeCreation>(leaveType);
                 return View(leaveTypeViewModel);
             }
             catch (Exception e) {
@@ -116,7 +117,7 @@ namespace LeaveManagement.Controllers {
                 }
                 var leaveTypeToChange = _Repository.FindById(id);
                 if (leaveTypeToChange == null) {
-                    var notFoundInfo = new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave type");
+                    var notFoundInfo = new LeaveTypeNotFoundViewModel(id, "Leave type");
                     return LeaveTypeNotFound(notFoundInfo);
                 }
                 if (leaveTypeToChange != null) {
@@ -141,10 +142,10 @@ namespace LeaveManagement.Controllers {
             try {
                 var leaveTypeModel = _Repository.FindById(id);
                 if (leaveTypeModel == null) {
-                    var notFoundData = new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave type");
+                    var notFoundData = new LeaveTypeNotFoundViewModel(id, "Leave type");
                     return LeaveTypeNotFound(notFoundData);
                 }
-                var leaveTypeViewModel = _Mapper.Map<Models.ViewModels.LeaveTypeCreation>(leaveTypeModel);
+                var leaveTypeViewModel = _Mapper.Map<LeaveTypeCreation>(leaveTypeModel);
                 return VulnerableEdit(leaveTypeViewModel);
             }
             catch (Exception e) {
@@ -156,7 +157,7 @@ namespace LeaveManagement.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult VulnerableEdit(Models.ViewModels.LeaveTypeCreation leaveTypeViewModel) {
+        public ActionResult VulnerableEdit(LeaveTypeCreation leaveTypeViewModel) {
             try {
                 if (!ModelState.IsValid)
                     return View(leaveTypeViewModel);
@@ -181,23 +182,23 @@ namespace LeaveManagement.Controllers {
         public ActionResult Delete(int id) {
             var instanceForDelete = _Repository.FindById(id);
             if (instanceForDelete == null) {
-                Models.ViewModels.LeaveTypeNotFoundViewModel notFoundView =
-                    new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave Type");
+                LeaveTypeNotFoundViewModel notFoundView =
+                    new LeaveTypeNotFoundViewModel(id, "Leave Type");
                 return LeaveTypeNotFound(notFoundView);
             }
-            var leaveTypeViewModel = _Mapper.Map<Models.ViewModels.LeaveTypeNavigationViewModel>(instanceForDelete);
+            var leaveTypeViewModel = _Mapper.Map<LeaveTypeNavigationViewModel>(instanceForDelete);
             return View(leaveTypeViewModel);
         }
 
         // POST: LeaveTypes/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Models.ViewModels.LeaveTypeNavigationViewModel viewModel) {
+        public ActionResult Delete(int id, LeaveTypeNavigationViewModel viewModel) {
             try {
                 var instanceForDelete = _Repository.FindById(id);
                 if (instanceForDelete == null) {
-                    Models.ViewModels.LeaveTypeNotFoundViewModel notFoundView =
-                        new Models.ViewModels.LeaveTypeNotFoundViewModel(id, "Leave Type");
+                    LeaveTypeNotFoundViewModel notFoundView =
+                        new LeaveTypeNotFoundViewModel(id, "Leave Type");
                     return LeaveTypeNotFound(notFoundView);
                 }
                 if (!ModelState.IsValid) {
@@ -224,7 +225,7 @@ namespace LeaveManagement.Controllers {
         }
 
 
-        public ActionResult LeaveTypeNotFound(Models.ViewModels.LeaveTypeNotFoundViewModel notFoundMessage) {
+        public ActionResult LeaveTypeNotFound(LeaveTypeNotFoundViewModel notFoundMessage) {
             return View(notFoundMessage);
         }
         #endregion
