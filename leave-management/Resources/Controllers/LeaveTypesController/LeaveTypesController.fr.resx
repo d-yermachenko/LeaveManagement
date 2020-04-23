@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LeaveTypeDateCreated" xml:space="preserve">
-    <value>Дата создания</value>
+  <data name="Model state invalid" xml:space="preserve">
+    <value>Etat de modele n'est pas valide</value>
   </data>
-  <data name="LeaveTypeName" xml:space="preserve">
-    <value>Название</value>
+  <data name="Something went wrong" xml:space="preserve">
+    <value>Quelque chose passait pas comme il faut</value>
   </data>
 </root>

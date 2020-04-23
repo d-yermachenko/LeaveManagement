@@ -1,12 +1,12 @@
-﻿@model             LeaveManagement.ViewModels.LeaveType.LeaveTypeCreation
+﻿@model LeaveManagement.ViewModels.LeaveType.LeaveTypeEditionViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>@CommandLocalizer["Create"]</h1>
 
-<h4>LeaveTypeCreation</h4>
+<h4>@Localizer["LeaveTypeCreation"]</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,15 +18,22 @@
                 <span asp-validation-for="LeaveTypeName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="@CommandLocalizer["Create"]" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
+@if (!String.IsNullOrWhiteSpace(ViewBag.Message)) {
+    <div>
+        <span class="alert-danger">@ViewBag.Message</span>
+    </div>
+}
+
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@CommandLocalizer["Back to List"]</a>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

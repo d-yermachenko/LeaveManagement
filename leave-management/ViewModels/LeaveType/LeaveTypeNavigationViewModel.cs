@@ -7,10 +7,10 @@ namespace LeaveManagement.ViewModels.LeaveType {
         [Display(Name = "LeaveTypeId")]
         public int Id { get; set; }
 
-        [Display(Name = "LeaveTypeName")]
+        [Display(Name = "LeaveTypeName", Description = "LeaveTypeName_Description")]
         public string LeaveTypeName { get; set; }
 
-        [Display(Name = "LeaveTypeDateCreated")]
+        [Display(Name = "LeaveTypeDateCreated", Description = "LeaveTypeDateCreated_Description")]
         public DateTime DateCreated { get; set; }
 
     }

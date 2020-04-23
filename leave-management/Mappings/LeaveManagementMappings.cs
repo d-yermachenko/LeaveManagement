@@ -10,7 +10,7 @@ using LeaveManagement.ViewModels.LeaveType;
 namespace LeaveManagement.Mappings {
     public class LeaveManagementMappings : Profile {
         public LeaveManagementMappings() {
-            CreateMap<LeaveType, LeaveTypeCreation>().ReverseMap();
+            CreateMap<LeaveType, LeaveTypeEditionViewModel>().ReverseMap();
             CreateMap<LeaveType, LeaveTypeNavigationViewModel>();
 
             CreateMap<Employee, EmployeePresentationDefaultViewModel>();

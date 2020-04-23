@@ -123,4 +123,10 @@
   <data name="LeaveTypeName" xml:space="preserve">
     <value>Leave type name</value>
   </data>
+  <data name="LeaveTypeName_Description" xml:space="preserve">
+    <value>Name of leave type</value>
+  </data>
+  <data name="Name required" xml:space="preserve">
+    <value>Name required</value>
+  </data>
 </root>

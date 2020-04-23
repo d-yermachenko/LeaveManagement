@@ -4,9 +4,14 @@ using System.Linq;
 using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Controllers {
+    public class LeaveTypesControllerLocalizer {
+        
+    }
+
     public class LeaveTypesController : Controller {
 
         private readonly ILogger<LeaveTypesController> _Logger;
@@ -15,12 +20,16 @@ namespace LeaveManagement.Controllers {
 
         private readonly AutoMapper.IMapper _Mapper;
 
-        public LeaveTypesController(Contracts.ILeaveTypeRepository repository, 
+        private readonly IStringLocalizer _Localizer;
+
+        public LeaveTypesController(Contracts.ILeaveTypeRepository repository,
             AutoMapper.IMapper mapper,
-            ILogger<LeaveTypesController> logger) {
+            ILogger<LeaveTypesController> logger,
+            IStringLocalizerFactory localizerFactory) {
             _Repository = repository;
             _Mapper = mapper;
             _Logger = logger;
+            _Localizer = GlobalizationStartup.MapRessourceToType(localizerFactory, typeof(LeaveTypesController));
         }
 
         #region Reading
@@ -68,22 +77,29 @@ namespace LeaveManagement.Controllers {
         //POST: LeaveTypes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(LeaveTypeCreation creationModel) {
+        public ActionResult Create(LeaveTypeEditionViewModel creationModel) {
             try {
-                if (!ModelState.IsValid) {
-                    ModelState.AddModelError("StateInvalid", "Model state invalid");
+                if (!ModelState.IsValid || (creationModel?.LeaveTypeName?.Equals("Kick me!")??true)) {
+                    ModelState.AddModelError("StateInvalid", _Localizer["Model state invalid"]);
+                    ViewBag.Message = _Localizer["Model state invalid"];
+                    _Logger.LogWarning("StateInvalid");
                     return View();
                 }
                 var createdLeaveType = _Mapper.Map<Data.Entities.LeaveType>(creationModel);
                 createdLeaveType.DateCreated = DateTime.Now;
                 if (!_Repository.Create(createdLeaveType)) {
-                    ModelState.AddModelError("SavingFailed", "Model state invalid");
+                    ModelState.AddModelError("SavingFailed", _Localizer["Failed to save the leave type {0}", creationModel?.LeaveTypeName]);
+                    ViewBag.Message = _Localizer["Model state invalid"];
+                    _Logger.LogError("SavingFailed");
+                    return View();
                 };
 
                 return RedirectToAction(nameof(Index));
             }
-            catch {
-                ModelState.AddModelError("ExceptionThrown", "Something went wrong");
+            catch (Exception error) {
+                ModelState.AddModelError("ExceptionThrown", _Localizer["Something went wrong"]);
+                _Logger.LogError(new EventId(error.HResult, error.ToString()), error.Message);
+                ViewBag.Message = _Localizer["Model state invalid"];
                 return View();
             }
         }
@@ -98,7 +114,7 @@ namespace LeaveManagement.Controllers {
                     var notFoundInfo = new LeaveTypeNotFoundViewModel(id, "Leave type");
                     return LeaveTypeNotFound(notFoundInfo);
                 }
-                var leaveTypeViewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeCreation>(leaveType);
+                var leaveTypeViewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeEditionViewModel>(leaveType);
                 return View(leaveTypeViewModel);
             }
             catch (Exception e) {
@@ -145,7 +161,7 @@ namespace LeaveManagement.Controllers {
                     var notFoundData = new LeaveTypeNotFoundViewModel(id, "Leave type");
                     return LeaveTypeNotFound(notFoundData);
                 }
-                var leaveTypeViewModel = _Mapper.Map<LeaveTypeCreation>(leaveTypeModel);
+                var leaveTypeViewModel = _Mapper.Map<LeaveTypeEditionViewModel>(leaveTypeModel);
                 return VulnerableEdit(leaveTypeViewModel);
             }
             catch (Exception e) {
@@ -157,7 +173,7 @@ namespace LeaveManagement.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult VulnerableEdit(LeaveTypeCreation leaveTypeViewModel) {
+        public ActionResult VulnerableEdit(LeaveTypeEditionViewModel leaveTypeViewModel) {
             try {
                 if (!ModelState.IsValid)
                     return View(leaveTypeViewModel);
