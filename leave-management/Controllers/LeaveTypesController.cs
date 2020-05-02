@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LeaveManagement.Code.CustomLocalization;
 using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,11 @@ namespace LeaveManagement.Controllers {
         public LeaveTypesController(Contracts.ILeaveTypeRepository repository,
             AutoMapper.IMapper mapper,
             ILogger<LeaveTypesController> logger,
-            IStringLocalizerFactory localizerFactory) {
+            ILeaveManagementCustomLocalizerFactory localizerFactory) {
             _Repository = repository;
             _Mapper = mapper;
             _Logger = logger;
-            _Localizer = GlobalizationStartup.MapRessourceToType(localizerFactory, typeof(LeaveTypesController));
+            _Localizer = localizerFactory.CreateStringLocalizer(typeof(LeaveTypesController));
         }
 
         #region Reading
