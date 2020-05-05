@@ -117,16 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LeaveTypeDateCreated" xml:space="preserve">
-    <value>Creation date</value>
+  <data name="&quot;&lt;p&gt;It is learning example application for Udemy lessons &lt;a href=&quot;https://www.udemy.com/course/complete-aspnet-core-31-and-entity-framework-development/&quot;&gt;Complete ASP.Net Core 3.1 and Entity Framework Development&lt;/a&gt;.&lt;/p&gt;&quot;" xml:space="preserve">
+    <value>"&lt;p&gt;Это приложение - обучающий пример из курса Udemy &lt;a href="https://www.udemy.com/course/complete-aspnet-core-31-and-entity-framework-development/"&gt;Complete ASP.Net Core 3.1 and Entity Framework Development&lt;/a&gt;.&lt;/p&gt;"</value>
   </data>
-  <data name="LeaveTypeName" xml:space="preserve">
-    <value>Leave type name</value>
-  </data>
-  <data name="LeaveTypeName_Description" xml:space="preserve">
-    <value>Name of leave type</value>
-  </data>
-  <data name="Name required" xml:space="preserve">
-    <value>Name required</value>
+  <data name="Welcome" xml:space="preserve">
+    <value>Добро пожаловать</value>
   </data>
 </root>

@@ -7,11 +7,11 @@ namespace LeaveManagement.Code.CustomLocalization {
     public interface ILeaveManagementCustomLocalizerFactory {
         IStringLocalizer CreateStringLocalizer(Type type);
 
-        IStringLocalizer CreateStringLocalizer(string baseName, string location);
+        IStringLocalizer CommandsLocalizer { get; }
 
-        IHtmlLocalizer CreateHtmlLocalizer(Type type);
+        IStringLocalizer MenuLocalizer { get;  }
 
-        IHtmlLocalizer CreateHtmlLocalizer(string baseName, string location);
+        IStringLocalizer MiscelanousLocalizer { get; }
 
     }
 }

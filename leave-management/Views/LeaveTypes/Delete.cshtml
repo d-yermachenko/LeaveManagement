@@ -1,4 +1,4 @@
-﻿@model             LeaveManagement.ViewModels.LeaveType.LeaveTypeNavigationViewModel
+﻿@model  LeaveManagement.ViewModels.LeaveType.LeaveTypeNavigationViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -6,7 +6,7 @@
 
 <h1>@Localizer["Delete"]</h1>
 
-<h3>@CommandLocalizer["Confirm delete?"]</h3>
+<h3>@LeaveManagementLocalizerFactory.CommandsLocalizer["Confirm delete?"]</h3>
 <div>
     <h4>LeaveTypeNavigationViewModel</h4>
     <hr />
@@ -28,6 +28,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">@CommandLocalizer["Back to List"]</a>
+        <a asp-action="Index">@LeaveManagementLocalizerFactory.CommandsLocalizer["Back to List"]</a>
     </form>
 </div>

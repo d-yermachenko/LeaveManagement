@@ -20,27 +20,24 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Home"]</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">@LeaveManagementLocalizerFactory.MenuLocalizer["Home"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                @Localizer["Manage"]
+                                @LeaveManagementLocalizerFactory.MenuLocalizer["Manage"]
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" asp-area="" asp-controller="LeaveTypes" asp-action="Index">
-                                    @Localizer["Leave types"]
-                                </a>
-                                <a class="dropdown-item" asp-area=""   asp-controller="Custom" asp-action="ShowExample">
-                                    Custom view
+                                    @LeaveManagementLocalizerFactory.MenuLocalizer["Leave types"]
                                 </a>
                                 <a class="dropdown-item" href="#">
-                                    @Localizer["Leave allocation"]
+                                    @LeaveManagementLocalizerFactory.MenuLocalizer["Leave allocation"]
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">@Localizer["Leave history"]</a>
+                                <a class="dropdown-item" href="#">@LeaveManagementLocalizerFactory.MenuLocalizer["Leave history"]</a>
                             </div>
                         </li>
                     </ul>

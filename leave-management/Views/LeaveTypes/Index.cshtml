@@ -7,7 +7,7 @@
 <h1>@Localizer["Index"]</h1>
 
 <p>
-    <a class="btn btn-primary" asp-action="Create">@CommandLocalizer["Create New"]</a>
+    <a class="btn btn-primary" asp-action="Create">@LeaveManagementLocalizerFactory.CommandsLocalizer["Create New"]</a>
 </p>
 <table class="table">
     <thead>
@@ -31,14 +31,14 @@
                     @Html.DisplayFor(modelItem => item.DateCreated)
                 </td>
                 <td>
-                    <a asp-action="VulnerableEdit" asp-route-id="@item.Id">@CommandLocalizer["Vulnerable edit"]</a>|
+                    <a asp-action="VulnerableEdit" asp-route-id="@item.Id">@LeaveManagementLocalizerFactory.CommandsLocalizer["Vulnerable edit"]</a>|
                     <a asp-action="Edit" asp-route-id="@item.Id">
-                        @CommandLocalizer["Edit"]
+                        @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
                     </a> |
                     <a asp-action="Details" asp-route-id="@item.Id">
-                        @CommandLocalizer["Details"]
+                        @LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]
                     </a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" onclick="confirm('@CommandLocalizer["Confirm deleting?"]')">@CommandLocalizer["Delete"]</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" onclick="confirm('@LeaveManagementLocalizerFactory.CommandsLocalizer["Confirm deleting?"]')">@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]</a>
                 </td>
             </tr>
         }

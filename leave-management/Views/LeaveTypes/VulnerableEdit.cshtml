@@ -1,10 +1,10 @@
 ﻿@model LeaveManagement.ViewModels.LeaveType.LeaveTypeEditionViewModel
 
 @{
-    ViewData["Title"] = "VulnerableEdit";
+    ViewData["Title"] = LeaveManagementLocalizerFactory.CommandsLocalizer["Vulnerable Edit"];
 }
 
-<h1>@CommandLocalizer["Vulnerable Edit"]</h1>
+<h1>@LeaveManagementLocalizerFactory.CommandsLocalizer["Vulnerable Edit"]</h1>
 <h4>@Localizer["LeaveTypeCreation"]</h4>
 <hr />
 <div class="row">
@@ -19,13 +19,13 @@
                 <span asp-validation-for="LeaveTypeName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="@CommandLocalizer["Save"]" class="btn btn-primary" />
+                <input type="submit" value="@LeaveManagementLocalizerFactory.CommandsLocalizer["Save"]" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">@CommandLocalizer["Back to List"]</a>
+    <a asp-action="Index">@LeaveManagementLocalizerFactory.CommandsLocalizer["Back to List"]</a>
 </div>
 

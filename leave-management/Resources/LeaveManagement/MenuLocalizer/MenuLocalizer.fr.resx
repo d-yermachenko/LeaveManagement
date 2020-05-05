@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Leave management" xml:space="preserve">
-    <value>Gestion d'absences</value>
+  <data name="Home" xml:space="preserve">
+    <value>Page maison</value>
+  </data>
+  <data name="Leave allocation" xml:space="preserve">
+    <value>Prises d'absence</value>
+  </data>
+  <data name="Leave history" xml:space="preserve">
+    <value>Historique des absences</value>
+  </data>
+  <data name="Leave types" xml:space="preserve">
+    <value>Types d'absence</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Vie privé</value>
   </data>
 </root>

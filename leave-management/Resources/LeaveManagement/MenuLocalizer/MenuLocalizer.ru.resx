@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Home" xml:space="preserve">
-    <value>Home</value>
+    <value>Домой</value>
   </data>
   <data name="Leave allocation" xml:space="preserve">
-    <value>Leave allocation</value>
+    <value>Запрос отстутствия</value>
   </data>
   <data name="Leave history" xml:space="preserve">
-    <value>Leave history</value>
-  </data>
-  <data name="Leave management" xml:space="preserve">
-    <value>Leave management</value>
+    <value>История отсутствий</value>
   </data>
   <data name="Leave types" xml:space="preserve">
-    <value>Leave types</value>
+    <value>Типы отсутствий</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Приватность</value>
   </data>
 </root>
