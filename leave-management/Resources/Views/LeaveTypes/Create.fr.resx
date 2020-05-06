@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Create leave type" xml:space="preserve">
+    <value>Créer type d'absence</value>
+  </data>
   <data name="If you want to throw the error in controller, type &quot;Kick me!&quot; in the name of live type" xml:space="preserve">
     <value>Si Vous voulez jeter l'erreur dans le controlleur, saisisez "Kick me!" comme le nom de type de vacance</value>
   </data>

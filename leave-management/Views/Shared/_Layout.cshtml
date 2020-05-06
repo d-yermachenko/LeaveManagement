@@ -6,6 +6,12 @@
     <title>@ViewData["Title"] - @Localizer["Leave management"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    @if (Environement.IsDevelopment()) {
+        <link href="~/lib/fontawesome47/css/font-awesome.min.css" rel="stylesheet" />
+    } else {
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    }
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>

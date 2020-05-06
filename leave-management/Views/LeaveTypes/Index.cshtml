@@ -1,4 +1,5 @@
-﻿@model IEnumerable<LeaveManagement.ViewModels.LeaveType.LeaveTypeNavigationViewModel>
+﻿@using System.Globalization;
+@model IEnumerable<LeaveManagement.ViewModels.LeaveType.LeaveTypeNavigationViewModel>
 
 @{
     ViewData["Title"] = Localizer["Index"];
@@ -7,9 +8,9 @@
 <h1>@Localizer["Index"]</h1>
 
 <p>
-    <a class="btn btn-primary" asp-action="Create">@LeaveManagementLocalizerFactory.CommandsLocalizer["Create New"]</a>
+    <a class="btn btn-success" asp-action="Create"><i class="fa fa-plus"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Create New"]</a>
 </p>
-<table class="table ">
+<table class="table dataTable">
     <thead>
         <tr>
             <th>
@@ -31,15 +32,41 @@
                     @Html.DisplayFor(modelItem => item.DateCreated)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">
-                        @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
-                    </a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">
-                        @LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]
-                    </a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" onclick="confirm('@LeaveManagementLocalizerFactory.CommandsLocalizer["Confirm deleting?"]')">@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]</a>
+                    <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@item.Id">
+                        <i class="fa fa-pencil"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
+                    </a>
+                    <a asp-action="Details" class="btn btn-info" asp-route-id="@item.Id">
+                        <i class="fa fa-info"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]
+                    </a>
+                    <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id" onclick="return confirm('@LeaveManagementLocalizerFactory.CommandsLocalizer["Confirm deleting?"]')">
+                        <i class="fa fa-trash"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+@section Scripts{
+    @if (Environement.IsDevelopment()) {
+        <script src="~/lib/dataTables/datatables.min.js"></script>
+        <script src="~/lib/dataTables/DataTables-1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    } else {
+        <script type="text/javascript" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="//cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    }
+    <script type="text/javascript" src="~/lib/dataTables/lang/@(CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower()).js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.dataTable').DataTable({
+                "language": dataTableLanguageOptions
+            });
+        });
+    </script>
+}
+@section Styles{
+    @if (Environement.IsDevelopment()) {
+        <link href="~/lib/dataTables/datatables.min.css" rel="stylesheet" />
+    } else {
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+    }
+}

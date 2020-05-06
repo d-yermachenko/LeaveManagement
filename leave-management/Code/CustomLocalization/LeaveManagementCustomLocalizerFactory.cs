@@ -57,7 +57,6 @@ namespace LeaveManagement.Code.CustomLocalization {
                         knownMapping = mapping;
                         state.Break();
                     }
-
                 }
                 catch {
                     ;

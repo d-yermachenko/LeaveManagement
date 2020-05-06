@@ -1,0 +1,19 @@
+Current list of supported cultures: En (Invariant), Fr, Ru
+Localizing of differen features:
+
+- Localize shared messages in CommandsLocalizers, MenuLocalizer, MiscLocalizer. 
+  Resources can be found in files Resources/LeaveManager/CommandsLocalizers/CommandsLocalizers[.culture].resx,
+  Resources/LeaveManager/MenuLocalizer/MenuLocalizer[.culture].resx, Resources/LeaveManager/MiscLocalizer/MiscLocalizer[.culture].resx
+  accordingly
+
+- For the view model, use folder Resources/ViewModel/../YourViewModel/YourViewModel[.supportedCulture..].resx
+
+- For views, use resources in Resources/Views/YourController/YourViewName[.supportedCulture..].resx, for your controllers' class 
+  YourControllerController. Path and tree uses folder convention, the namespace defines the structure of folders.
+
+- For messages of your controller, use also folder convention. Exemple, for LeaveManagement.Controller.My.Controller.Namespace.MyControllerController
+  the file for resources will be Resources/Controller/My/Controller/Namespace/MyController/MyController[.supportedCulture..].resx
+
+- If you need localize some javascript library, it is on you own, just try to cover all supported cultures. You can use convention with
+  language file situated in folder nearby, and inclide it, like this:
+    <script type="text/javascript" src="~/js/dataTables/lang/@(CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower()).js"></script>

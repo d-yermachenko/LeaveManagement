@@ -9,10 +9,6 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Controllers {
-    public class LeaveTypesControllerLocalizer {
-        
-    }
-
     public class LeaveTypesController : Controller {
 
         private readonly ILogger<LeaveTypesController> _Logger;
@@ -160,40 +156,23 @@ namespace LeaveManagement.Controllers {
             var instanceForDelete = _Repository.FindById(id);
             if (instanceForDelete == null) {
                 LeaveTypeNotFoundViewModel notFoundView =
-                    new LeaveTypeNotFoundViewModel(id, "Leave Type");
+                    new LeaveTypeNotFoundViewModel(id, _Localizer["Leave Type"]);
                 return LeaveTypeNotFound(notFoundView);
             }
             var leaveTypeViewModel = _Mapper.Map<LeaveTypeNavigationViewModel>(instanceForDelete);
-            return View(leaveTypeViewModel);
-        }
-
-        // POST: LeaveTypes/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, LeaveTypeNavigationViewModel viewModel) {
-            try {
-                var instanceForDelete = _Repository.FindById(id);
-                if (instanceForDelete == null) {
-                    LeaveTypeNotFoundViewModel notFoundView =
-                        new LeaveTypeNotFoundViewModel(id, "Leave Type");
-                    return LeaveTypeNotFound(notFoundView);
-                }
-                if (!ModelState.IsValid) {
-                    ModelState.AddModelError("ModelInvalid", "Model is not valid");
-                    return View(viewModel);
-                }
-                bool isSucceed = _Repository.Delete(instanceForDelete);
-                if (!isSucceed) {
-                    ModelState.AddModelError("DeleteFailed", "Operation de suppression planté");
-                    return View(viewModel);
-                }
+            if (!ModelState.IsValid) {
+                ModelState.AddModelError("ModelInvalid", "Model is not valid");
                 return RedirectToAction(nameof(Index));
             }
-            catch {
+            bool isSucceed = _Repository.Delete(instanceForDelete);
+            if (!isSucceed) {
                 ModelState.AddModelError("DeleteFailed", "Operation de suppression planté");
-                return View(viewModel);
+                return RedirectToAction(nameof(Index));
             }
+            return RedirectToAction(nameof(Index));
         }
+
+       
         #endregion
 
         #region Anomalies handling

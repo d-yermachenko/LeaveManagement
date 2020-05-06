@@ -10,6 +10,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2A6A6381-684B-4A82-95D4-D70BB7FE2D4B}"
+	ProjectSection(SolutionItems) = preProject
+		!Check list in function add.txt = !Check list in function add.txt
+		Localization checklist.txt = Localization checklist.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
