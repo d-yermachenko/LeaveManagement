@@ -154,46 +154,6 @@ namespace LeaveManagement.Controllers {
         }
         #endregion
 
-        #region Vulnerable edition
-        public ActionResult VulnerableEdit(int id) {
-            try {
-                var leaveTypeModel = _Repository.FindById(id);
-                if (leaveTypeModel == null) {
-                    var notFoundData = new LeaveTypeNotFoundViewModel(id, "Leave type");
-                    return LeaveTypeNotFound(notFoundData);
-                }
-                var leaveTypeViewModel = _Mapper.Map<LeaveTypeEditionViewModel>(leaveTypeModel);
-                return VulnerableEdit(leaveTypeViewModel);
-            }
-            catch (Exception e) {
-                ModelState.AddModelError("Exception", e.Message);
-                return RedirectToAction(nameof(Index));
-            }
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult VulnerableEdit(LeaveTypeEditionViewModel leaveTypeViewModel) {
-            try {
-                if (!ModelState.IsValid)
-                    return View(leaveTypeViewModel);
-                Data.Entities.LeaveType leaveType = _Mapper.Map<Data.Entities.LeaveType>(leaveTypeViewModel);
-                bool succeed = _Repository.Update(leaveType);
-                if (!succeed) {
-                    ModelState.AddModelError("UpdateError", "Writing to database failed");
-                    return View(leaveTypeViewModel);
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception e) {
-                ModelState.AddModelError("Exception", e.Message);
-                return View(leaveTypeViewModel);
-            }
-        }
-
-        #endregion
-
         #region Remove
         // GET: LeaveTypes/Delete/5
         public ActionResult Delete(int id) {

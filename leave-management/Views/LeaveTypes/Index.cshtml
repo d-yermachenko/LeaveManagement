@@ -9,7 +9,7 @@
 <p>
     <a class="btn btn-primary" asp-action="Create">@LeaveManagementLocalizerFactory.CommandsLocalizer["Create New"]</a>
 </p>
-<table class="table">
+<table class="table ">
     <thead>
         <tr>
             <th>
@@ -31,7 +31,6 @@
                     @Html.DisplayFor(modelItem => item.DateCreated)
                 </td>
                 <td>
-                    <a asp-action="VulnerableEdit" asp-route-id="@item.Id">@LeaveManagementLocalizerFactory.CommandsLocalizer["Vulnerable edit"]</a>|
                     <a asp-action="Edit" asp-route-id="@item.Id">
                         @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
                     </a> |
