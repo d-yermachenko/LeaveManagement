@@ -5,6 +5,6 @@ using System.Threading.Tasks;
 using LeaveManagement.Data.Entities;
 
 namespace LeaveManagement.Contracts {
-    public interface ILeaveAllocationRepository : IRepositoryBase<LeaveAllocation, long>{
+    public interface ILeaveAllocationRepositoryAsync : IRepositoryBaseAsync<LeaveAllocation, long>{
     }
 }

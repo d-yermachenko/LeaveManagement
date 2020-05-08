@@ -47,13 +47,14 @@
     </tbody>
 </table>
 @section Scripts{
-    @if (Environement.IsDevelopment()) {
+    <environment include="Development">
         <script src="~/lib/dataTables/datatables.min.js"></script>
         <script src="~/lib/dataTables/DataTables-1.10.20/js/dataTables.bootstrap4.min.js"></script>
-    } else {
+    </environment>
+    <environment exclude="Development">
         <script type="text/javascript" src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="//cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
-    }
+    </environment>
     <script type="text/javascript" src="~/lib/dataTables/lang/@(CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower()).js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -64,9 +65,10 @@
     </script>
 }
 @section Styles{
-    @if (Environement.IsDevelopment()) {
+    <environment include="Development">
         <link href="~/lib/dataTables/datatables.min.css" rel="stylesheet" />
-    } else {
+    </environment>
+    <environment exclude="Development">
         <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
-    }
+    </environment>
 }

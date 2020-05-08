@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
 
 namespace LeaveManagement.Repository.Entity {
-    public class LeaveAllocationRepository : ILeaveAllocationRepository {
+    public class LeaveAllocationRepository : ILeaveAllocationRepositoryAsync {
         private ApplicationDbContext ApplicationDbContext;
 
         public LeaveAllocationRepository(ApplicationDbContext applicationDbContext) {
@@ -15,39 +16,41 @@ namespace LeaveManagement.Repository.Entity {
         }
 
 
-        public bool Create(LeaveAllocation entity) {
-            try {
-                ApplicationDbContext.LeaveAllocations.Add(entity);
-                return ApplicationDbContext.SaveChanges() > 0;
-            }
-            catch {
-                throw;
-            }
-
+        public async Task<bool> CreateAsync(LeaveAllocation entity) {
+                try {
+                    ApplicationDbContext.LeaveAllocations.Add(entity);
+                    return await SaveAsync();
+                }
+                catch {
+                    throw;
+                }
+               
         }
 
-        public bool Delete(LeaveAllocation entity) {
+        public async Task<bool> DeleteAsync(LeaveAllocation entity) {
             try {
                 ApplicationDbContext.LeaveAllocations.Remove(entity);
-                return true;
+                return await SaveAsync();
             }
             catch {
                 throw;
             }
         }
 
-        public ICollection<LeaveAllocation> FindAll() => ApplicationDbContext.LeaveAllocations.ToList();
+        public async Task<ICollection<LeaveAllocation>> FindAllAsync() => await ApplicationDbContext.LeaveAllocations.ToListAsync();
 
-        public LeaveAllocation FindById(long id) => ApplicationDbContext.LeaveAllocations.Find(new long[] { id });
+        public async Task<LeaveAllocation> FindByIdAsync(long id) => await ApplicationDbContext.LeaveAllocations.FindAsync(new long[] { id });
 
-        public bool Save() {
-            ApplicationDbContext.Save();
-            return true;
+        public async Task<bool> SaveAsync() {
+            return await Task.Run(() => {
+                var affectedLines = ApplicationDbContext.SaveChanges();
+                return affectedLines > 0;
+            });
         }
 
-        public bool Update(LeaveAllocation entity) {
+        public async Task<bool> UpdateAsync(LeaveAllocation entity) {
             ApplicationDbContext.LeaveAllocations.Update(entity);
-            return true;
+            return await SaveAsync();
         }
     }
 }

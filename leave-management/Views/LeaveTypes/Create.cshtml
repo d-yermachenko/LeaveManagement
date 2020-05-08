@@ -23,8 +23,8 @@
         </form>
     </div>
 </div>
-<div class="text-danger">
-    @Localizer["If you want to throw the error in controller, type \"Kick me!\" in the name of live type"]
+<div>
+    <partial name="_ProblemPartial" />
 </div>
 
 @if (!String.IsNullOrWhiteSpace(ViewBag.Message)) {

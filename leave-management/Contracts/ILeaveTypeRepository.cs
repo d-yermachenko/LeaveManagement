@@ -1,9 +1,10 @@
 ﻿using LeaveManagement.Data.Entities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LeaveManagement.Contracts {
-    public interface ILeaveTypeRepository : IRepositoryBase<LeaveType, int> {
-        ICollection<LeaveType> GetLeaveTypesByEmployeeId(string employeeId);
+    public interface ILeaveTypeRepositoryAsync : IRepositoryBaseAsync<LeaveType, int> {
+        Task<ICollection<LeaveType>> GetLeaveTypesByEmployeeIdAsync(string employeeId);
 
     }
 }

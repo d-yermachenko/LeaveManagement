@@ -16,6 +16,9 @@
                 <input asp-for="LeaveTypeName" class="form-control" />
                 <span asp-validation-for="LeaveTypeName" class="text-danger"></span>
             </div>
+            <div>
+                <partial name="_ProblemPartial" />
+            </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-success">
                     <i class="fa fa-save"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Save"]

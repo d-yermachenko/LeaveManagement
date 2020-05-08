@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LeaveManagement.Repository.Entity {
-    public class LeaveTypeRepository : ILeaveTypeRepository {
+    public class LeaveTypeRepository : ILeaveTypeRepositoryAsync {
 
         ApplicationDbContext ApplicationDbContext;
 
@@ -14,57 +16,57 @@ namespace LeaveManagement.Repository.Entity {
             ApplicationDbContext = applicationDbContext;
         }
 
-        public bool Create(LeaveType entity) {
+        public async Task<bool> CreateAsync(LeaveType entity) {
             try {
                 ApplicationDbContext.LeaveTypes.Add(entity);
-                return ApplicationDbContext.Save();
+                return await SaveAsync();
             }
             catch {
                 throw;
             }
         }
 
-        public bool Delete(LeaveType entity) {
+        public async Task<bool> DeleteAsync(LeaveType entity) {
             try {
                 ApplicationDbContext.LeaveTypes.Remove(entity);
-                return ApplicationDbContext.Save();
+                return await SaveAsync();
             }
             catch {
                 throw;
             }
         }
 
-        public ICollection<LeaveType> FindAll() => ApplicationDbContext.LeaveTypes.ToArray();
+        public async Task<ICollection<LeaveType>> FindAllAsync() => await ApplicationDbContext.LeaveTypes.ToArrayAsync();
 
-        public LeaveType FindById(int id) {
-            return ApplicationDbContext.LeaveTypes.Find( id );
+        public async Task<LeaveType> FindByIdAsync(int id) {
+            return await ApplicationDbContext.LeaveTypes.FindAsync( id );
         }
 
-        public ICollection<LeaveType> GetLeaveTypesByEmployeeId(string employeeId) {
+        public async Task<ICollection<LeaveType>> GetLeaveTypesByEmployeeIdAsync(string employeeId) {
             Func<LeaveType, bool> selectExpression = (leaveType) => {
                 var historyOfEmployee = ApplicationDbContext.LeaveHistories.Where(lh => lh.RequestingEmployeeId.Equals(employeeId));
                 var leaveTypesIds = historyOfEmployee.Select(hoe => hoe.LeaveTypeId).GroupBy(lti => lti).Select(gr => gr.Key);
                 return leaveTypesIds.Contains(leaveType.Id);
             };
-            return ApplicationDbContext.LeaveTypes.Where(x=> selectExpression.Invoke(x)).ToArray();
+            return await Task.Run(() => {
+                return ApplicationDbContext.LeaveTypes.Where(x => selectExpression.Invoke(x)).ToArray();
+            });
         }
 
-        public bool Save() {
-            bool result = false;
+        public async Task<bool> SaveAsync() {
             try {
-                ApplicationDbContext.Save();
-                result = true;
+                return (await ApplicationDbContext.SaveChangesAsync()) > 0;
+                
             }
             catch {
                 throw;
             }
-            return result;
         }
 
-        public bool Update(LeaveType entity) {
+        public async Task<bool> UpdateAsync(LeaveType entity) {
             try {
                 ApplicationDbContext.LeaveTypes.Update(entity);
-                return Save();
+                return await SaveAsync();
             }
             catch {
                 throw;

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using LeaveManagement.Code.CustomLocalization;
+using LeaveManagement.Models;
 using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
@@ -13,33 +17,41 @@ namespace LeaveManagement.Controllers {
 
         private readonly ILogger<LeaveTypesController> _Logger;
 
-        private readonly Contracts.ILeaveTypeRepository _Repository;
+        private readonly Contracts.ILeaveTypeRepositoryAsync _Repository;
 
         private readonly AutoMapper.IMapper _Mapper;
 
-        private readonly IStringLocalizer _Localizer;
+        private readonly ILeaveManagementCustomLocalizerFactory LocalizerFactory;
 
-        public LeaveTypesController(Contracts.ILeaveTypeRepository repository,
+        private readonly IStringLocalizer ControllerLocalizer;
+
+        public LeaveTypesController(Contracts.ILeaveTypeRepositoryAsync repository,
             AutoMapper.IMapper mapper,
             ILogger<LeaveTypesController> logger,
             ILeaveManagementCustomLocalizerFactory localizerFactory) {
             _Repository = repository;
             _Mapper = mapper;
             _Logger = logger;
-            _Localizer = localizerFactory.CreateStringLocalizer(typeof(LeaveTypesController));
+            LocalizerFactory = localizerFactory;
+            ControllerLocalizer = localizerFactory.CreateStringLocalizer(typeof(LeaveTypesController));
         }
 
         #region Reading
         // GET: LeaveTypes
-        public ActionResult Index() {
-            List<Data.Entities.LeaveType> leaveTypes = _Repository.FindAll().ToList();
+        public async Task<ActionResult> Index() {
+            List<Data.Entities.LeaveType> leaveTypes = (await _Repository.FindAllAsync()).ToList();
             var viewModel = _Mapper.Map<List<Data.Entities.LeaveType>, List<LeaveTypeNavigationViewModel>>(leaveTypes);
             return View(viewModel);
         }
 
         // GET: LeaveTypes/Details/5
-        public ActionResult Details(int id) {
-            var entry = _Repository.FindById(id);
+        public async Task<ActionResult> Details(int id) {
+            var entry = await _Repository.FindByIdAsync(id);
+            if (entry == null) {
+                string errorTitle = ControllerLocalizer["Leave type {0} not found", id];
+                string errorMessage = ControllerLocalizer["Impossible to find leave type #{0}. Please check the adress", id];
+                return StatusCode(StatusCodes.Status404NotFound, errorMessage);
+            }
             var viewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeNavigationViewModel>(entry);
             return View(viewModel);
         }
@@ -52,70 +64,72 @@ namespace LeaveManagement.Controllers {
             return View();
         }
 
-        // POST: LeaveTypes/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection) {
-        //    try {
-        //        Data.Entities.LeaveType leaveType = new Data.Entities.LeaveType() {
-        //            Id = 0,
-        //            LeaveTypeName = collection["LeaveTypeName"],
-        //            DateCreated = DateTime.Now
-        //        };
-        //        _Repository.Create(leaveType);
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch {
-        //        return View();
-        //    }
-        //}
 
         //POST: LeaveTypes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(LeaveTypeEditionViewModel creationModel) {
+        public async Task<ActionResult> Create(LeaveTypeEditionViewModel creationModel) {
+            string newName = string.Empty;
             try {
-                if (!ModelState.IsValid || (creationModel?.LeaveTypeName?.Equals("Kick me!")??true)) {
-                    ModelState.AddModelError("StateInvalid", _Localizer["Model state invalid"]);
-                    ViewBag.Message = _Localizer["Model state invalid"];
-                    _Logger.LogWarning("StateInvalid");
-                    return View();
+                if (!ModelState.IsValid) {
+                    HomeController.DisplayProblem(_Logger, this, ControllerLocalizer["Model state invalid"],
+                        ControllerLocalizer[ModelState.ValidationState.ToString()]);
+                    return View(creationModel);
+                }
+                newName = creationModel.LeaveTypeName;
+                var leaveTypes =  (await _Repository.FindAllAsync()).Where(x => x.LeaveTypeName?.Equals(newName) ?? false);
+                if (leaveTypes?.Count() > 0) {
+                    HomeController.DisplayProblem(_Logger, this, ControllerLocalizer["Failed to create leave type '{0}'.", newName],
+                        ControllerLocalizer["Leave type with name {0} already exists", newName]);
+                    return View(creationModel);
                 }
                 var createdLeaveType = _Mapper.Map<Data.Entities.LeaveType>(creationModel);
                 createdLeaveType.DateCreated = DateTime.Now;
-                if (!_Repository.Create(createdLeaveType)) {
-                    ModelState.AddModelError("SavingFailed", _Localizer["Failed to save the leave type {0}", creationModel?.LeaveTypeName]);
-                    ViewBag.Message = _Localizer["Model state invalid"];
-                    _Logger.LogError("SavingFailed");
-                    return View();
+                if (!(await _Repository.CreateAsync(createdLeaveType))) {
+                    string errorTitle = ControllerLocalizer["Saving failed"];
+                    string errorMessage = ControllerLocalizer["Failed to save leave type '{0}' in repositary", newName];
+                    HomeController.DisplayProblem(_Logger, this, errorTitle, errorMessage);
+                    return View(creationModel);
                 };
-
                 return RedirectToAction(nameof(Index));
             }
+            catch(DbException dbException) {
+                string errorTitle = ControllerLocalizer["Saving failed"];
+                string errorMessage = ControllerLocalizer["Repository error while saving leave type '{0}' in repositary", newName];
+                HomeController.DisplayProblem(_Logger, this, errorTitle, errorMessage, dbException);
+                return View(creationModel);
+            }
             catch (Exception error) {
-                ModelState.AddModelError("ExceptionThrown", _Localizer["Something went wrong"]);
-                _Logger.LogError(new EventId(error.HResult, error.ToString()), error.Message);
-                ViewBag.Message = _Localizer["Model state invalid"];
-                return View();
+                string errorTitle = ControllerLocalizer["Saving failed"];
+                string errorMessage = ControllerLocalizer["Unidentified error while saving leave type '{0}' in repositary", newName];
+                HomeController.DisplayProblem(_Logger, this, errorTitle, errorMessage, error);
+                return View(creationModel);
             }
         }
         #endregion
 
         #region Edit
         // GET: LeaveTypes/Edit/5
-        public ActionResult Edit(int id) {
+        public async Task<ActionResult> Edit(int id) {
             try {
-                var leaveType = _Repository.FindById(id);
+                var leaveType = await _Repository.FindByIdAsync(id);
                 if (leaveType == null) {
-                    var notFoundInfo = new LeaveTypeNotFoundViewModel(id, "Leave type");
-                    return LeaveTypeNotFound(notFoundInfo);
+                    return NotFound();
+                    return HomeController.RedirectToError(_Logger, this, ControllerLocalizer["Leave type {0} not found", id],
+                        ControllerLocalizer["Leave type {0} not found", id], id, nameof(Index),
+                        LocalizerFactory.CommandsLocalizer["Back to list"]);
                 }
                 var leaveTypeViewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeEditionViewModel>(leaveType);
                 return View(leaveTypeViewModel);
             }
-            catch (Exception e) {
-                return Error(e);
+            catch (DbException error) {
+                HomeController.DisplayProblem(_Logger, this, ControllerLocalizer[error.ToString()], error.Message);
+                return View();
+            }
+            catch (Exception error) {
+                _Logger.LogError(new EventId(error.HResult, error.ToString()), error.Message);
+                ViewBag.Message = ControllerLocalizer[error.ToString()] + "\n" + error.Message;
+                return View();
             }
 
         }
@@ -123,28 +137,44 @@ namespace LeaveManagement.Controllers {
         // POST: LeaveTypes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection) {
+        public async Task<ActionResult> Edit(int id, LeaveTypeEditionViewModel editionViewModel) {
+            string newName = string.Empty;
             try {
                 if (!ModelState.IsValid) {
                     return View();
                 }
-                var leaveTypeToChange = _Repository.FindById(id);
+                var leaveTypeToChange = await _Repository.FindByIdAsync(id);
                 if (leaveTypeToChange == null) {
-                    var notFoundInfo = new LeaveTypeNotFoundViewModel(id, "Leave type");
-                    return LeaveTypeNotFound(notFoundInfo);
+                    return HomeController.RedirectToError(_Logger, this, ControllerLocalizer["Leave type {0} not found", id],
+                    ControllerLocalizer["Leave type {0} not found", id], nameof(Index),
+                    LocalizerFactory.CommandsLocalizer["Back to list"]);
                 }
-                if (leaveTypeToChange != null) {
-                    leaveTypeToChange.LeaveTypeName = collection["LeaveTypeName"];
-                    if (!_Repository.Update(leaveTypeToChange)) {
-                        ModelState.AddModelError("UpdateFailed", "Something went wrong");
-                        return View();
-                    }
-
+                newName = editionViewModel.LeaveTypeName;
+                var leaveTypes = (await _Repository.FindAllAsync()).Where(x => x.LeaveTypeName?.Equals(newName) ??false &&
+                x.Id != id);
+                if(leaveTypes?.Count() > 0) {
+                    HomeController.DisplayProblem(_Logger, this, ControllerLocalizer["Leave type with name {0} already exists", newName],
+                        ControllerLocalizer["Leave type with name {0} already exists", newName]);
+                    return View(editionViewModel);
                 }
-
+                leaveTypeToChange.LeaveTypeName = newName;
+                if (!(await _Repository.UpdateAsync(leaveTypeToChange))) {
+                    string errorMessage = ControllerLocalizer["Failed to rename this leave type to {0}", newName];
+                    ModelState.AddModelError("UpdateFailed", errorMessage);
+                    HomeController.DisplayProblem(_Logger, this, ControllerLocalizer["Leave type with name {0} already exists", newName],
+                        ControllerLocalizer["Leave type with name {0} already exists", newName]);
+                    return View();
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch {
+            catch(DbUpdateException updateError) {
+                HomeController.DisplayProblem(_Logger, this, ControllerLocalizer[updateError.ToString()],
+                    updateError.Message);
+                return View();
+            }
+            catch (Exception exception) {
+                HomeController.DisplayProblem(_Logger, this, ControllerLocalizer[exception.ToString()],
+                    exception.Message);
                 return View();
             }
         }
@@ -152,37 +182,39 @@ namespace LeaveManagement.Controllers {
 
         #region Remove
         // GET: LeaveTypes/Delete/5
-        public ActionResult Delete(int id) {
-            var instanceForDelete = _Repository.FindById(id);
-            if (instanceForDelete == null) {
-                LeaveTypeNotFoundViewModel notFoundView =
-                    new LeaveTypeNotFoundViewModel(id, _Localizer["Leave Type"]);
-                return LeaveTypeNotFound(notFoundView);
-            }
-            var leaveTypeViewModel = _Mapper.Map<LeaveTypeNavigationViewModel>(instanceForDelete);
-            if (!ModelState.IsValid) {
-                ModelState.AddModelError("ModelInvalid", "Model is not valid");
+        public async Task<ActionResult> Delete(int id) {
+            try {
+                var instanceToDelete = await _Repository.FindByIdAsync(id);
+                if (instanceToDelete == null) {
+                    string errorMessage = ControllerLocalizer["Leave type with number {0} was not found", id];
+                    string errorTitle = ControllerLocalizer["Leave type not found"];
+                    HomeController.DisplayProblem(_Logger, this, errorMessage, errorTitle);
+                    return View();
+                }
+                var leaveTypeViewModel = _Mapper.Map<LeaveTypeNavigationViewModel>(instanceToDelete);
+                bool isSucceed = await _Repository.DeleteAsync(instanceToDelete);
+                if (!isSucceed) {
+                    string errorMessage = ControllerLocalizer["Can't delete leave type with id {0}", id];
+                    string errorTitle = ControllerLocalizer["Can't delete leave type"];
+                    HomeController.DisplayProblem(_Logger, this, errorMessage, errorTitle);
+                    return RedirectToAction(nameof(Index));
+                }
                 return RedirectToAction(nameof(Index));
             }
-            bool isSucceed = _Repository.Delete(instanceForDelete);
-            if (!isSucceed) {
-                ModelState.AddModelError("DeleteFailed", "Operation de suppression planté");
+            catch(DbException dbException) {
+                string errorMessage = ControllerLocalizer["Can't delete leave type with id {0}", id];
+                string errorTitle = ControllerLocalizer["Can't delete leave type"];
+                HomeController.DisplayProblem(_Logger, this, errorMessage, errorTitle, dbException);
                 return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
         }
 
-       
+
         #endregion
 
         #region Anomalies handling
-        public ActionResult Error(Exception error) {
-            return View();
-        }
+        private void NotifyAnomaly(Exception exception) {
 
-
-        public ActionResult LeaveTypeNotFound(LeaveTypeNotFoundViewModel notFoundMessage) {
-            return View(notFoundMessage);
         }
         #endregion
     }

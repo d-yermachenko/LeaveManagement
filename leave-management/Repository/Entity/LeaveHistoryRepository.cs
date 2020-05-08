@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LeaveManagement.Repository.Entity {
-    public class LeaveHistoryRepository : ILeaveHistoryRepository {
+    public class LeaveHistoryRepository : ILeaveHistoryRepositoryAsync {
         public ApplicationDbContext ApplicationDbContext;
 
         public LeaveHistoryRepository(ApplicationDbContext applicationDbContext) {
@@ -16,28 +19,36 @@ namespace LeaveManagement.Repository.Entity {
         }
 
 
-        public bool Create(LeaveHistory entity) {
+        public async Task<bool> CreateAsync(LeaveHistory entity) {
             ApplicationDbContext.LeaveHistories.Add(entity);
-            return true;
+            return await SaveAsync();
         }
 
-        public bool Delete(LeaveHistory entity) {
+        public async Task<bool> DeleteAsync(LeaveHistory entity) {
             ApplicationDbContext.LeaveHistories.Remove(entity);
-            return true;
+            return await SaveAsync();
         }
 
-        public ICollection<LeaveHistory> FindAll() => ApplicationDbContext.LeaveHistories.ToArray();
+        public async Task<ICollection<LeaveHistory>> FindAllAsync() => await ApplicationDbContext.LeaveHistories
+            .Include(x => x.ApprouvedBy)
+            .Include(x => x.RequestingEmployee)
+            .Include(x => x.LeaveType)
+            .ToArrayAsync();
 
-        public LeaveHistory FindById(long id) => ApplicationDbContext.LeaveHistories.Find(new object[] { id });
+        public async Task <LeaveHistory> FindByIdAsync(long id) => await ApplicationDbContext.LeaveHistories
+            .Include(x=>x.ApprouvedBy)
+            .Include(x=>x.RequestingEmployee)
+            .Include(x=>x.LeaveType)
+            .FirstOrDefaultAsync(x=>x.Id == id);
 
-        public bool Save() {
-            ApplicationDbContext.Save();
-            return true;
+        public async Task<bool> SaveAsync() {
+            var affectedRecords = await ApplicationDbContext.SaveChangesAsync();
+            return affectedRecords> 0;
         }
 
-        public bool Update(LeaveHistory entity) {
+        public async Task<bool> UpdateAsync(LeaveHistory entity) {
             ApplicationDbContext.LeaveHistories.Update(entity);
-            return true;
+            return await SaveAsync();
         }
     }
 }

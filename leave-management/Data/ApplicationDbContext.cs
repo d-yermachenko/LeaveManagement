@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagement.Data.Entities;
 using LeaveManagement.Contracts;
 using LeaveManagement.Models.ViewModels;
+using System.Threading.Tasks;
 
 namespace LeaveManagement.Data {
     public class ApplicationDbContext : IdentityDbContext {
@@ -27,9 +28,9 @@ namespace LeaveManagement.Data {
         
 
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            return this.SaveChanges() > 0;
+            return (await this.SaveChangesAsync()) > 0;
         }
       
 

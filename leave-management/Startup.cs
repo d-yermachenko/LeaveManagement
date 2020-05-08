@@ -34,9 +34,9 @@ namespace LeaveManagement {
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
-            services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
-            services.AddScoped<ILeaveHistoryRepository, LeaveHistoryRepository>();
+            services.AddScoped<ILeaveTypeRepositoryAsync, LeaveTypeRepository>();
+            services.AddScoped<ILeaveAllocationRepositoryAsync, LeaveAllocationRepository>();
+            services.AddScoped<ILeaveHistoryRepositoryAsync, LeaveHistoryRepository>();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
             GlobalizationStartup.ConfigureServices(services);
 

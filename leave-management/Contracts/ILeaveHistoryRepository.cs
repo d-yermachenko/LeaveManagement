@@ -4,7 +4,7 @@ using System.Linq;
 using LeaveManagement.Data.Entities;
 
 namespace LeaveManagement.Contracts {
-    public interface ILeaveHistoryRepository : IRepositoryBase<LeaveHistory, long> {
+    public interface ILeaveHistoryRepositoryAsync : IRepositoryBaseAsync<LeaveHistory, long> {
        
     }
 }

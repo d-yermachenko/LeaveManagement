@@ -1,2 +1,5 @@
 - Make sure that there are not conflict between differences in libs
 - Make sure that this function is localizable
+- Using Exception handling: Please refer exception handling. If you change something in the exception hangling, please, dont forget
+  update the documentation.
+	

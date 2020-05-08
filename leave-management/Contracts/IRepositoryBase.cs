@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LeaveManagement.Contracts {
-    public interface IRepositoryBase<T, I>  where T :class
+    public interface IRepositoryBaseAsync<T, I>  where T :class
                                      where I : struct{
-        ICollection<T> FindAll();
+         Task<ICollection<T>> FindAllAsync();
 
-        T FindById(I id);
+         Task<T> FindByIdAsync(I id);
 
-        bool Create(T entity);
+         Task<bool> CreateAsync(T entity);
 
-        bool Update(T entity);
+         Task<bool> UpdateAsync(T entity);
 
-        bool Delete(T entity);
+         Task<bool> DeleteAsync(T entity);
 
-        bool Save();
+         Task<bool> SaveAsync();
     }
 }
