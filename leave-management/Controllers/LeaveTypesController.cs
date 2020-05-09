@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using LeaveManagement.Code.CustomLocalization;
-using LeaveManagement.Models;
 using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +47,6 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> Details(int id) {
             var entry = await _Repository.FindByIdAsync(id);
             if (entry == null) {
-                string errorTitle = ControllerLocalizer["Leave type {0} not found", id];
                 string errorMessage = ControllerLocalizer["Impossible to find leave type #{0}. Please check the adress", id];
                 return StatusCode(StatusCodes.Status404NotFound, errorMessage);
             }
@@ -115,9 +113,6 @@ namespace LeaveManagement.Controllers {
                 var leaveType = await _Repository.FindByIdAsync(id);
                 if (leaveType == null) {
                     return NotFound();
-                    return HomeController.RedirectToError(_Logger, this, ControllerLocalizer["Leave type {0} not found", id],
-                        ControllerLocalizer["Leave type {0} not found", id], id, nameof(Index),
-                        LocalizerFactory.CommandsLocalizer["Back to list"]);
                 }
                 var leaveTypeViewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeEditionViewModel>(leaveType);
                 return View(leaveTypeViewModel);
@@ -145,9 +140,7 @@ namespace LeaveManagement.Controllers {
                 }
                 var leaveTypeToChange = await _Repository.FindByIdAsync(id);
                 if (leaveTypeToChange == null) {
-                    return HomeController.RedirectToError(_Logger, this, ControllerLocalizer["Leave type {0} not found", id],
-                    ControllerLocalizer["Leave type {0} not found", id], nameof(Index),
-                    LocalizerFactory.CommandsLocalizer["Back to list"]);
+                    return NotFound(ControllerLocalizer["Leave type {0} not found", id]);
                 }
                 newName = editionViewModel.LeaveTypeName;
                 var leaveTypes = (await _Repository.FindAllAsync()).Where(x => x.LeaveTypeName?.Equals(newName) ??false &&

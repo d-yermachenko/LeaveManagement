@@ -9,10 +9,6 @@ using Microsoft.Extensions.Hosting;
 using LeaveManagement.Contracts;
 using LeaveManagement.Repository.Entity;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc.Razor;
-using System.Globalization;
-using Microsoft.Extensions.Logging;
-using System;
 
 namespace LeaveManagement {
     public class Startup {
