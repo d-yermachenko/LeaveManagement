@@ -150,5 +150,17 @@ namespace LeaveManagement.Code.CustomLocalization {
                 return MiscelanousLocalizerField;
             }
         }
+
+        private IHtmlLocalizer HtmlIdentityLocalizerField;
+
+        public IHtmlLocalizer HtmlIdentityLocalizer {
+            get {
+                if (HtmlIdentityLocalizerField == null)
+                    HtmlIdentityLocalizerField = HtmlLocalizerFactory.Create("LeaveManagement.IdentityLocalizer.IdentityLocalizer", this.GetType().Assembly.FullName);
+                return HtmlIdentityLocalizerField;
+            }
+        }
+
+        public IStringLocalizer StringIdentityLocalizer => throw new NotImplementedException();
     }
 }

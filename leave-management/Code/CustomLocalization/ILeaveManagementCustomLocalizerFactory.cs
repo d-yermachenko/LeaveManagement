@@ -13,5 +13,9 @@ namespace LeaveManagement.Code.CustomLocalization {
 
         IStringLocalizer MiscelanousLocalizer { get; }
 
+        IHtmlLocalizer HtmlIdentityLocalizer { get;  }
+
+        IStringLocalizer StringIdentityLocalizer { get;  }
+
     }
 }

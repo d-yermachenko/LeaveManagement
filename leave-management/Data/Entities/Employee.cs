@@ -14,6 +14,6 @@ namespace LeaveManagement.Data.Entities {
         
         public DateTime DateOfBirth  { get; set; }
         
-        public DateTime AncienityDate  { get; set; }
+        public DateTime EmploymentDate  { get; set; }
     }
 }
