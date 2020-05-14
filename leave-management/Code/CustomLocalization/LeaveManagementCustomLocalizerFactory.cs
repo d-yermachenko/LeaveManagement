@@ -74,8 +74,15 @@ namespace LeaveManagement.Code.CustomLocalization {
             ConventionalResourceMappers = new ConcurrentBag<Func<Type, Tuple<string, string>>>();
             ConventionalResourceMappers.Add(LeaveManagementViewModelDataAnnotationsMapper);
             ConventionalResourceMappers.Add(LeaveManagementControllerMapper);
+            ConventionalResourceMappers.Add(LeaveManagementIdentityMapper);
 
         }
+
+
+        #endregion
+
+        #region Type to resource mappers
+
         /// <summary>
         /// Gets resource type and assembly name for DataAnnoration translation for type, if type follows the convention of 
         /// ViewModels resources and type is from this assembly.
@@ -92,7 +99,7 @@ namespace LeaveManagement.Code.CustomLocalization {
         /// <returns>If type is one of conventional ViewModels type, returns Tuple(resourceName, assembmyName). Otherwise, null</returns>
         private Tuple<string, string> LeaveManagementViewModelDataAnnotationsMapper(Type expectedType) {
             string[] nameSpacePath = expectedType.Namespace?.Split(new char[] { '.' });
-            if(nameSpacePath.Length > 2 && nameSpacePath.ElementAt(1).Equals(ViewModelsRootNamespace)) {
+            if (nameSpacePath.Length > 2 && nameSpacePath.ElementAt(1).Equals(ViewModelsRootNamespace)) {
                 string resourceName = String.Concat(string.Join('.', nameSpacePath.TakeLast(nameSpacePath.Length - 1)), ".", nameSpacePath.Last());
                 return Tuple.Create(resourceName, expectedType.Assembly.FullName);
             }
@@ -107,7 +114,7 @@ namespace LeaveManagement.Code.CustomLocalization {
         /// <returns></returns>
         private Tuple<string, string> LeaveManagementControllerMapper(Type expectedType) {
             string[] nameSpacePath = expectedType.FullName?.Split(new char[] { '.' });
-            if(nameSpacePath.Length > 2 && nameSpacePath.ElementAt(1).Equals(ControllersRootNameSpace)) {
+            if (nameSpacePath.Length > 2 && nameSpacePath.ElementAt(1).Equals(ControllersRootNameSpace)) {
                 string resourceName = String.Concat(string.Join('.', nameSpacePath.TakeLast(nameSpacePath.Length - 1)), ".", nameSpacePath.Last());
                 return Tuple.Create(resourceName, expectedType.Assembly.FullName);
             }
@@ -115,8 +122,16 @@ namespace LeaveManagement.Code.CustomLocalization {
                 return null;
         }
 
-        #endregion
+        private Tuple<string, string> LeaveManagementIdentityMapper (Type expectedType) {
+            Tuple<string, string> result = null;
+            string[] nameSpacePath = expectedType.FullName?.Split(new char[] { '.' });
+            if (nameSpacePath.Any(x => x.Equals("Identity"))) {
+                result = Tuple.Create("Areas.Identity.IdentityInputModel", this.GetType().Assembly.FullName);
+            }
+            return result;
+        }
 
+        #endregion
 
 
         public IStringLocalizer CreateStringLocalizer(Type type) => MapRessourceToType(StringLocalizerFactory, type);
@@ -161,6 +176,14 @@ namespace LeaveManagement.Code.CustomLocalization {
             }
         }
 
-        public IStringLocalizer StringIdentityLocalizer => throw new NotImplementedException();
+        private IStringLocalizer StringIdentityLocalizerField;
+
+        public IStringLocalizer StringIdentityLocalizer {
+            get {
+                if (StringIdentityLocalizerField == null)
+                    StringIdentityLocalizerField = StringLocalizerFactory.Create("LeaveManagement.IdentityLocalizer.IdentityLocalizer", this.GetType().Assembly.FullName);
+                return StringIdentityLocalizerField;
+            }
+        }
     }
 }
