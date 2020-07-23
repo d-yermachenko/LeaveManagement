@@ -15,7 +15,6 @@ namespace LeaveManagement.Code.CustomLocalization {
 
         #endregion
 
-
         #region Private fields and constructor
         private readonly IStringLocalizerFactory StringLocalizerFactory;
 

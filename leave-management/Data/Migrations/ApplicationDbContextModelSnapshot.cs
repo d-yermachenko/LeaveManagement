@@ -323,7 +323,10 @@ namespace LeaveManagement.Data.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EmployementDate")
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EmploymentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")

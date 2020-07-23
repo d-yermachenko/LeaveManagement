@@ -4,6 +4,8 @@ using System;
 
 namespace LeaveManagement.Data.Entities {
     public class Employee : IdentityUser {
+        public string DisplayName { get; set; }
+
         public string Title { get; set; }
 
         public string FirstName { get; set; }
