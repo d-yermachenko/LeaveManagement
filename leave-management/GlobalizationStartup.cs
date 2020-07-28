@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Linq;
 
@@ -17,17 +19,11 @@ namespace LeaveManagement {
             });
             services.AddTransient<ILeaveManagementCustomLocalizerFactory, LeaveManagementCustomLocalizerFactory>();
             services.AddMvc()
-                .AddViewLocalization(LanguageViewLocationExpanderFormat.SubFolder)
-                //.AddDataAnnotationsLocalization();
-                .AddDataAnnotationsLocalization(options => {
-                    options.DataAnnotationLocalizerProvider = (type, factory) => {
-                        using (var serviceProvider = services.BuildServiceProvider()) {
-                            var localizingService = serviceProvider.GetRequiredService<ILeaveManagementCustomLocalizerFactory>();
-                            return localizingService.CreateStringLocalizer(type);
-                        }
-                    };
-                });
+            .AddViewLocalization(LanguageViewLocationExpanderFormat.SubFolder)
+            .AddDataAnnotationsLocalization();
         }
+
+
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             CultureInfo[] supportedCultures = new CultureInfo[] {
@@ -37,6 +33,13 @@ namespace LeaveManagement {
                 new CultureInfo("fr")
             };
 
+            var localizationService = app.ApplicationServices.GetRequiredService<ILeaveManagementCustomLocalizerFactory>();
+            var options1 = app.ApplicationServices.GetService<IOptions<MvcDataAnnotationsLocalizationOptions>>();
+
+
+            options1.Value.DataAnnotationLocalizerProvider = (type, function) => {
+                return localizationService.CreateStringLocalizer(type);
+            };
 
             IRequestCultureProvider[] cultureProviders = new IRequestCultureProvider[] {
                 new QueryStringRequestCultureProvider(),

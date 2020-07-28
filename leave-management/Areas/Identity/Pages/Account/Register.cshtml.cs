@@ -107,6 +107,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
                     Email = Input.Email,
                     FirstName = Input.FirstName,
                     LastName = Input.LastName,
+                    Title = Input.Title,
                     DateOfBirth = Input.DateOfBirth,
                     EmploymentDate = Input.EmployementDate,
                     DisplayName = String.IsNullOrWhiteSpace(Input.DisplayName) ? $"{Input.FirstName} {Input.FirstName}" : Input.DisplayName
@@ -115,7 +116,6 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded) {
                     _logger.LogInformation("User created a new account with password.");
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }

@@ -9,11 +9,14 @@ using Microsoft.Extensions.Hosting;
 using LeaveManagement.Contracts;
 using LeaveManagement.Repository.Entity;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using System;
+using LeaveManagement.Code.CustomLocalization;
+using LeaveManagement.Code;
 
 namespace LeaveManagement {
     public class Startup {
-        public Startup(IConfiguration configuration)
-        {
+        public Startup(IConfiguration configuration) {
 
             Configuration = configuration;
         }
@@ -24,8 +27,7 @@ namespace LeaveManagement {
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureServices(IServiceCollection services) {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -34,31 +36,35 @@ namespace LeaveManagement {
             services.AddScoped<ILeaveAllocationRepositoryAsync, LeaveAllocationRepository>();
             services.AddScoped<ILeaveHistoryRepositoryAsync, LeaveHistoryRepository>();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
+            services.AddScoped<IAutorisationsManager, AutorisationsManager>();
             GlobalizationStartup.ConfigureServices(services);
-
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddScoped<IEmployeeRepositoryAsync, EmployeeRepository>();
+            services.AddDefaultIdentity<IdentityUser>(options => {
+                options.SignIn.RequireConfirmedAccount = true;
+            })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app,
+            IWebHostEnvironment env,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManagement) {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-            else
-            {
+            else {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             GlobalizationStartup.Configure(app, env);
-
+            var logger = app.ApplicationServices.GetService<Microsoft.Extensions.Logging.ILogger>();
+            var seedingTask = SeedData.Seed(userManager, roleManagement, logger);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -67,13 +73,15 @@ namespace LeaveManagement {
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
+            
+
+            app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+            seedingTask.Wait();
         }
     }
 }

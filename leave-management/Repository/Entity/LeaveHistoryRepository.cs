@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LeaveManagement.Repository.Entity {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using LeaveManagement.Code;
 using LeaveManagement.Code.CustomLocalization;
 using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Http;
@@ -24,20 +25,26 @@ namespace LeaveManagement.Controllers {
 
         private readonly IStringLocalizer ControllerLocalizer;
 
+        private readonly IAutorisationsManager AutorisationsManager;
+
         public LeaveTypesController(Contracts.ILeaveTypeRepositoryAsync repository,
             AutoMapper.IMapper mapper,
             ILogger<LeaveTypesController> logger,
-            ILeaveManagementCustomLocalizerFactory localizerFactory) {
+            ILeaveManagementCustomLocalizerFactory localizerFactory,
+            IAutorisationsManager autorisationsManager) {
             _Repository = repository;
             _Mapper = mapper;
             _Logger = logger;
             LocalizerFactory = localizerFactory;
             ControllerLocalizer = localizerFactory.CreateStringLocalizer(typeof(LeaveTypesController));
+            AutorisationsManager = autorisationsManager;
         }
 
         #region Reading
         // GET: LeaveTypes
         public async Task<ActionResult> Index() {
+            if (!AutorisationsManager.CanBrowseLeaveTypes())
+                return Forbid();
             List<Data.Entities.LeaveType> leaveTypes = (await _Repository.FindAllAsync()).ToList();
             var viewModel = _Mapper.Map<List<Data.Entities.LeaveType>, List<LeaveTypeNavigationViewModel>>(leaveTypes);
             return View(viewModel);
@@ -45,6 +52,8 @@ namespace LeaveManagement.Controllers {
 
         // GET: LeaveTypes/Details/5
         public async Task<ActionResult> Details(int id) {
+            if (!AutorisationsManager.CanBrowseLeaveTypes())
+                return Forbid();
             var entry = await _Repository.FindByIdAsync(id);
             if (entry == null) {
                 string errorMessage = ControllerLocalizer["Impossible to find leave type #{0}. Please check the adress", id];
@@ -59,6 +68,8 @@ namespace LeaveManagement.Controllers {
 
         // GET: LeaveTypes/Create
         public ActionResult Create() {
+            if (!AutorisationsManager.CanCreateLeaveType())
+                return Forbid();
             return View();
         }
 
@@ -67,6 +78,8 @@ namespace LeaveManagement.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(LeaveTypeEditionViewModel creationModel) {
+            if (!AutorisationsManager.CanCreateLeaveType())
+                return Forbid();
             string newName = string.Empty;
             try {
                 if (!ModelState.IsValid) {
@@ -109,8 +122,10 @@ namespace LeaveManagement.Controllers {
         #region Edit
         // GET: LeaveTypes/Edit/5
         public async Task<ActionResult> Edit(int id) {
-            try {
+              try {
                 var leaveType = await _Repository.FindByIdAsync(id);
+                if (!AutorisationsManager.CanEditLeaveType(leaveType))
+                    return Forbid();
                 if (leaveType == null) {
                     return NotFound();
                 }
@@ -139,6 +154,8 @@ namespace LeaveManagement.Controllers {
                     return View();
                 }
                 var leaveTypeToChange = await _Repository.FindByIdAsync(id);
+                if (!AutorisationsManager.CanEditLeaveType(leaveTypeToChange))
+                    return Forbid();
                 if (leaveTypeToChange == null) {
                     return NotFound(ControllerLocalizer["Leave type {0} not found", id]);
                 }
@@ -178,6 +195,8 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> Delete(int id) {
             try {
                 var instanceToDelete = await _Repository.FindByIdAsync(id);
+                if (!AutorisationsManager.CanEditLeaveType(instanceToDelete))
+                    return Forbid();
                 if (instanceToDelete == null) {
                     string errorMessage = ControllerLocalizer["Leave type with number {0} was not found", id];
                     string errorTitle = ControllerLocalizer["Leave type not found"];
