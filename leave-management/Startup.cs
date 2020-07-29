@@ -40,7 +40,7 @@ namespace LeaveManagement {
             GlobalizationStartup.ConfigureServices(services);
             services.AddScoped<IEmployeeRepositoryAsync, EmployeeRepository>();
             services.AddDefaultIdentity<IdentityUser>(options => {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = false;
             })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
