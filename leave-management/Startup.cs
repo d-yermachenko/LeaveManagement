@@ -36,7 +36,6 @@ namespace LeaveManagement {
             services.AddScoped<ILeaveAllocationRepositoryAsync, LeaveAllocationRepository>();
             services.AddScoped<ILeaveHistoryRepositoryAsync, LeaveHistoryRepository>();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
-            services.AddScoped<IAutorisationsManager, AutorisationsManager>();
             GlobalizationStartup.ConfigureServices(services);
             services.AddScoped<IEmployeeRepositoryAsync, EmployeeRepository>();
             services.AddDefaultIdentity<IdentityUser>(options => {

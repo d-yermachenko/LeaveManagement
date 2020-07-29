@@ -9,6 +9,10 @@ namespace LeaveManagement {
         private const string DefaultAdminUserName = "admin@localhost.com";
         private const string DefaultAdminPassword = "P@ssw0rd";
 
+        public const string AdministratorRole = "Administrator";
+        public const string EmployeeRole = "Employee";
+        public const string HRStaffRole = "HRStaff";
+
 
         public async static Task Seed(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ILogger logger) {
             try { 
@@ -31,7 +35,7 @@ namespace LeaveManagement {
                 };
                 var newBornAdmin = (await userManager.CreateAsync(adminUser, DefaultAdminPassword));
                 if(newBornAdmin.Succeeded)
-                    await userManager.AddToRoleAsync(adminUser, AutorisationsManager.AdministratorRole);
+                    await userManager.AddToRoleAsync(adminUser, AdministratorRole);
 
             }
 
@@ -40,9 +44,9 @@ namespace LeaveManagement {
 
         private async static Task SeedRoles(RoleManager<IdentityRole> roleManager) {
             string[] defaultRoles = new string[] { 
-                AutorisationsManager.AdministratorRole, 
-                AutorisationsManager.EmployeeRole, 
-                AutorisationsManager.HRStaffRole };
+                AdministratorRole, 
+                EmployeeRole, 
+                HRStaffRole };
             await Task.Run(async () =>  {
                 foreach (var role in defaultRoles) {
                     if (!await roleManager.RoleExistsAsync(role)) {
