@@ -8,6 +8,8 @@ namespace LeaveManagement.Data.Entities {
 
         public uint NumberOfDays { get; set; }
 
+        public int Period { get; set; }
+
         public DateTime DateCreated { get; set; }
 
         public Employee AllocationEmployee { get; set; }
@@ -17,5 +19,7 @@ namespace LeaveManagement.Data.Entities {
         public LeaveType AllocationLeaveType { get; set; }
 
         public int AllocationLeaveTypeId { get; set; }
+
+        
     }
 }

@@ -42,12 +42,28 @@
             </div>
             <div class="form-group">
                 <label asp-for="Input.DateOfBirth"></label>
-                <input asp-for="Input.DateOfBirth" class="form-control" disabled />
+                @if (Model.Input.CanChangeBirthDate)
+                {
+            <input asp-for="Input.DateOfBirth" class="form-control" />
+                }
+                else
+                {
+            <input asp-for="Input.DateOfBirth" class="form-control" disabled />
+                }
+                
                 <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+
             </div>
             <div class="form-group">
                 <label asp-for="Input.EmployementDate"></label>
-                <input asp-for="Input.EmployementDate" class="form-control" disabled />
+                @if (Model.Input.CanChangeDateOfEmployement)
+                {
+                    <input asp-for="Input.EmployementDate" class="form-control" />
+                }
+                else
+                {
+                    <input asp-for="Input.EmployementDate" class="form-control" disabled/>
+                }
                 <span asp-validation-for="Input.EmployementDate" class="text-danger"></span>
             </div>
             <div class="form-group">

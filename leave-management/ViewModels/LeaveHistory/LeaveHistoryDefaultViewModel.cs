@@ -1,10 +1,9 @@
-﻿using LeaveManagement.ViewModels.LeaveType;
+﻿using LeaveManagement.ViewModels.Employee;
+using LeaveManagement.ViewModels.LeaveType;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace LeaveManagement.Models.ViewModels {
+
+namespace LeaveManagement.ViewModels.LeaveHistory {
     public class LeaveHistoryDefaultViewModel {
 
         public long Id { get; set; }

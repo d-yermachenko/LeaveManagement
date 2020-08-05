@@ -37,9 +37,16 @@ namespace LeaveManagement.Repository.Entity {
             }
         }
 
-        public async Task<ICollection<LeaveAllocation>> FindAllAsync() => await ApplicationDbContext.LeaveAllocations.ToListAsync();
+        public async Task<ICollection<LeaveAllocation>> FindAllAsync() => 
+            await ApplicationDbContext.LeaveAllocations
+            .Include(ai => ai.AllocationEmployee)
+            .Include(lt => lt.AllocationLeaveType)
+            .ToListAsync();
 
-        public async Task<LeaveAllocation> FindByIdAsync(long id) => await ApplicationDbContext.LeaveAllocations.FindAsync(new long[] { id });
+        public async Task<LeaveAllocation> FindByIdAsync(long id) => await ApplicationDbContext.LeaveAllocations
+            .Include(ai => ai.AllocationEmployee)
+            .Include(lt => lt.AllocationLeaveType)
+            .FirstOrDefaultAsync(x=>x.Id == id);
 
         public async Task<bool> SaveAsync() {
             return await Task.Run(() => {
@@ -51,6 +58,13 @@ namespace LeaveManagement.Repository.Entity {
         public async Task<bool> UpdateAsync(LeaveAllocation entity) {
             ApplicationDbContext.LeaveAllocations.Update(entity);
             return await SaveAsync();
+        }
+
+        public async Task<IEnumerable<LeaveAllocation>> WhereAsync(Func<LeaveAllocation, bool> predicate) {
+            return await Task.Run(()=>ApplicationDbContext.LeaveAllocations
+            .Include(ai=>ai.AllocationEmployee)
+            .Include(lt=>lt.AllocationLeaveType)
+            .Where(predicate));
         }
     }
 }

@@ -1,0 +1,76 @@
+﻿@model IEnumerable<LeaveManagement.ViewModels.LeaveAllocation.LeaveAllocationPresentationViewModel>
+
+@{
+    ViewData["Title"] = Localizer["Yours leave allocations"];
+}
+
+<h1>@Localizer["List of your leave allocation"]</h1>
+
+<table class="table dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AllocationLeaveType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Period)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfDays)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AllocationEmployee)
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                <a asp-action="UserLeaveAllocationsForPeriod" asp-route-leaveTypeId="@item.AllocationLeaveTypeId">
+                    @item.AllocationLeaveType?.LeaveTypeName
+                    </a>
+            </td>
+            <td>
+                <a asp-action="UserLeaveAllocationsForPeriod" asp-route-period="@item.Period">
+                    @Html.DisplayFor(modelItem => item.Period)
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOfDays)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            <td>
+                @item.AllocationEmployee?.Title  @item.AllocationEmployee?.FirstName @item?.AllocationEmployee.LastName
+            </td>
+
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
+                    <i class="fa fa-pencil"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
+                </a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<div class="container container-fluid">
+    <div class="row">
+        <div class="col col-5">
+            <a asp-action="UserLeaveAllocationsForPeriod" asp-route-periond="@null" class="btn btn-outline-info btn-block">
+                <i class="fa fa-dedent"></i> @Localizer["Show all"]
+            </a>
+        </div> 
+    </div>
+</div>
+@section Styles{
+    <partial name="_DataTablesStyles" />
+}
+@section Scripts{
+    <partial name="_DataTablesScripts" />
+}

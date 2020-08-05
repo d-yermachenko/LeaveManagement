@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2A6A6381-6
 		Localization checklist.txt = Localization checklist.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeaveManagementTests", "LeaveManagementTests\LeaveManagementTests.csproj", "{4E42219F-089C-4FD5-B44B-4B94C2A545AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{AD5A7476-D445-4D6D-9341-EE0CFCDE3D27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD5A7476-D445-4D6D-9341-EE0CFCDE3D27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD5A7476-D445-4D6D-9341-EE0CFCDE3D27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E42219F-089C-4FD5-B44B-4B94C2A545AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E42219F-089C-4FD5-B44B-4B94C2A545AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E42219F-089C-4FD5-B44B-4B94C2A545AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E42219F-089C-4FD5-B44B-4B94C2A545AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

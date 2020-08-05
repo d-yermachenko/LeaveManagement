@@ -115,7 +115,11 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded) {
+                    
                     _logger.LogInformation("User created a new account with password.");
+                    var addToRoleResult = await _userManager.AddToRoleAsync(user, SeedData.EmployeeRole);
+                    if(addToRoleResult.Succeeded)
+                        _logger.LogInformation("Added to role " + SeedData.EmployeeRole);
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }

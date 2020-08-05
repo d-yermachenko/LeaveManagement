@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using LeaveManagement.Data.Entities;
 using LeaveManagement.Contracts;
-using LeaveManagement.Models.ViewModels;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Data {

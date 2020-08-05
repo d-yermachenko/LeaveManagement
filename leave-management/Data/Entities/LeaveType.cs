@@ -9,5 +9,11 @@ namespace LeaveManagement.Data.Entities {
 
         public DateTime DateCreated { get; set; }
 
+        public int DefaultDays { get; set; }
+
+        public string AuthorId { get; set; }
+
+        public Employee Author { get; set; }
+
     }
 }

@@ -39,7 +39,41 @@ namespace LeaveManagement.Repository.Entity {
 
         public async Task<ICollection<Employee>> FindAllAsync() => await Task.Run(() => (ICollection<Employee>)_ApplicationDbContext.Employees.ToList());
 
-        public async Task<Employee> FindByIdAsync(string id) => await Task.Run(() => _ApplicationDbContext.Employees.First(x => x.Id.Equals(id)));
+        public async Task<Employee> FindByIdAsync(string id) {
+            var hasEmployee = await _ApplicationDbContext.Employees.AnyAsync(x => x.Id.Equals(id));
+            var hasUser = await _ApplicationDbContext.Users.AnyAsync(x => x.Id.Equals(id));
+            if (hasEmployee)
+                return await _ApplicationDbContext.Employees.FindAsync(id);
+            else if(hasUser) {
+                var user = await _ApplicationDbContext.Users.FindAsync(id);
+                var employee = new Employee() {
+                    AccessFailedCount = user.AccessFailedCount,
+                    ConcurrencyStamp = user.ConcurrencyStamp,
+                    Email = user.Email,
+                    EmailConfirmed = user.EmailConfirmed,
+                    Id = user.Id,
+                    LockoutEnabled = user.LockoutEnabled,
+                    LockoutEnd = user.LockoutEnd,
+                    NormalizedEmail = user.NormalizedEmail,
+                    NormalizedUserName = user.NormalizedUserName,
+                    PasswordHash = user.PasswordHash,
+                    PhoneNumber = user.PhoneNumber,
+                    PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                    SecurityStamp = user.SecurityStamp,
+                    TwoFactorEnabled = user.TwoFactorEnabled,
+                    UserName = user.UserName
+                };
+                _ApplicationDbContext.Remove(user);
+                _ApplicationDbContext.Add(employee);
+                var changes = await _ApplicationDbContext.SaveChangesAsync();
+                if(changes > 0)
+                    return await _ApplicationDbContext.Employees.FindAsync(id);
+                else
+                    throw new KeyNotFoundException(_LocalizerFactory.MiscelanousLocalizer["User not found"]);
+            }
+
+            return await Task.Run(() => _ApplicationDbContext.Employees.First(x => x.Id.Equals(id)));
+        }
 
         public Task<bool> SaveAsync() => _ApplicationDbContext.SaveChangesAsync().ContinueWith((saveResult) => saveResult.Result > 0);
 

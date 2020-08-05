@@ -14,6 +14,9 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IEmployeeRepositoryAsync _employeeRepository;
 
+        private bool IsPrivelegedUser = false;
+        private bool IsCurrentUser = false;
+
         public IndexModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
@@ -32,6 +35,9 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
         public InputModel Input { get; set; }
 
         public class InputModel {
+
+            [HiddenInput(DisplayValue = false)]
+            public string Id { get; set; }
 
             [Phone]
             [Display(Name = "Phone number")]
@@ -73,12 +79,17 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
             [DataType(DataType.Text, ErrorMessage = "Enter the tax rate")]
             [Display(Name = "Tax rate", Prompt = "Enter the tax rate", Description = "Tax percentage")]
             public string TaxRate { get; set; }
+
+            public bool CanChangeBirthDate { get; set; }
+
+            public bool CanChangeDateOfEmployement { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user) {
             var employee = await _employeeRepository.FindByIdAsync(user.Id);
             Username = employee.UserName;
             Input = new InputModel {
+                Id = employee.Id,
                 PhoneNumber = employee.PhoneNumber,
                 DateOfBirth = employee.DateOfBirth,
                 DisplayName = employee.DisplayName,
@@ -86,12 +97,31 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
                 EmployementDate = employee.EmploymentDate,
-                TaxRate = employee.TaxRate
+                TaxRate = employee.TaxRate,
+                CanChangeBirthDate = IsCurrentUser || IsPrivelegedUser,
+                CanChangeDateOfEmployement = IsPrivelegedUser
             };
         }
 
-        public async Task<IActionResult> OnGetAsync() {
-            var user = await _userManager.GetUserAsync(User);
+        public async Task<IdentityUser> LoadUserAndCheckPermissions(string userId = "") {
+            IdentityUser concernedUser = null;
+            IdentityUser currentUser = await _userManager.GetUserAsync(User);
+            IsPrivelegedUser = await _userManager.IsUserHasOneRoleOfAsync(currentUser, SeedData.AdministratorRole, SeedData.EmployeeRole);
+            if (string.IsNullOrWhiteSpace(userId)) {
+                concernedUser = currentUser;
+            }
+            else
+                concernedUser = await _userManager.FindByIdAsync(userId);
+
+            IsCurrentUser = currentUser?.Id.Equals(concernedUser?.Id) ?? false;
+
+            if (!IsCurrentUser || !IsPrivelegedUser)
+                Forbid();
+            return concernedUser;
+        }
+
+        public async Task<IActionResult> OnGetAsync(string userId = "") {
+            var user = await LoadUserAndCheckPermissions(userId);
             if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
@@ -101,7 +131,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
         }
 
         public async Task<IActionResult> OnPostAsync() {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await LoadUserAndCheckPermissions(Input.Id);
             if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
@@ -119,6 +149,10 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
             employee.LastName = Input.LastName;
             employee.PhoneNumber = Input.PhoneNumber;
             employee.TaxRate = Input.TaxRate;
+            if (!employee.DateOfBirth.Equals(Input.DateOfBirth) && (IsCurrentUser || IsPrivelegedUser))
+                employee.DateOfBirth = Input.DateOfBirth;
+            if (!employee.EmploymentDate.Equals(Input.EmployementDate) && IsPrivelegedUser)
+                employee.EmploymentDate = Input.EmployementDate;
             #endregion
             var setPhoneResult = await _employeeRepository.UpdateAsync(employee);
             if (!setPhoneResult) {

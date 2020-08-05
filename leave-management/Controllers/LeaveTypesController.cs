@@ -8,6 +8,7 @@ using LeaveManagement.Code.CustomLocalization;
 using LeaveManagement.ViewModels.LeaveType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -27,16 +28,20 @@ namespace LeaveManagement.Controllers {
 
         private readonly IStringLocalizer ControllerLocalizer;
 
+        private readonly SignInManager<IdentityUser> _SignInManager;
+
 
         public LeaveTypesController(Contracts.ILeaveTypeRepositoryAsync repository,
             AutoMapper.IMapper mapper,
             ILogger<LeaveTypesController> logger,
-            ILeaveManagementCustomLocalizerFactory localizerFactory) {
+            ILeaveManagementCustomLocalizerFactory localizerFactory,
+            SignInManager<IdentityUser> signInManager) {
             _Repository = repository;
             _Mapper = mapper;
             _Logger = logger;
             LocalizerFactory = localizerFactory;
             ControllerLocalizer = localizerFactory.CreateStringLocalizer(typeof(LeaveTypesController));
+            _SignInManager = signInManager;
         }
 
         #region Reading
@@ -57,6 +62,7 @@ namespace LeaveManagement.Controllers {
                 return StatusCode(StatusCodes.Status404NotFound, errorMessage);
             }
             var viewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeNavigationViewModel>(entry);
+            viewModel.AuthorLastName = $"{entry.Author?.Title} {entry.Author?.FirstName} {entry.Author?.LastName}";
             return View(viewModel);
         }
         #endregion
@@ -91,6 +97,7 @@ namespace LeaveManagement.Controllers {
                 }
                 var createdLeaveType = _Mapper.Map<Data.Entities.LeaveType>(creationModel);
                 createdLeaveType.DateCreated = DateTime.Now;
+                createdLeaveType.AuthorId = (await _SignInManager.UserManager.FindByNameAsync(User.Identity.Name)).Id;
                 if (!(await _Repository.CreateAsync(createdLeaveType))) {
                     string errorTitle = ControllerLocalizer["Saving failed"];
                     string errorMessage = ControllerLocalizer["Failed to save leave type '{0}' in repositary", newName];

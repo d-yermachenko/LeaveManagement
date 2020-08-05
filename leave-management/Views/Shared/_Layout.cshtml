@@ -1,6 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@{
+    IdentityUser AppUser = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
+    IList<string> UserRoles = AppUser != null ? await UserManager.GetRolesAsync(AppUser) : null;
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,21 +40,39 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                @LeaveManagementLocalizerFactory.MenuLocalizer["Manage"]
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-area="" asp-controller="LeaveTypes" asp-action="Index">
-                                    @LeaveManagementLocalizerFactory.MenuLocalizer["Leave types"]
+                        @if (AppUser != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @LeaveManagementLocalizerFactory.MenuLocalizer["Manage"]
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    @LeaveManagementLocalizerFactory.MenuLocalizer["Leave allocation"]
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">@LeaveManagementLocalizerFactory.MenuLocalizer["Leave history"]</a>
-                            </div>
-                        </li>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @if (UserRoles?.Contains(SeedData.AdministratorRole) ?? false)
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="LeaveTypes" asp-action="Index">
+                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Edit leave types"]
+                                        </a>
+                                    }
+                                    @if (AppUser != null)
+                                    {
+                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="AllocateByLeaveTypes">
+                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Leave types"]
+                                        </a>
+                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="AllocateByEmployees">
+                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Employees"]
+                                        </a>
+                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="UserLeaveAllocationsForPeriod">
+                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Browse your current allocations"]
+                                        </a>
+                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="UserLeaveAllocationsForPeriod">
+                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Yours allocations"]
+                                        </a>
+                                    }
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">@LeaveManagementLocalizerFactory.MenuLocalizer["Leave history"]</a>
+                                </div>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

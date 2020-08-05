@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeaveManagement.Data.Entities;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace LeaveManagement.ViewModels.LeaveType {
@@ -12,6 +13,12 @@ namespace LeaveManagement.ViewModels.LeaveType {
 
         [Display(Name = "Date of creation", Description = "Date when this leave type was created")]
         public DateTime DateCreated { get; set; }
+
+        [Display(Name = "Default number of days", Description = "Number of days for this leave type for period")]
+        public int DefaultDays { get; set; }
+
+        [Display(Name = "Author of this leave type", Description = "Employee created this leave type")]
+        public string AuthorLastName { get; set; }
 
     }
 }

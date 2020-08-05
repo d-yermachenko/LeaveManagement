@@ -16,6 +16,15 @@
                 <input asp-for="LeaveTypeName" class="form-control" />
                 <span asp-validation-for="LeaveTypeName" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="DefaultDays" class="control-label"> @Html.DisplayNameFor(model => model.DefaultDays)</label>
+                <input asp-for="DefaultDays" class="form-control" />
+                <span asp-validation-for="DefaultDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateCreated" class="control-label"> @Html.DisplayNameFor(model => model.DateCreated)</label>
+                <input asp-for="DateCreated" class="form-control" disabled />
+            </div>
             <div>
                 <partial name="_ProblemPartial" />
             </div>

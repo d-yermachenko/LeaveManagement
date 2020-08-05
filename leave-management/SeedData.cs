@@ -1,13 +1,14 @@
 ﻿using LeaveManagement.Code;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
 namespace LeaveManagement {
     public static class SeedData {
-        private const string DefaultAdminUserName = "admin@localhost.com";
-        private const string DefaultAdminPassword = "P@ssw0rd";
+        public const string DefaultAdminUserName = "admin@localhost.com";
+        public const string DefaultAdminPassword = "P@ssw0rd";
 
         public const string AdministratorRole = "Administrator";
         public const string EmployeeRole = "Employee";
@@ -28,17 +29,25 @@ namespace LeaveManagement {
 
         private async static Task SeedUsers(UserManager<IdentityUser> userManager) {
             var possibleAdminUser = await userManager.FindByNameAsync(DefaultAdminUserName);
+            bool success = true;
             if (possibleAdminUser == null) {
                 IdentityUser adminUser = new IdentityUser() {
                     UserName = DefaultAdminUserName,
                     Email = DefaultAdminUserName
                 };
                 var newBornAdmin = (await userManager.CreateAsync(adminUser, DefaultAdminPassword));
-                if(newBornAdmin.Succeeded)
-                    await userManager.AddToRoleAsync(adminUser, AdministratorRole);
-
+                success &= newBornAdmin.Succeeded;
+                if (success)
+                    possibleAdminUser = await userManager.FindByNameAsync(DefaultAdminUserName);
             }
+            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, AdministratorRole))
+                success &= (await userManager.AddToRoleAsync(possibleAdminUser, AdministratorRole)).Succeeded;
 
+            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, EmployeeRole))
+                success &= (await userManager.AddToRoleAsync(possibleAdminUser, EmployeeRole)).Succeeded;
+
+            if (!success)
+                throw new OperationFailedException();
 
         }
 
