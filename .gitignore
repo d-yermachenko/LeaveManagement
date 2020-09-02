@@ -14,7 +14,7 @@ wing command works for downloading when using Git for Windows:
 *.sln.docstates
 *.mdf
 *.ldf
-appsettings.Development.json
+appsettings.*.json
 
 # Build results
 [Dd]ebug/
