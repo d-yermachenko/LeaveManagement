@@ -15,5 +15,6 @@ namespace LeaveManagement.Data.Entities {
 
         public Employee Author { get; set; }
 
+
     }
 }

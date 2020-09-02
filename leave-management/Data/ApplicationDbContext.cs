@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagement.Data.Entities;
 using LeaveManagement.Contracts;
 using System.Threading.Tasks;
+using LeaveManagement.ViewModels.LeaveRequest;
 
 namespace LeaveManagement.Data {
     public class ApplicationDbContext : IdentityDbContext {
@@ -21,7 +22,7 @@ namespace LeaveManagement.Data {
 
         public DbSet<LeaveAllocation> LeaveAllocations { get; set; }
 
-        public DbSet<LeaveHistory> LeaveHistories { get; set; }
+        public DbSet<LeaveRequest> LeaveRequests { get; set; }
         #endregion
 
         
@@ -31,7 +32,8 @@ namespace LeaveManagement.Data {
         {
             return (await this.SaveChangesAsync()) > 0;
         }
-      
+   
+     
 
 
     }

@@ -1,0 +1,63 @@
+﻿@model LeaveManagement.ViewModels.LeaveRequest.LeaveRequestsStatisticsViewModel
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@section Scripts{
+    <partial name="_DataTablesScripts" />
+}
+@section Styles{
+    <partial name="_DataTablesStyles" />
+}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card h-100 mr-1" style="margin-right: 2em;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @Html.DisplayNameFor(model => model.TotalRequests)&nbsp;
+                    <span class="badge badge-info">@Model.TotalRequests</span>
+                </h5>
+                <p class="card-text">@Html.DescriptionFor(x => x.TotalRequests)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 mr-1" style="margin-right: 2em;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @Html.DisplayNameFor(x => x.PendingRequests)&nbsp;
+                    <span class="badge badge-warning">@Model.PendingRequests</span>
+                </h5>
+                <p class="card-text">@Html.DescriptionFor(x => x.PendingRequests)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 mr-1">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @Html.DisplayNameFor(x => x.AcceptedRequests)&nbsp;
+                    <span class="badge badge-success">@Model.AcceptedRequests</span>
+                </h5>
+                <p class="card-text">@Html.DescriptionFor(x => x.AcceptedRequests)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 mr-1">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @Html.DisplayNameFor(x => x.RejectedRequests)&nbsp;
+                    <span class="badge badge-danger">@Model.RejectedRequests</span>
+                </h5>
+                <p class="card-text">@Html.DescriptionFor(x => x.RejectedRequests)</p>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<br />
+@await Html.PartialAsync("_LeaveRequestsTable", Model.LeaveRequests)
+

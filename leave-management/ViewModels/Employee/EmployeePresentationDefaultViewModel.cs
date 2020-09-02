@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LeaveManagement.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -33,9 +34,16 @@ namespace LeaveManagement.ViewModels.Employee {
         public string TaxRate { get; set; }
 
         [Display(Name = "Date of birth of employee")]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         [Display(Name = "Date of employement")]
-        public DateTime AncienityDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime EmploymentDate { get; set; }
+
+        [Display(Name ="RH Manager")]
+        public EmployeePresentationDefaultViewModel Manager { get; set; }
+
+        public string ManagerId { get; set; }
     }
 }

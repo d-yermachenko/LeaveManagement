@@ -3,6 +3,19 @@
 @{
     ViewData["Title"] = Localizer["Yours leave allocations"];
 }
+@if (ViewBag.ShowRequestButton)
+{
+    <div class="row">
+        <div class="col-md-4 offset-md-8">
+            <a class="btn btn-block btn-outline-success" asp-controller="LeaveRequests" asp-action="Create">
+                @LeaveManagementLocalizerFactory.CommandsLocalizer["Request for leave"]
+            </a>
+        </div>
+    </div>
+    <br />
+    <hr />
+}
+
 
 <h1>@Localizer["List of your leave allocation"]</h1>
 
@@ -29,43 +42,57 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                <a asp-action="UserLeaveAllocationsForPeriod" asp-route-leaveTypeId="@item.AllocationLeaveTypeId">
-                    @item.AllocationLeaveType?.LeaveTypeName
+            <tr>
+                <td>
+                    <a asp-action="UserLeaveAllocationsForPeriod"
+                       asp-route-leaveTypeId="@item.AllocationLeaveTypeId"
+                       asp-route-period="*"
+                       asp-route-userId="*">
+                        @item.AllocationLeaveType?.LeaveTypeName
                     </a>
-            </td>
-            <td>
-                <a asp-action="UserLeaveAllocationsForPeriod" asp-route-period="@item.Period">
-                    @Html.DisplayFor(modelItem => item.Period)
-                </a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfDays)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                @item.AllocationEmployee?.Title  @item.AllocationEmployee?.FirstName @item?.AllocationEmployee.LastName
-            </td>
-
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
-                    <i class="fa fa-pencil"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
-                </a>
-            </td>
-        </tr>
+                </td>
+                <td>
+                    <a asp-action="UserLeaveAllocationsForPeriod" asp-route-period="@item.Period">
+                        @Html.DisplayFor(modelItem => item.Period)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfDays)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateCreated)
+                </td>
+                <td>
+                    <a asp-action="UserLeaveAllocationsForPeriod" asp-route-userId="@item.AllocationEmployeeId">
+                        <span>@item.AllocationEmployee.FormatEmployeeSNT()</span>
+                    </a>
+                </td>
+                <td>
+                        @if (await _UserManager.IsPrivelegedUser(User))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-block">
+                                <i class="fa fa-pencil"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-block btn-danger"
+                               onclick="return confirm('@Localizer["Are you sure you want to delete this allocation?"]')">
+                                <i class="fa fa-trash"></i>@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]
+                            </a>
+                        }
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-block btn-success">
+                                <i class="fa fa-sun-o"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]
+                            </a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
 <div class="container container-fluid">
     <div class="row">
         <div class="col col-5">
-            <a asp-action="UserLeaveAllocationsForPeriod" asp-route-periond="@null" class="btn btn-outline-info btn-block">
+            <a asp-action="UserLeaveAllocationsForPeriod" asp-route-period="*" asp-route-userId="*" asp-route-leaveTypeId="@null" class="btn btn-outline-info btn-block">
                 <i class="fa fa-dedent"></i> @Localizer["Show all"]
             </a>
-        </div> 
+        </div>
     </div>
 </div>
 @section Styles{

@@ -1,0 +1,52 @@
+﻿@model LeaveManagement.ViewModels.LeaveAllocation.LeaveAllocationPresentationViewModel
+
+@{
+    ViewData["Title"] = @Localizer["Details of leave allocations"];
+}
+
+<h1>@Localizer["Details of leave allocations"]</h1>
+
+<div>
+    <h4>LeaveAllocationPresentationViewModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NumberOfDays)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NumberOfDays)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AllocationEmployee)
+        </dt>
+        <dd class = "col-sm-10">
+            <span>@Model.AllocationEmployee.FormatEmployeeSNT()</span>
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AllocationLeaveType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AllocationLeaveType.LeaveTypeName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Period)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Period)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@Model.Id">
+        <i class="fa fa-pencil"></i>&nbsp;@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
+    </a>
+    
+    <a class="btn btn-block btn-info" asp-action="UserLeaveAllocationsForPeriod">
+    <i class="fa fa-list"></i> &nbsp;@LeaveManagementLocalizerFactory.CommandsLocalizer["Back to List"]</a>
+</div>

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using LeaveManagement.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 
 namespace LeaveManagement.Controllers {
     public class HomeController : Controller {
@@ -16,6 +18,7 @@ namespace LeaveManagement.Controllers {
             _logger = logger;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             return View();
@@ -26,6 +29,8 @@ namespace LeaveManagement.Controllers {
             return View();
         }
 
+        
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() => Problem();
         /*{
@@ -34,9 +39,9 @@ namespace LeaveManagement.Controllers {
 
         public static void DisplayProblem(ILogger logger, Controller controller, string errorTitle, string errorMessage, Exception exception = null) {
             if (exception != null)
-                logger.LogError(exception, errorMessage);
+                logger?.LogError(exception, errorMessage);
             else
-                logger.LogError(errorMessage);
+                logger?.LogError(errorMessage);
             controller.ModelState.AddModelError(errorTitle, errorMessage);
             controller.ViewBag.ErrorTitle = errorTitle;
             controller.ViewBag.ErrorMessage = errorMessage;

@@ -1,85 +1,81 @@
 ﻿@page
 @model RegisterModel
-@{
-    ViewData["Title"] = "Register";
+@{ Microsoft.Extensions.Localization.IStringLocalizer RegisterLocalizer = CustomLocalizerFactory.StringIdentityLocalizer;
 }
 
-<h1>@ViewData["Title"]</h1>
+@{
+    ViewData["Title"] = RegisterLocalizer["Register"];
+}
+@{
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h4>@CustomLocalizerFactory.HtmlIdentityLocalizer["Create a new account."]</h4>
-            <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.DisplayName"></label>
-                <input asp-for="Input.DisplayName" class="form-control" />
-                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Password"></label>
-                <input asp-for="Input.Password" class="form-control" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.ConfirmPassword"></label>
-                <input asp-for="Input.ConfirmPassword" class="form-control" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Title"></label>
-                <input asp-for="Input.Title" class="form-control" />
-                <span asp-validation-for="Input.Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.FirstName"></label>
-                <input asp-for="Input.FirstName" class="form-control" />
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.LastName"></label>
-                <input asp-for="Input.LastName" class="form-control" />
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.DateOfBirth"></label>
-                <input asp-for="Input.DateOfBirth" class="form-control" />
-                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.EmployementDate"></label>
-                <input asp-for="Input.EmployementDate" class="form-control" />
-                <span asp-validation-for="Input.EmployementDate" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-success">Register</button>
-        </form>
-    </div>
-    <div class="col-md-8 col-md-offset-2">
-        <section>
-            <h4>Use another service to register.</h4>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) > 0)
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+<div class="register-page hold-transition" style="min-height: 586.391px;">
+    <div class="register-box">
+        <div class="card">
+            <div class="card-body register-card-body">
+                <p class="login-box-msg">@RegisterLocalizer["Register a new membership"]</p>
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <span asp-validation-for="Input.DisplayName" class="text-danger d-block"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="Input.DisplayName" class="form-control" placeholder="@Html.DisplayNameFor(Model=>Model.Input.DisplayName)">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fa fa-user"></span>
+                            </div>
                         </div>
-                    </form>
-                }
-            }
-        </section>
+
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-danger d-block"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="Input.Email" class="form-control" placeholder="@Html.DisplayNameFor(Model=>Model.Input.Email)">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fa fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="Input.Password" class="form-control" placeholder="@Html.DisplayNameFor(Model=>Model.Input.Password)">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fa fa-lock"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="@Html.DisplayNameFor(Model=>Model.Input.ConfirmPassword)">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fa fa-lock"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+                                <label for="agreeTerms">
+                                    @CustomLocalizerFactory.HtmlIdentityLocalizer["I agree to the <a href=\"#\">terms</a>"]
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">@RegisterLocalizer["Register"]</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+
+                <a asp-page="Login.cshtml" class="text-center">@RegisterLocalizer["I already have a membership"]</a>
+            </div>
+            <!-- /.form-box -->
+        </div><!-- /.card -->
     </div>
 </div>
 

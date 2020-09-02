@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using LeaveManagement.Repository.Entity;
+using LeaveManagement.Contracts;
+using Microsoft.Extensions.Localization;
 
 namespace LeaveManagement.Areas.Identity.Pages.Account
 {
@@ -20,14 +23,22 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IEmployeeRepositoryAsync _employeeRepository;
+        private readonly IStringLocalizerFactory _stringLocalizerFactory;
+        private readonly IStringLocalizer _stringLocalizer;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, 
+        public LoginModel(SignInManager<IdentityUser> signInManager,
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            IEmployeeRepositoryAsync employeeRepository,
+            IStringLocalizerFactory stringLocalizerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _employeeRepository = employeeRepository;
+            _stringLocalizerFactory = stringLocalizerFactory;
+            _stringLocalizer = stringLocalizerFactory.Create(typeof(LoginModel));
         }
 
         [BindProperty]
@@ -79,10 +90,26 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                Microsoft.AspNetCore.Identity.SignInResult result = null;
+                try {
+                    result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                }
+                catch(Exception e) {
+                    _logger.LogError(e, e.Message);
+                    ModelState.AddModelError(string.Empty, _stringLocalizer["Cant connect sign in manager. Please contact your system administrator"]);
+                    return Page();
+                }
+                 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if(user == null)
+                        return LocalRedirect(returnUrl);
+                    var employee = (await _employeeRepository.FindByIdAsync(user.Id));
+                    employee.LastConnectionDate = employee.CurrentConnectionDate;
+                    employee.CurrentConnectionDate = DateTime.Now;
+                    await _employeeRepository.SaveAsync();
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

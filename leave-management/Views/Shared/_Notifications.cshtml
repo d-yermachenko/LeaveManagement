@@ -1,0 +1,38 @@
+﻿@using LeaveManagement.Contracts
+@inject UserManager<IdentityUser>    _UserManager;
+@inject ILeaveRequestsRepositoryAsync _LeaveRequestsRepository;
+@inject IEmployeeRepositoryAsync _EmployeeRepository;
+@inject ILeaveManagementCustomLocalizerFactory _LocalizerFactory;
+@inject SignInManager<IdentityUser>    _SignInManager;
+@{
+    LeaveManagement.Views.Shared.NotificationsModel NModel = new LeaveManagement.Views.Shared.NotificationsModel(
+        _UserManager, _SignInManager, _LeaveRequestsRepository, _LocalizerFactory, _EmployeeRepository, User);
+    NModel = await NModel.LoadNotificationsAsync();
+    ViewData["PendingRequests"] = NModel.PendingRequests;
+}
+
+<li class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="fa fa-bell"></i>
+        <span class="badge badge-warning navbar-badge">@NModel.TotalEvents</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <span class="dropdown-header">@Localizer["{0} Notifications", NModel.TotalEvents]</span>
+        @foreach (var evnt in NModel.LeaveNotifications)
+        {
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item text-sm text-info" asp-all-route-data="@((Dictionary<string, string>)evnt)">
+            <i class="fa fa-envelope mr-2"></i> @evnt.EventMessage
+            <span class="float-right text-muted text-sm">@evnt.EventDate</span>
+        </a>
+        }
+        @foreach (var notificationLink in NModel.LeaveNotificationsLinks)
+        {
+            <div class="dropdown-divider"></div>
+            <a asp-action="@notificationLink.Action"
+               asp-controller="@notificationLink.Controller"
+               class="dropdown-item dropdown-footer text-sm-right">@notificationLink.Message<span class="badge badge-pill">@notificationLink.EventsCount</span> </a>
+        }
+    </div>
+</li>

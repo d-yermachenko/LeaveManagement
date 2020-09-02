@@ -3,8 +3,10 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @if(!String.IsNullOrWhiteSpace(ViewBag.ErrorTitle) && !String.IsNullOrWhiteSpace(ViewBag.ErrorMessage)) {
-    <h4 class="alert-danger">@ViewBag.ErrorTitle</h4>
-    <p class="alert-danger">
-        @ViewBag.ErrorMessage
-    </p>
+    <div class="invalid-feedback">
+        <h4>@ViewBag.ErrorTitle</h4>
+        <p>
+            @ViewBag.ErrorMessage
+        </p>
+    </div>
 }

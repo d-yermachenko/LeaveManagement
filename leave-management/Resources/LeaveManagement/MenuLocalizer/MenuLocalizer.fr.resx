@@ -126,6 +126,9 @@
   <data name="Leave history" xml:space="preserve">
     <value>Historique des absences</value>
   </data>
+  <data name="Leave requests" xml:space="preserve">
+    <value>Demandes de l'absence</value>
+  </data>
   <data name="Leave types" xml:space="preserve">
     <value>Types d'absence</value>
   </data>

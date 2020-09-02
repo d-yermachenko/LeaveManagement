@@ -6,7 +6,7 @@ namespace LeaveManagement.Data.Entities {
 
         public long Id { get; set; }
 
-        public uint NumberOfDays { get; set; }
+        public int NumberOfDays { get; set; }
 
         public int Period { get; set; }
 

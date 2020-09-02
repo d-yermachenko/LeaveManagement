@@ -91,5 +91,9 @@ namespace LeaveManagementTests.MocksAndFakes {
         public Task<bool> UpdateAsync(LeaveType entity) {
             throw new NotImplementedException();
         }
+
+        public Task<ICollection<LeaveType>> WhereAsync(Func<LeaveType, bool> predicate) {
+            throw new NotImplementedException();
+        }
     }
 }

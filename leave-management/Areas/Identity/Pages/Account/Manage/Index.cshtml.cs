@@ -106,7 +106,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
         public async Task<IdentityUser> LoadUserAndCheckPermissions(string userId = "") {
             IdentityUser concernedUser = null;
             IdentityUser currentUser = await _userManager.GetUserAsync(User);
-            IsPrivelegedUser = await _userManager.IsUserHasOneRoleOfAsync(currentUser, SeedData.AdministratorRole, SeedData.EmployeeRole);
+            IsPrivelegedUser = await _userManager.IsPrivelegedUser(currentUser);
             if (string.IsNullOrWhiteSpace(userId)) {
                 concernedUser = currentUser;
             }

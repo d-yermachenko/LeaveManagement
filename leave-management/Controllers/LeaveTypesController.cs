@@ -40,7 +40,7 @@ namespace LeaveManagement.Controllers {
             _Mapper = mapper;
             _Logger = logger;
             LocalizerFactory = localizerFactory;
-            ControllerLocalizer = localizerFactory.CreateStringLocalizer(typeof(LeaveTypesController));
+            ControllerLocalizer = localizerFactory.Create(typeof(LeaveTypesController));
             _SignInManager = signInManager;
         }
 
@@ -162,12 +162,8 @@ namespace LeaveManagement.Controllers {
                 newName = editionViewModel.LeaveTypeName;
                 var leaveTypes = (await _Repository.FindAllAsync()).Where(x => x.LeaveTypeName?.Equals(newName) ??false &&
                 x.Id != id);
-                if(leaveTypes?.Count() > 0) {
-                    HomeController.DisplayProblem(_Logger, this, ControllerLocalizer["Leave type with name {0} already exists", newName],
-                        ControllerLocalizer["Leave type with name {0} already exists", newName]);
-                    return View(editionViewModel);
-                }
                 leaveTypeToChange.LeaveTypeName = newName;
+                leaveTypeToChange.DefaultDays = editionViewModel.DefaultDays;
                 if (!(await _Repository.UpdateAsync(leaveTypeToChange))) {
                     string errorMessage = ControllerLocalizer["Failed to rename this leave type to {0}", newName];
                     ModelState.AddModelError("UpdateFailed", errorMessage);

@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Repository.Entity {
     public class LeaveTypeRepository : ILeaveTypeRepositoryAsync {
 
         ApplicationDbContext ApplicationDbContext;
+
 
         public LeaveTypeRepository(ApplicationDbContext applicationDbContext) {
             ApplicationDbContext = applicationDbContext;
@@ -36,7 +39,7 @@ namespace LeaveManagement.Repository.Entity {
             }
         }
 
-        public async Task<ICollection<LeaveType>> FindAllAsync() => await ApplicationDbContext.LeaveTypes.ToArrayAsync();
+        public async Task<ICollection<LeaveType>> FindAllAsync() => await Task.Run(()=> ApplicationDbContext.LeaveTypes.ToList());
 
         public async Task<LeaveType> FindByIdAsync(int id) {
             return await ApplicationDbContext.LeaveTypes.FindAsync( id );
@@ -44,7 +47,7 @@ namespace LeaveManagement.Repository.Entity {
 
         public async Task<ICollection<LeaveType>> GetLeaveTypesByEmployeeIdAsync(string employeeId) {
             Func<LeaveType, bool> selectExpression = (leaveType) => {
-                var historyOfEmployee = ApplicationDbContext.LeaveHistories.Where(lh => lh.RequestingEmployeeId.Equals(employeeId));
+                var historyOfEmployee = ApplicationDbContext.LeaveRequests.Where(lh => lh.RequestingEmployeeId.Equals(employeeId));
                 var leaveTypesIds = historyOfEmployee.Select(hoe => hoe.LeaveTypeId).GroupBy(lti => lti).Select(gr => gr.Key);
                 return leaveTypesIds.Contains(leaveType.Id);
             };
@@ -71,6 +74,10 @@ namespace LeaveManagement.Repository.Entity {
             catch {
                 throw;
             }
+        }
+
+        public async Task<ICollection<LeaveType>> WhereAsync(Func<LeaveType, bool> predicate) {
+            return await Task.Run(() => ApplicationDbContext.LeaveTypes.Where(predicate).ToList());
         }
     }
 }

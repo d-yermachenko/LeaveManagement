@@ -1,0 +1,94 @@
+﻿@model IEnumerable<LeaveManagement.ViewModels.LeaveRequest.LeaveRequestDefaultViewModel>;
+
+<table class="table dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RequestingEmployee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeaveType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequestedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Approuved)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApprouvedBy)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <span>@(item.RequestingEmployee?.FormatEmployeeSNT() ?? string.Empty)</span>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LeaveType.LeaveTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestedDate)
+                </td>
+                <td>
+                    @if (item.RequestCancelled)
+                    {
+                        <span class="badge badge-secondary">@Localizer["Cancelled"]</span>
+                    }
+                    else
+                    {
+                        if (item.Approuved == true)
+                        {
+                            <span class="badge badge-success">@Localizer["Approuved"]</span>
+                        }
+                        else if (item.Approuved == false)
+                        {
+                            <span class="badge badge-danger">@Localizer["Rejected"]</span>
+                        }
+                        else if (item.Approuved == null)
+                        {
+                            <span class="badge badge-warning">@Localizer["Pending"]</span>
+                        }
+                    }
+
+                </td>
+                <td>
+                    <span>@(item.ApprouvedBy?.FormatEmployeeSNT() ?? "")</span>
+                </td>
+                <td>
+                    @if (ViewBag.DisplayReviewButton ?? false)
+                    {
+                        <a asp-action="Review" class="btn btn-outline-info" asp-route-requestId="@item.Id">
+                            <i class="fa fa-file"></i> @Localizer["Review"]
+                        </a>
+                    }
+                    @if (DateTime.Now.Date.CompareTo(item.StartDate) <= 1 && item.Approuved != false)
+                    {
+                        <a class="btn btn-danger" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]"
+                           asp-controller="LeaveRequests" asp-action="RemoveRequest" asp-route-requestId="@item.Id">
+                            <i class="fa fa-remove"></i>
+                        </a>
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

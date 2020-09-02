@@ -1,0 +1,146 @@
+﻿@model LeaveManagement.ViewModels.LeaveRequest.LeaveRequestDefaultViewModel
+
+@{
+    ViewData["Title"] = Localizer["Details of leave request"];
+}
+
+<h1>@Localizer["Details of leave request"]</h1>
+
+
+<div>
+    <h4>@Localizer </h4>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Html.ValidationSummary(true)
+        </div>
+    }
+    <hr />
+    <form id="leaveRequestReviewForm" asp-action="Review" asp-route-requestId="@Model.Id">
+        <div class="container-fluid">
+            <input type="hidden" asp-for="Id" />
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.LeaveType)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.LeaveType.LeaveTypeName)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.RequestingEmployee)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.RequestingEmployee.FormatEmployeeSNT()
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.StartDate)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.RequestedDate)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.RequestedDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.RequestedDate)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Approuved)
+                </dt>
+                <dd class="col-sm-10">
+                    <span id="approuvedSpan"></span>
+
+                    <input asp-for="Approuved" type="hidden" id="leaveApprouved" />
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ActionedDateTime)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ActionedDateTime)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ApprouvedByName)
+                </dt>
+                <dd class="col-sm-10">
+                    <span>@Model.ApprouvedBy?.FormatEmployeeSNT()</span>
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ValidationComment)
+                </dt>
+                <dd class="col-sm-10">
+                    @if (Model.Approuved == null)
+                    {
+                        <textarea asp-for="ValidationComment" class="form-control rounded" rows="3"></textarea>
+                    }
+                    else
+                    {
+                        <textarea asp-for="ValidationComment" class="form-control rounded" rows="3" disabled></textarea>
+                    }
+                </dd>
+            </dl>
+        </div>
+        <div class="row">
+            @if (Model.Approuved == null)
+            {
+                <a class="btn btn-outline-success col-3" onclick="setStateAndSubmit(true, false);">
+                    <i class="fa fa-check"></i>&nbsp;@LeaveManagementLocalizerFactory.CommandsLocalizer["Approuve"]
+                </a>
+                <a class="btn btn-outline-danger col-3 offset-1" onclick="setStateAndSubmit(false, false);">
+                    <i class="fa fa-remove"></i>&nbsp;@LeaveManagementLocalizerFactory.CommandsLocalizer["Reject"]
+                </a>
+            }
+
+            <a class="btn btn-outline-info col-3 offset-1" asp-action="ModeratorIndex">
+                <i class="fa fa-backward"></i>&nbsp;@LeaveManagementLocalizerFactory.CommandsLocalizer["Back to list"]
+            </a>
+        </div>
+    </form>
+</div>
+
+
+
+@section Scripts{
+    <script id="leaveRequestReview">
+        function setBadge(state, cancelled) {
+            var span = document.getElementById("approuvedSpan");
+            if (cancelled === true) {
+                span.className = "badge badge-secondary";
+                    span.innerText = "@Localizer["Cancelled"]" ;
+            }
+            else switch (state) {
+                case true:
+                    span.className = "badge badge-success";
+                    span.innerText = "@Localizer["Approuved"]" ;
+                    break;
+                case false:
+                    span.className = "badge badge-danger";
+                    span.innerText = "@Localizer["Rejected"]" ;
+                    break;
+                default:
+                    span.className = "badge badge-warning";
+                    span.innerText = "@Localizer["Pending"]" ;
+                    break;
+
+            }
+        }
+
+        function setStateAndSubmit(state, cancelled) {
+            if (cancelled) {
+                ;
+            } else {
+                var leaveApprouved = document.getElementById("leaveApprouved");
+                leaveApprouved.value = state;
+            }
+            setBadge(state, cancelled);
+            document.getElementById("leaveRequestReviewForm").submit();
+        }
+        setBadge(@(Model.Approuved?.ToString()?.ToLower()??"null"), @Model.RequestCancelled.ToString().ToLower());
+
+    </script>
+}

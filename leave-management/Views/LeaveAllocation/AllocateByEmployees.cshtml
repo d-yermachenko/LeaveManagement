@@ -30,7 +30,7 @@
                 @Html.DisplayNameFor(model => model.DateOfBirth)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AncienityDate)
+                @Html.DisplayNameFor(model => model.EmploymentDate)
             </th>
             <th></th>
         </tr>
@@ -60,12 +60,16 @@
                 @Html.DisplayFor(modelItem => item.DateOfBirth)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AncienityDate)
+                @Html.DisplayFor(modelItem => item.EmploymentDate)
             </td>
             <td>
                 <a class="btn btn-outline-primary" asp-action="AllocateByEmployee" asp-route-employeeId="@item.Id">
                 <i class="fa fa-calendar"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate leave"]</a> 
 
+                <a class="btn btn-outline-success" asp-area="Identity" asp-page="/Account/Manage/Index" asp-route-userId="@item.Id" 
+                   title="@Localizer["Edit user"]">
+                    <i class="fa fa-user"></i>
+                </a>
             </td>
         </tr>
 }

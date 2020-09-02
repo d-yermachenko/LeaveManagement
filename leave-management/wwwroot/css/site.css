@@ -69,3 +69,23 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.list-grp-item-info {
+    color: rgb(12, 84, 96);
+    background-color: rgba(190, 229, 235, 0.5);
+}
+
+.list-grp-item-success {
+    color: #155724;
+    background-color: rgba(195, 230, 203, 0.5);
+}
+
+.list-grp-item-warning {
+    color: #856404;
+    background-color: rgba(255, 238, 186, 0.5);
+}
+
+.list-grp-item-danger {
+    color: #721c24;
+    background-color: rgba(245, 198, 203, 0.5);
+}

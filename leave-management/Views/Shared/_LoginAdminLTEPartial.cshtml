@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> UserSignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+
+    @if (SignInManager.IsSignedIn(User))
+    {<!-- Sidebar user panel (optional) -->
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link active">
+                <i class="fa fa-user nav-icon"></i>
+                <p>@User.Identity.Name</p>
+                <i class="right fa fa-angle-left"></i>
+            </a>
+            <ul class="nav nav-treeview" data-wid>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="nav-icon fa fa-address-card"></i>&nbsp;
+                        <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Edit profile"]</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">
+                        <i class="nav-icon fa fa-user-secret"></i>
+                        <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Change password"]</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Email">
+                        <i class="nav-icon fa fa-envelope-open"></i>
+                        <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Change email"]</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <form asp-area="Identity" class="form-inline" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="nav-link btn btn-link text-white">
+                            <i class="nav-icon fa fa-sign-out"></i>
+                            <p> @Localizer["Logout"]</p>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">
+                <i class="nav-icon fa fa-signing"></i>
+                <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Register"]</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+                <i class="nav-icon fa fa-sign-in"></i>
+                <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Login"]</p>
+            </a>
+        </li>
+    }
+</ul>

@@ -134,7 +134,10 @@ namespace LeaveManagement.Code.CustomLocalization {
         #endregion
 
 
-        public IStringLocalizer CreateStringLocalizer(Type type) => MapRessourceToType(StringLocalizerFactory, type);
+        public IStringLocalizer Create(Type type) => MapRessourceToType(StringLocalizerFactory, type);
+
+        public IStringLocalizer Create(string baseName, string location) => StringLocalizerFactory.Create(baseName, location);
+
 
         private IStringLocalizer CommandsLocalizerField = null;
 

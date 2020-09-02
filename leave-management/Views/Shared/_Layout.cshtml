@@ -26,7 +26,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Leave management"]</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@LeaveManagementLocalizerFactory.MenuLocalizer["Leave management"]</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -35,10 +35,20 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">@LeaveManagementLocalizerFactory.MenuLocalizer["Home"]</a>
+                            <a class="nav-link text-light" asp-controller="LeaveAllocation" asp-action="UserLeaveAllocationsForPeriod"
+                               asp-route-showRequestButton="true" asp-route-userId="@null">
+                                @LeaveManagementLocalizerFactory.MenuLocalizer["Your leave allocations"]
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="LeaveRequests" asp-action="Create">
+                                @Localizer["Request leave"]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="LeaveRequests" asp-action="EmployeeRequests">
+                                @Localizer["My requests"]
+                            </a>
                         </li>
                         @if (AppUser != null)
                         {
@@ -47,29 +57,29 @@
                                     @LeaveManagementLocalizerFactory.MenuLocalizer["Manage"]
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    @if (UserRoles?.Contains(SeedData.AdministratorRole) ?? false)
+                                    @if (await UserManager.IsPrivelegedUser(AppUser))
                                     {
                                         <a class="dropdown-item" asp-area="" asp-controller="LeaveTypes" asp-action="Index">
                                             @LeaveManagementLocalizerFactory.MenuLocalizer["Edit leave types"]
                                         </a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="LeaveAllocation" asp-action="AllocateByLeaveTypes">
+                                            @Localizer["Allocate leaves"]
+                                        </a>
                                     }
                                     @if (AppUser != null)
                                     {
-                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="AllocateByLeaveTypes">
-                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Leave types"]
-                                        </a>
-                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="AllocateByEmployees">
-                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Employees"]
-                                        </a>
+
                                         <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="UserLeaveAllocationsForPeriod">
                                             @LeaveManagementLocalizerFactory.MenuLocalizer["Browse your current allocations"]
                                         </a>
-                                        <a class="dropdown-item" asp-controller="LeaveAllocation" asp-action="UserLeaveAllocationsForPeriod">
-                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Yours allocations"]
+
+                                    }
+                                    @if (UserRoles?.Contains(LeaveManagement.UserRoles.Administrator.ToString()) ?? false)
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="LeaveRequests" asp-action="ModeratorIndex">
+                                            @LeaveManagementLocalizerFactory.MenuLocalizer["Leave requests"]
                                         </a>
                                     }
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">@LeaveManagementLocalizerFactory.MenuLocalizer["Leave history"]</a>
                                 </div>
                             </li>
                         }

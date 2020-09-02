@@ -59,33 +59,34 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
             [Display(Name = "Password")]
             public string Password { get; set; }
 
+            [Required]
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [Required]
+
             [DataType(DataType.Text, ErrorMessage = "Enter employee title")]
             [Display(Name = "Employee title", Description = "M., Ms., Mrs., Miss", Prompt = "Employee title")]
             public string Title { get; set; }
 
-            [Required]
+
             [DataType(DataType.Text, ErrorMessage = "Enter employee name")]
             [Display(Name = "Employee first name", Prompt = "First name")]
             public string FirstName { get; set; }
 
-            [Required]
+
             [DataType(DataType.Text, ErrorMessage = "Enter employee last(family) name")]
             [Display(Name = "Employee last(family) name", Prompt = "Last(family) name")]
             public string LastName { get; set; }
 
 
-            [Required]
+
             [DataType(DataType.Date, ErrorMessage = "Enter employee's date of birth")]
             [Display(Name = "Employees' date of birth", Prompt = "Employees' date of birth")]
             public DateTime DateOfBirth { get; set; }
 
-            [Required]
+
             [DataType(DataType.Date, ErrorMessage = "Enter employement date")]
             [Display(Name = "Employement date", Prompt = "Enter employement date", Description = "Date when this person joined the company")]
             public DateTime EmployementDate { get; set; }
@@ -117,9 +118,9 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
                 if (result.Succeeded) {
                     
                     _logger.LogInformation("User created a new account with password.");
-                    var addToRoleResult = await _userManager.AddToRoleAsync(user, SeedData.EmployeeRole);
+                    var addToRoleResult = await _userManager.AddToRoleAsync(user, UserRoles.Employee.ToString());
                     if(addToRoleResult.Succeeded)
-                        _logger.LogInformation("Added to role " + SeedData.EmployeeRole);
+                        _logger.LogInformation("Added to role " + UserRoles.Employee.ToString());
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }

@@ -7,24 +7,30 @@
 @{
     ViewData["Title"] = Localizer["Leave allocation"];
 }
-    <h1>@Localizer["Which type of leave would-loke you allocate?"]</h1>
+<h1>@Localizer["Which type of leave would-loke you allocate?"]</h1>
 <table class="table dataTable">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(mdl=>mdl.AvalableLeaveTypes.FirstOrDefault().LeaveTypeName)</th>
+            <th>@Html.DisplayNameFor(mdl => mdl.AvalableLeaveTypes.FirstOrDefault().LeaveTypeName)</th>
             <th>@Html.DisplayNameFor(mdl => mdl.AvalableLeaveTypes.FirstOrDefault().DefaultDays)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var leaveType in Model.AvalableLeaveTypes)
+        @foreach (var leaveType in Model.AvalableLeaveTypes)
         {
             <tr>
                 <td>@leaveType.LeaveTypeName</td>
                 <td>@leaveType.DefaultDays</td>
                 <td>
-                    <a asp-action="CreateByLeaveType" asp-route-leaveType="@leaveType.Id" class="btn btn-outline-success btn-block">
-                        <i class="fa fa-calendar"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate"] @leaveType.LeaveTypeName 
+                    <a asp-action="CreateByLeaveType" asp-route-leaveType="@leaveType.Id" class="btn btn-outline-success"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate {0}", leaveType.LeaveTypeName]">
+                        <i class="fa fa-calendar"></i>
+                    </a>
+                    <a asp-action="CreateAllocationToAllEmployees" asp-route-leaveTypeId="@leaveType.Id" class="btn btn-outline-info"
+                       onclick="confirm(@LeaveManagementLocalizerFactory.CommandsLocalizer["Are you sure you want to allocate this leave type to all employees?"])"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate {0} to all employees",  leaveType.LeaveTypeName]">
+                        <i class="fa fa-user-plus"></i>
                     </a>
                 </td>
             </tr>

@@ -10,31 +10,31 @@ using LeaveManagement.Data.Entities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LeaveManagement.Repository.Entity {
-    public class LeaveHistoryRepository : ILeaveHistoryRepositoryAsync {
+    public class LeaveRequestsRepository : ILeaveRequestsRepositoryAsync {
         public ApplicationDbContext ApplicationDbContext;
 
-        public LeaveHistoryRepository(ApplicationDbContext applicationDbContext) {
+        public LeaveRequestsRepository(ApplicationDbContext applicationDbContext) {
             ApplicationDbContext = applicationDbContext;
         }
 
 
-        public async Task<bool> CreateAsync(LeaveHistory entity) {
-            ApplicationDbContext.LeaveHistories.Add(entity);
+        public async Task<bool> CreateAsync(LeaveRequest entity) {
+            ApplicationDbContext.LeaveRequests.Add(entity);
             return await SaveAsync();
         }
 
-        public async Task<bool> DeleteAsync(LeaveHistory entity) {
-            ApplicationDbContext.LeaveHistories.Remove(entity);
+        public async Task<bool> DeleteAsync(LeaveRequest entity) {
+            ApplicationDbContext.LeaveRequests.Remove(entity);
             return await SaveAsync();
         }
 
-        public async Task<ICollection<LeaveHistory>> FindAllAsync() => await ApplicationDbContext.LeaveHistories
+        public async Task<ICollection<LeaveRequest>> FindAllAsync() => await ApplicationDbContext.LeaveRequests
             .Include(x => x.ApprouvedBy)
             .Include(x => x.RequestingEmployee)
             .Include(x => x.LeaveType)
             .ToArrayAsync();
 
-        public async Task <LeaveHistory> FindByIdAsync(long id) => await ApplicationDbContext.LeaveHistories
+        public async Task <LeaveRequest> FindByIdAsync(long id) => await ApplicationDbContext.LeaveRequests
             .Include(x=>x.ApprouvedBy)
             .Include(x=>x.RequestingEmployee)
             .Include(x=>x.LeaveType)
@@ -45,9 +45,17 @@ namespace LeaveManagement.Repository.Entity {
             return affectedRecords> 0;
         }
 
-        public async Task<bool> UpdateAsync(LeaveHistory entity) {
-            ApplicationDbContext.LeaveHistories.Update(entity);
+        public async Task<bool> UpdateAsync(LeaveRequest entity) {
+            ApplicationDbContext.LeaveRequests.Update(entity);
             return await SaveAsync();
+        }
+
+        public async Task<ICollection<LeaveRequest>> WhereAsync(Func<LeaveRequest, bool> predicate) {
+            return await Task.Run(() => ApplicationDbContext.LeaveRequests
+            .Include(x => x.ApprouvedBy)
+            .Include(x => x.RequestingEmployee)
+            .Include(x => x.LeaveType)
+            .Where(predicate).ToList());
         }
     }
 }

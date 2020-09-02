@@ -35,8 +35,8 @@ namespace LeaveManagement.Data.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("NumberOfDays")
-                        .HasColumnType("bigint");
+                    b.Property<int>("NumberOfDays")
+                        .HasColumnType("int");
 
                     b.Property<int>("Period")
                         .HasColumnType("int");
@@ -50,14 +50,14 @@ namespace LeaveManagement.Data.Migrations
                     b.ToTable("LeaveAllocations");
                 });
 
-            modelBuilder.Entity("LeaveManagement.Data.Entities.LeaveHistory", b =>
+            modelBuilder.Entity("LeaveManagement.Data.Entities.LeaveRequest", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("ActionedDateTime")
+                    b.Property<DateTime?>("ActionedDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("Approuved")
@@ -66,16 +66,19 @@ namespace LeaveManagement.Data.Migrations
                     b.Property<string>("ApprouvedById")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ArrpouvedById")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndDateDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("RequestedDateDate")
+                    b.Property<bool>("RequestCancelled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RequestComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RequestingEmployeeId")
@@ -83,6 +86,9 @@ namespace LeaveManagement.Data.Migrations
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ValidationComment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -92,7 +98,7 @@ namespace LeaveManagement.Data.Migrations
 
                     b.HasIndex("RequestingEmployeeId");
 
-                    b.ToTable("LeaveHistories");
+                    b.ToTable("LeaveRequests");
                 });
 
             modelBuilder.Entity("LeaveManagement.Data.Entities.LeaveType", b =>
@@ -331,6 +337,9 @@ namespace LeaveManagement.Data.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<DateTime>("CurrentConnectionDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -343,14 +352,22 @@ namespace LeaveManagement.Data.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("LastConnectionDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("TaxRate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("ManagerId");
 
                     b.HasDiscriminator().HasValue("Employee");
                 });
@@ -368,7 +385,7 @@ namespace LeaveManagement.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LeaveManagement.Data.Entities.LeaveHistory", b =>
+            modelBuilder.Entity("LeaveManagement.Data.Entities.LeaveRequest", b =>
                 {
                     b.HasOne("LeaveManagement.Data.Entities.Employee", "ApprouvedBy")
                         .WithMany()
@@ -441,6 +458,13 @@ namespace LeaveManagement.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LeaveManagement.Data.Entities.Employee", b =>
+                {
+                    b.HasOne("LeaveManagement.Data.Entities.Employee", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId");
                 });
 #pragma warning restore 612, 618
         }

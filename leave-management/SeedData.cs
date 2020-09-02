@@ -10,11 +10,6 @@ namespace LeaveManagement {
         public const string DefaultAdminUserName = "admin@localhost.com";
         public const string DefaultAdminPassword = "P@ssw0rd";
 
-        public const string AdministratorRole = "Administrator";
-        public const string EmployeeRole = "Employee";
-        public const string HRStaffRole = "HRStaff";
-
-
         public async static Task Seed(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ILogger logger) {
             try { 
                 await SeedRoles(roleManager);
@@ -40,11 +35,11 @@ namespace LeaveManagement {
                 if (success)
                     possibleAdminUser = await userManager.FindByNameAsync(DefaultAdminUserName);
             }
-            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, AdministratorRole))
-                success &= (await userManager.AddToRoleAsync(possibleAdminUser, AdministratorRole)).Succeeded;
+            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, UserRoles.Administrator.ToString()))
+                success &= (await userManager.AddToRoleAsync(possibleAdminUser, UserRoles.Administrator.ToString())).Succeeded;
 
-            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, EmployeeRole))
-                success &= (await userManager.AddToRoleAsync(possibleAdminUser, EmployeeRole)).Succeeded;
+            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, UserRoles.Employee.ToString()))
+                success &= (await userManager.AddToRoleAsync(possibleAdminUser, UserRoles.Employee.ToString())).Succeeded;
 
             if (!success)
                 throw new OperationFailedException();
@@ -52,10 +47,7 @@ namespace LeaveManagement {
         }
 
         private async static Task SeedRoles(RoleManager<IdentityRole> roleManager) {
-            string[] defaultRoles = new string[] { 
-                AdministratorRole, 
-                EmployeeRole, 
-                HRStaffRole };
+            string[] defaultRoles = Enum.GetNames(typeof(UserRoles));
             await Task.Run(async () =>  {
                 foreach (var role in defaultRoles) {
                     if (!await roleManager.RoleExistsAsync(role)) {

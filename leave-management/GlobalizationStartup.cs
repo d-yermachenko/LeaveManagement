@@ -1,9 +1,13 @@
-﻿using LeaveManagement.Code.CustomLocalization;
+﻿using LeaveManagement.Code;
+using LeaveManagement.Code.CustomLocalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Globalization;
@@ -21,6 +25,11 @@ namespace LeaveManagement {
             services.AddMvc()
             .AddViewLocalization(LanguageViewLocationExpanderFormat.SubFolder)
             .AddDataAnnotationsLocalization();
+
+            services.Configure<RouteOptions>(options => {
+                options.ConstraintMap.Add("culture", typeof(LanguageRouteConstraint));
+            }
+            );
         }
 
 
@@ -36,12 +45,15 @@ namespace LeaveManagement {
             var localizationService = app.ApplicationServices.GetRequiredService<ILeaveManagementCustomLocalizerFactory>();
             var options1 = app.ApplicationServices.GetService<IOptions<MvcDataAnnotationsLocalizationOptions>>();
 
+            HtmlHelpersExtensions.RegisterLocalizer(localizationService);
 
             options1.Value.DataAnnotationLocalizerProvider = (type, function) => {
-                return localizationService.CreateStringLocalizer(type);
+                return localizationService.Create(type);
             };
 
+
             IRequestCultureProvider[] cultureProviders = new IRequestCultureProvider[] {
+                new RouteCultureProvider(),
                 new QueryStringRequestCultureProvider(),
                 new CookieRequestCultureProvider(),
                 new AcceptLanguageHeaderRequestCultureProvider()
@@ -54,7 +66,7 @@ namespace LeaveManagement {
                 SupportedCultures = supportedCultures,
                 // UI strings that we have localized.
                 SupportedUICultures = supportedCultures
-            }); ;
+            });
 
         }
         #endregion

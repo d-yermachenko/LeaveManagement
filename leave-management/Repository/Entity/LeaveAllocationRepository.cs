@@ -60,11 +60,12 @@ namespace LeaveManagement.Repository.Entity {
             return await SaveAsync();
         }
 
-        public async Task<IEnumerable<LeaveAllocation>> WhereAsync(Func<LeaveAllocation, bool> predicate) {
+        public async Task<ICollection<LeaveAllocation>> WhereAsync(Func<LeaveAllocation, bool> predicate) {
             return await Task.Run(()=>ApplicationDbContext.LeaveAllocations
             .Include(ai=>ai.AllocationEmployee)
             .Include(lt=>lt.AllocationLeaveType)
-            .Where(predicate));
+            .Where(predicate).ToList());
         }
+
     }
 }

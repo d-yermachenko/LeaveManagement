@@ -1,13 +1,22 @@
-﻿using LeaveManagement.Code.CustomLocalization;
+﻿using AutoMapper;
+using KellermanSoftware.CompareNetObjects;
+using LeaveManagement.Code.CustomLocalization;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Repository.Entity {
@@ -21,18 +30,66 @@ namespace LeaveManagement.Repository.Entity {
 
         private readonly SignInManager<IdentityUser> _SignInManager;
 
+        private readonly IMapper _Mapper;
+
+        private ILogger<EmployeeRepository> _Logger;
+
+        private IEmailSender _EmailSender;
+
         public EmployeeRepository(ILeaveManagementCustomLocalizerFactory localizerFactory,
             ApplicationDbContext applicationDbContext,
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager) {
+            SignInManager<IdentityUser> signInManager,
+            IMapper mapper,
+            ILogger<EmployeeRepository> logger,
+            IEmailSender emailSender) {
             _ApplicationDbContext = applicationDbContext;
             _LocalizerFactory = localizerFactory;
             _UserManager = userManager;
             _SignInManager = signInManager;
+            _Logger = logger;
+            _Mapper = mapper;
+            _EmailSender = emailSender;
         }
+
+        public async Task<bool> RegisterEmployeeAsync(Employee entity, string password) {
+            entity.Id = (new IdentityUser() { UserName = entity.UserName, Email = entity.Email }).Id;
+            var result = await _UserManager.CreateAsync(entity, password);
+            if (!result.Succeeded)
+                throw new InvalidOperationException(result.ToString());
+            IdentityUser newUser = await _UserManager.FindByIdAsync(entity.Id);
+            bool hasUser = newUser != null;
+            if (!hasUser)
+                return false;
+            bool hasEmployee = await _ApplicationDbContext.Employees.AnyAsync(x => x.Id.Equals(newUser.Id));
+            Employee employee;
+            if (hasEmployee)
+                employee = await _ApplicationDbContext.Employees.FirstAsync(x => newUser.Id.Equals(x.Id));
+            else
+                employee = _Mapper.Map<Employee>(newUser);
+            if (!hasEmployee) {
+                _ApplicationDbContext.Remove(newUser);
+            }
+            int updatedRecords = 0;
+            try {
+                updatedRecords = await _ApplicationDbContext.SaveChangesAsync();
+            }
+            catch (AggregateException e) {
+                _Logger?.LogError(e.Flatten(), e.Message);
+            }
+            return updatedRecords == 1;
+        }
+
         public async Task<bool> CreateAsync(Employee entity) {
-            var result = await _UserManager.CreateAsync(entity);
-            return result.Succeeded;
+            string password = $"{entity.FormatEmployeeSNT()}@{DateTime.Now.Year}-{DateTime.Now.Month}";
+            bool registrationResult = await RegisterEmployeeAsync(entity, password);
+            LocalizedHtmlString mail = _LocalizerFactory.HtmlIdentityLocalizer["Your password : {0}", password];
+            StringBuilder mailBodyBuilder = new StringBuilder();
+            using(StringWriter writer = new StringWriter(mailBodyBuilder)) {
+                mail.WriteTo(writer, HtmlEncoder.Create(new TextEncoderSettings()));
+            }
+            await _EmailSender?.SendEmailAsync(entity.Email, _LocalizerFactory.StringIdentityLocalizer["Your password"], mailBodyBuilder.ToString());
+            return registrationResult;
         }
 
         public async Task<bool> DeleteAsync(Employee entity) => await _UserManager.DeleteAsync(entity).ContinueWith((identityResult) => identityResult.Result.Succeeded);
@@ -44,29 +101,13 @@ namespace LeaveManagement.Repository.Entity {
             var hasUser = await _ApplicationDbContext.Users.AnyAsync(x => x.Id.Equals(id));
             if (hasEmployee)
                 return await _ApplicationDbContext.Employees.FindAsync(id);
-            else if(hasUser) {
+            else if (hasUser) {
                 var user = await _ApplicationDbContext.Users.FindAsync(id);
-                var employee = new Employee() {
-                    AccessFailedCount = user.AccessFailedCount,
-                    ConcurrencyStamp = user.ConcurrencyStamp,
-                    Email = user.Email,
-                    EmailConfirmed = user.EmailConfirmed,
-                    Id = user.Id,
-                    LockoutEnabled = user.LockoutEnabled,
-                    LockoutEnd = user.LockoutEnd,
-                    NormalizedEmail = user.NormalizedEmail,
-                    NormalizedUserName = user.NormalizedUserName,
-                    PasswordHash = user.PasswordHash,
-                    PhoneNumber = user.PhoneNumber,
-                    PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                    SecurityStamp = user.SecurityStamp,
-                    TwoFactorEnabled = user.TwoFactorEnabled,
-                    UserName = user.UserName
-                };
+                var employee = _Mapper.Map<Employee>(user);
                 _ApplicationDbContext.Remove(user);
                 _ApplicationDbContext.Add(employee);
                 var changes = await _ApplicationDbContext.SaveChangesAsync();
-                if(changes > 0)
+                if (changes > 0)
                     return await _ApplicationDbContext.Employees.FindAsync(id);
                 else
                     throw new KeyNotFoundException(_LocalizerFactory.MiscelanousLocalizer["User not found"]);
@@ -81,17 +122,13 @@ namespace LeaveManagement.Repository.Entity {
             var userData = await FindByIdAsync(entity.Id);
             if (userData is null)
                 throw new ArgumentOutOfRangeException(_LocalizerFactory.MiscelanousLocalizer["User you provided was not yet created"]);
+            userData = _Mapper.Map<Employee>(entity);
             #region Modification
             userData.Title = entity.Title;
-
             userData.FirstName = entity.FirstName;
-
             userData.LastName = entity.LastName;
-
             userData.DisplayName = entity.DisplayName;
-
             userData.PhoneNumber = entity.PhoneNumber;
-
             userData.TaxRate = entity.TaxRate;
             if (!userData?.DateOfBirth.Equals(entity.DateOfBirth) ?? true)
                 userData.DateOfBirth = entity.DateOfBirth;
@@ -101,11 +138,15 @@ namespace LeaveManagement.Repository.Entity {
             #endregion
 
             _ApplicationDbContext.Update(userData);
-            await _SignInManager.RefreshSignInAsync(userData);
+
             return await SaveAsync();
 
 
 
+        }
+
+        public async Task<ICollection<Employee>> WhereAsync(Func<Employee, bool> predicate) {
+            return await Task.Run(() => _ApplicationDbContext.Employees.Where(predicate).ToList());
         }
     }
 }

@@ -120,4 +120,7 @@
   <data name="Confirm password" xml:space="preserve">
     <value>Подтверждение пароля</value>
   </data>
+  <data name="Remember me?" xml:space="preserve">
+    <value>Запомнить меня?</value>
+  </data>
 </root>

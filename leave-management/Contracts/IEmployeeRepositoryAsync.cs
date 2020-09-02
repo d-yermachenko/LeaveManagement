@@ -6,5 +6,6 @@ using System.Threading.Tasks;
 
 namespace LeaveManagement.Contracts {
     public interface IEmployeeRepositoryAsync: IRepositoryBaseAsync<Employee, string> {
+        public Task<bool> RegisterEmployeeAsync(Employee employee, string password);
     }
 }

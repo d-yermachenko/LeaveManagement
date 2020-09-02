@@ -1,0 +1,69 @@
+﻿@model LeaveManagement.ViewModels.LeaveRequest.EmployeeLeaveRequestsViewModel
+
+@{
+    ViewData["Title"] = LeaveManagementLocalizerFactory.MenuLocalizer["Review leave requests"];
+}
+@section Styles{
+    <partial name="_DataTablesStyles" />
+}
+@section Scripts{
+    <partial name="_DataTablesScripts" />
+}
+<h1>@Localizer["Syntese"]</h1>
+<div class="row">
+    @foreach (var allocation in Model.LeaveAllocations)
+    {
+        <div class="col-3">
+            <div class="card h-100 mr-1 half-opacity">
+                <div class="card-header bg-info">
+                    @allocation.LeaveTypeName
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span title="@Html.DescriptionFor(model => model.LeaveAllocations.FirstOrDefault().ApprouvedDays)">
+                                @Html.DisplayNameFor(model => model.LeaveAllocations.FirstOrDefault().AllocatedDays)
+                            </span>
+                            <span class="badge badge-pill badge-light">@allocation.AllocatedDays</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span title="@Html.DescriptionFor(model => model.LeaveAllocations.FirstOrDefault().ApprouvedDays)">
+                                @Html.DisplayNameFor(model => model.LeaveAllocations.FirstOrDefault().ApprouvedDays)
+                            </span>
+                            <span class="badge badge-pill badge-success">@allocation.ApprouvedDays</span>
+                        </li>
+                        <li class="list-group-item ">
+                            <span title="@Html.DescriptionFor(model => model.LeaveAllocations.FirstOrDefault().RejectedDays)">
+                                @Html.DisplayNameFor(model => model.LeaveAllocations.FirstOrDefault().RejectedDays)
+                            </span>
+                            <span class="badge badge-pill badge-danger">@allocation.RejectedDays</span>
+                        </li>
+                        <li class="list-group-item ">
+                            <span title="@Html.DescriptionFor(model => model.LeaveAllocations.FirstOrDefault().PendingDays)">
+                                @Html.DisplayNameFor(model => model.LeaveAllocations.FirstOrDefault().PendingDays)
+                            </span>
+                            <span class="badge badge-pill badge-warning">@allocation.PendingDays</span>
+                        </li>
+                        <li class="list-group-item list-grp-item-warning">
+                            <span title="@Html.DescriptionFor(model => model.LeaveAllocations.FirstOrDefault().UsedDays)">
+                                @Html.DisplayNameFor(model => model.LeaveAllocations.FirstOrDefault().UsedDays)
+                            </span>
+                            <span class="badge badge-pill badge-warning">@allocation.UsedDays</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span title="@Html.DescriptionFor(model => model.LeaveAllocations.FirstOrDefault().RestOfDays)">
+                                @Html.DisplayNameFor(model => model.LeaveAllocations.FirstOrDefault().RestOfDays)
+                            </span>
+                            <span class="badge badge-pill badge-info">@allocation.RestOfDays</span>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<hr />
+<h4>@Localizer["Your leave requests"]</h4>
+@await Html.PartialAsync("_LeaveRequestsTable", Model.LeaveRequests)

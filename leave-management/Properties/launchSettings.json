@@ -12,7 +12,6 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "AppSettings.ConnectionStrings.DefaultConnectionString": "Data Source=(localdb)\\\\MSSQLLocalDB;Initial Catalog=leavemanagentusers;Integrated Security=False;User ID=aspnetcore;Password=NetCoreCheckAuth/Manager",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

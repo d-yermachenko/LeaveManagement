@@ -17,5 +17,13 @@ namespace LeaveManagement.Data.Entities {
         public DateTime DateOfBirth  { get; set; }
         
         public DateTime EmploymentDate  { get; set; }
+
+        public DateTime CurrentConnectionDate { get; set; }
+
+        public DateTime LastConnectionDate { get; set; }
+
+        public Employee Manager { get; set; }
+
+        public string ManagerId { get; set; }
     }
 }

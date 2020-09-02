@@ -4,8 +4,7 @@ using System;
 
 
 namespace LeaveManagement.Code.CustomLocalization {
-    public interface ILeaveManagementCustomLocalizerFactory {
-        IStringLocalizer CreateStringLocalizer(Type type);
+    public interface ILeaveManagementCustomLocalizerFactory : IStringLocalizerFactory{
 
         IStringLocalizer CommandsLocalizer { get; }
 
