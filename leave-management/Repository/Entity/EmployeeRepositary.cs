@@ -64,12 +64,10 @@ namespace LeaveManagement.Repository.Entity {
             bool hasEmployee = await _ApplicationDbContext.Employees.AnyAsync(x => x.Id.Equals(newUser.Id));
             Employee employee;
             if (hasEmployee)
-                employee = await _ApplicationDbContext.Employees.FirstAsync(x => newUser.Id.Equals(x.Id));
+                return true;
             else
                 employee = _Mapper.Map<Employee>(newUser);
-            if (!hasEmployee) {
-                _ApplicationDbContext.Remove(newUser);
-            }
+            _ApplicationDbContext.Remove(newUser);
             int updatedRecords = 0;
             try {
                 updatedRecords = await _ApplicationDbContext.SaveChangesAsync();
@@ -85,7 +83,7 @@ namespace LeaveManagement.Repository.Entity {
             bool registrationResult = await RegisterEmployeeAsync(entity, password);
             LocalizedHtmlString mail = _LocalizerFactory.HtmlIdentityLocalizer["Your password : {0}", password];
             StringBuilder mailBodyBuilder = new StringBuilder();
-            using(StringWriter writer = new StringWriter(mailBodyBuilder)) {
+            using (StringWriter writer = new StringWriter(mailBodyBuilder)) {
                 mail.WriteTo(writer, HtmlEncoder.Create(new TextEncoderSettings()));
             }
             await _EmailSender?.SendEmailAsync(entity.Email, _LocalizerFactory.StringIdentityLocalizer["Your password"], mailBodyBuilder.ToString());

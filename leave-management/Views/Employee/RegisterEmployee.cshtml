@@ -13,6 +13,8 @@
                 <p class="login-box-msg">@RegisterLocalizer["Register a new membership"]</p>
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <form asp-action="@ViewBag.Action">
+                    <input asp-for="Id" type="hidden" />
+                    <input asp-for="ReturnUrl" hidden="hidden"/>
                     <span asp-validation-for="UserName" class="text-danger d-block"></span>
                     <div class="input-group mb-2">
                         <input asp-for="UserName" class="form-control" placeholder="@Html.DisplayNameFor(Model=>@Model.UserName)">
@@ -21,7 +23,6 @@
                                 <span class="fa fa-user"></span>
                             </div>
                         </div>
-
                     </div>
                     <span asp-validation-for="Email" class="text-danger d-block"></span>
                     <div class="input-group mb-2">
@@ -49,7 +50,6 @@
                             <div class="input-group-text">
                                 <span class="fa fa-lock"></span>
                             </div>
-
                         </div>
                     </div>
                     <span asp-validation-for="Title" class="text-danger"></span>
@@ -132,10 +132,5 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#rolesInput').multiselect();
-        });
-    </script>
 }
 

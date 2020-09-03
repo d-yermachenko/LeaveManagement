@@ -99,7 +99,7 @@ namespace LeaveManagement.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEmployee(EmployeeCreationVM employeeCreationVM) {
-            string referer = ReturnUrl;
+            string referer = employeeCreationVM.ReturnUrl;
             var currentUser = await _UserManager.GetUserAsync(User);
             if (!await _UserManager.IsPrivelegedUser(currentUser)) {
                 ModelState.AddModelError("", _DataLocalizer["Action permitted only to administrators"]);
@@ -122,6 +122,7 @@ namespace LeaveManagement.Controllers {
                 employeeCreationVM.RolesList = await GetListAllowedRoles(employeeRoles);
             }
             if (ModelState.ErrorCount == 0) {
+                
                 Employee employee = _Mapper.Map<Employee>(employeeCreationVM);
                 employee.DisplayName = employee.FormatEmployeeSNT();
                 employee.ManagerId = currentUser.Id;

@@ -40,21 +40,24 @@ namespace LeaveManagement.ViewModels.Employee {
 
         [Display(Name = "User name", Description = "The main user name which will be displayed like your login", ShortName = "Login", Prompt ="Enter user name")]
         [DataType(DataType.Text)]
-        [Required]
+        [MinLength(6)]
+        [MaxLength(50)]
+        [Required (ErrorMessage = "User name is required")]
         public string UserName { get; set; }
 
         [Required]
         [Display(Name = "Employee title", Description = "M., Ms., Mrs., Miss", Prompt = "Employee title")]
         public string Title { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="First name required")]
         [Display(Name = "First name", Description = "Users' first name")]
         public string FirstName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Last name required")]
         [Display(Name = "Last name", Description = "Last (family) name")]
         public string LastName { get; set; }
 
+        [Required(ErrorMessage = "Phone number required")]
         [Display(Name = "Phone number", Description = "Phone")]
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
@@ -62,7 +65,7 @@ namespace LeaveManagement.ViewModels.Employee {
         [Display(Name = "Tax of employee")]
         public string TaxRate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Date of birth cant be empty")]
         [Display(Name = "Date of birth of employee")]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
@@ -77,7 +80,7 @@ namespace LeaveManagement.ViewModels.Employee {
 
         public IList<string> Roles { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="You must accept contract")]
         [Display(Name = "Agree to all conditions")]
         public bool AcceptContract { get; set; }
     }

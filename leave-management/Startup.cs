@@ -17,6 +17,9 @@ using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
+using LeaveManagement.PasswordGenerator;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using LeaveManagement.EmailSender;
 
 namespace LeaveManagement {
     public class Startup {
@@ -54,6 +57,15 @@ namespace LeaveManagement {
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddTransient<IPasswordGenerator>(
+                (serviceProvider) => new PasswordGenerator.PasswordGenerator(
+                    () => Configuration.GetSection(nameof(PasswordGeneratorOptions)).Get<PasswordGeneratorOptions>()
+            ));
+            services.AddTransient<IEmailSender>(
+                (serviceProvider) => new EmailSender.SmtpEmailSender(
+                    () => Configuration.GetSection(nameof(SmtpSettings)).Get<EmailSender.SmtpSettings>()
+                )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,7 +103,7 @@ namespace LeaveManagement {
             try {
                 seedingTask.Wait();
             }
-            catch(AggregateException ae) {
+            catch (AggregateException ae) {
                 var nae = ae.Flatten();
                 logger?.LogError(nae, "Aggregate exception when migrating and seeding database", null);
             }
