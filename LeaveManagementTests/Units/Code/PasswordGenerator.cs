@@ -11,9 +11,7 @@ namespace LeaveManagementTests.Units.Code {
         public void TestConfiguration() {
             int expectedLength = 15;
 
-            var passwordGenerator = new LeaveManagement.PasswordGenerator.PasswordGenerator((options) => {
-                options.LengthOfPassword = expectedLength;
-            });
+            var passwordGenerator = new LeaveManagement.PasswordGenerator.PasswordGenerator(() => new LeaveManagement.PasswordGenerator.PasswordGeneratorOptions() { LengthOfPassword = expectedLength });
 
             string password = passwordGenerator.GeneratePassword();
             Assert.AreEqual(expectedLength, password.Length);
