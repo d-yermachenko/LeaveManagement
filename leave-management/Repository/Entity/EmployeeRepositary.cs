@@ -36,6 +36,8 @@ namespace LeaveManagement.Repository.Entity {
 
         private IEmailSender _EmailSender;
 
+        private readonly IStringLocalizer _EmployeeLocalizer;
+
         public EmployeeRepository(ILeaveManagementCustomLocalizerFactory localizerFactory,
             ApplicationDbContext applicationDbContext,
             UserManager<IdentityUser> userManager,
@@ -50,6 +52,7 @@ namespace LeaveManagement.Repository.Entity {
             _Logger = logger;
             _Mapper = mapper;
             _EmailSender = emailSender;
+            _EmployeeLocalizer = _LocalizerFactory.Create(this.GetType());
         }
 
         public async Task<bool> RegisterEmployeeAsync(Employee entity, string password) {
@@ -95,7 +98,7 @@ namespace LeaveManagement.Repository.Entity {
                 if (changes > 0)
                     return await _ApplicationDbContext.Employees.FindAsync(id);
                 else
-                    throw new KeyNotFoundException(_LocalizerFactory.MiscelanousLocalizer["User not found"]);
+                    throw new KeyNotFoundException(_EmployeeLocalizer["User not found"]);
             }
 
             return await Task.Run(() => _ApplicationDbContext.Employees.First(x => x.Id.Equals(id)));
@@ -106,7 +109,7 @@ namespace LeaveManagement.Repository.Entity {
         public async Task<bool> UpdateAsync(Employee entity) {
             var userData = await FindByIdAsync(entity.Id);
             if (userData is null)
-                throw new ArgumentOutOfRangeException(_LocalizerFactory.MiscelanousLocalizer["User you provided was not yet created"]);
+                throw new ArgumentOutOfRangeException(_EmployeeLocalizer["User you provided was not yet created"]);
             userData = _Mapper.Map<Employee>(entity);
             #region Modification
             userData.Title = entity.Title;

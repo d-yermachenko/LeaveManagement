@@ -41,7 +41,9 @@ namespace LeaveManagement {
                 new CultureInfo("en"),
                 new CultureInfo("en-US"),
                 new CultureInfo("ru"),
-                new CultureInfo("fr")
+                new CultureInfo("fr"),
+                new CultureInfo("fr-CH"),
+                new CultureInfo("de-CH")
             };
 
 

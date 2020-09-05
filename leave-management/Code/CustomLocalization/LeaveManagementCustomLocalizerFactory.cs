@@ -38,6 +38,7 @@ namespace LeaveManagement.Code.CustomLocalization {
 
         /// <summary>
         /// List of mappers from type to corresponded resource name.
+        /// Mapper gets the type and returns 
         /// </summary>
         public ConcurrentBag<Func<Type, Tuple<string, string>>> ConventionalResourceMappers { get; private set; }
 
@@ -47,7 +48,7 @@ namespace LeaveManagement.Code.CustomLocalization {
         /// <param name="factory"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public IStringLocalizer MapRessourceToType(IStringLocalizerFactory factory, Type type) {
+        protected IStringLocalizer MapRessourceToType(IStringLocalizerFactory factory, Type type) {
             IStringLocalizer result = null;
             Tuple<string, string> knownMapping = null;
             Parallel.For(0, ConventionalResourceMappers.Count, (element, state) => {
@@ -75,7 +76,6 @@ namespace LeaveManagement.Code.CustomLocalization {
             ConventionalResourceMappers.Add(LeaveManagementViewModelDataAnnotationsMapper);
             ConventionalResourceMappers.Add(LeaveManagementControllerMapper);
             ConventionalResourceMappers.Add(LeaveManagementIdentityMapper);
-
         }
 
 
@@ -159,16 +159,7 @@ namespace LeaveManagement.Code.CustomLocalization {
             }
         }
 
-        private IStringLocalizer MiscelanousLocalizerField = null;
-
-        public IStringLocalizer MiscelanousLocalizer{
-            get {
-                if(MiscelanousLocalizerField == null)
-                    MiscelanousLocalizerField = StringLocalizerFactory.Create("LeaveManagement.MiscLocalizer.Miscellaneous", this.GetType().Assembly.FullName);
-                return MiscelanousLocalizerField;
-            }
-        }
-
+        
         private IHtmlLocalizer HtmlIdentityLocalizerField;
 
         public IHtmlLocalizer HtmlIdentityLocalizer {

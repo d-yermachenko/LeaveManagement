@@ -10,8 +10,6 @@ namespace LeaveManagement.Code.CustomLocalization {
 
         IStringLocalizer MenuLocalizer { get;  }
 
-        IStringLocalizer MiscelanousLocalizer { get; }
-
         IHtmlLocalizer HtmlIdentityLocalizer { get;  }
 
         IStringLocalizer StringIdentityLocalizer { get;  }
