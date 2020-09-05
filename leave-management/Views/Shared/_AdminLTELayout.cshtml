@@ -5,6 +5,7 @@
 @{
     IdentityUser AppUser = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
     IList<string> UserRoles = AppUser != null ? await UserManager.GetRolesAsync(AppUser) : null;
+    Microsoft.AspNetCore.Routing.RouteValueDictionary CurrentRoute = Context.Request.RouteValues;
 }
 
 <!DOCTYPE html>
@@ -41,6 +42,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </ul>
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
+                <!--Langudage dropdown menu-->
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="fa fa-globe" title="@Localizer["Language"]"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-sm-right">
+                        <span class="dropdown-header">@Localizer["Please chose your language"]</span>
+                        @foreach (var culture in GlobalizationStartup.SupportedCultures)
+                        {
+                            <div class="dropdown-divider"></div>
+
+                            <a class="dropdown-item text-sm" asp-controller="Home" asp-action="SwitchCulture" asp-route-cultureCode="@culture.Name"
+                               asp-route-refController="@(CurrentRoute.ContainsKey("controller")? CurrentRoute["controller"] :"")" 
+                               asp-route-refAction="@(CurrentRoute.ContainsKey("action")? CurrentRoute["action"] :"")"
+                               asp-route-refId="@(CurrentRoute.ContainsKey("id")? CurrentRoute["id"] :"")">
+                                <i class="fa fa-flag"></i> @culture.DisplayName
+                            </a>
+                        }
+                    </div>
+                </li>
                 <!-- Notifications Dropdown Menu -->
                 <partial name="_Notifications" />
             </ul>

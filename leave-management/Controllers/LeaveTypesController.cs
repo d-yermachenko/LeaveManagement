@@ -15,7 +15,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Controllers {
-    
+
+    [MiddlewareFilter(typeof(LocalizationPipeline))]
+    [Authorize]
     public class LeaveTypesController : Controller {
 
         private readonly ILogger<LeaveTypesController> _Logger;
@@ -46,16 +48,18 @@ namespace LeaveManagement.Controllers {
 
         #region Reading
         // GET: LeaveTypes
-        [Authorize(Roles = "Administrator,HRStaff")]
         public async Task<ActionResult> Index() {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
             List<Data.Entities.LeaveType> leaveTypes = (await _Repository.FindAllAsync()).ToList();
             var viewModel = _Mapper.Map<List<Data.Entities.LeaveType>, List<LeaveTypeNavigationViewModel>>(leaveTypes);
             return View(viewModel);
         }
 
         // GET: LeaveTypes/Details/5
-        [Authorize(Roles = "Administrator,HRStaff")]
         public async Task<ActionResult> Details(int id) {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
             var entry = await _Repository.FindByIdAsync(id);
             if (entry == null) {
                 string errorMessage = ControllerLocalizer["Impossible to find leave type #{0}. Please check the adress", id];
@@ -69,9 +73,10 @@ namespace LeaveManagement.Controllers {
 
         #region Create
 
-        [Authorize(Roles = "Administrator")]
         // GET: LeaveTypes/Create
-        public ActionResult Create() {
+        public async Task<ActionResult> Create() {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
             return View();
         }
 
@@ -79,8 +84,9 @@ namespace LeaveManagement.Controllers {
         //POST: LeaveTypes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Create(LeaveTypeEditionViewModel creationModel) {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
             string newName = string.Empty;
             try {
                 if (!ModelState.IsValid) {
@@ -123,9 +129,10 @@ namespace LeaveManagement.Controllers {
 
         #region Edit
         // GET: LeaveTypes/Edit/5
-        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Edit(int id) {
-              try {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
+            try {
                 var leaveType = await _Repository.FindByIdAsync(id);
                 if (leaveType == null) {
                     return NotFound();
@@ -148,8 +155,9 @@ namespace LeaveManagement.Controllers {
         // POST: LeaveTypes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Edit(int id, LeaveTypeEditionViewModel editionViewModel) {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
             string newName = string.Empty;
             try {
                 if (!ModelState.IsValid) {
@@ -188,8 +196,9 @@ namespace LeaveManagement.Controllers {
 
         #region Remove
         // GET: LeaveTypes/Delete/5
-        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Delete(int id) {
+            if ((await _SignInManager.UserManager?.IsPrivelegedUser(User)) != true)
+                return Forbid();
             try {
                 var instanceToDelete = await _Repository.FindByIdAsync(id);
                 if (instanceToDelete == null) {
@@ -214,14 +223,6 @@ namespace LeaveManagement.Controllers {
                 HomeController.DisplayProblem(_Logger, this, errorMessage, errorTitle, dbException);
                 return RedirectToAction(nameof(Index));
             }
-        }
-
-
-        #endregion
-
-        #region Anomalies handling
-        private void NotifyAnomaly(Exception exception) {
-
         }
         #endregion
     }

@@ -62,20 +62,7 @@ namespace LeaveManagement.Repository.Entity {
             if (!hasUser)
                 return false;
             bool hasEmployee = await _ApplicationDbContext.Employees.AnyAsync(x => x.Id.Equals(newUser.Id));
-            Employee employee;
-            if (hasEmployee)
-                return true;
-            else
-                employee = _Mapper.Map<Employee>(newUser);
-            _ApplicationDbContext.Remove(newUser);
-            int updatedRecords = 0;
-            try {
-                updatedRecords = await _ApplicationDbContext.SaveChangesAsync();
-            }
-            catch (AggregateException e) {
-                _Logger?.LogError(e.Flatten(), e.Message);
-            }
-            return updatedRecords == 1;
+            return hasEmployee;
         }
 
         public async Task<bool> CreateAsync(Employee entity) {

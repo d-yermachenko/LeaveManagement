@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Controllers {
+    [MiddlewareFilter(typeof(LocalizationPipeline))]
     public class EmployeeController : Controller {
 
         private const string RegisterEmployeeView = "RegisterEmployee2Col";
@@ -145,7 +146,10 @@ namespace LeaveManagement.Controllers {
                 return View(RegisterEmployeeView, employeeCreationVM);
             }
             else {
-                return Redirect(referer);
+                if (!String.IsNullOrEmpty(referer))
+                    return Redirect(referer);
+                else
+                    return RedirectToAction("Index", "Home");
             }
 
         }

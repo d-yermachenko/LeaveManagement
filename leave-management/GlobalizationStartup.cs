@@ -16,6 +16,11 @@ using System.Linq;
 namespace LeaveManagement {
     public static class GlobalizationStartup {
 
+        public static readonly CultureInfo DefaultCulture = new CultureInfo("en-US");
+
+        public const string CultureRoutePartName = "culture";
+
+
         #region Startup methods
         public static void ConfigureServices(IServiceCollection services) {
             services.AddLocalization(options => {
@@ -32,15 +37,15 @@ namespace LeaveManagement {
             );
         }
 
-
-
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            CultureInfo[] supportedCultures = new CultureInfo[] {
+        public static readonly CultureInfo[] SupportedCultures = new CultureInfo[] {
                 new CultureInfo("en"),
                 new CultureInfo("en-US"),
                 new CultureInfo("ru"),
                 new CultureInfo("fr")
             };
+
+
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
 
             var localizationService = app.ApplicationServices.GetRequiredService<ILeaveManagementCustomLocalizerFactory>();
             var options1 = app.ApplicationServices.GetService<IOptions<MvcDataAnnotationsLocalizationOptions>>();
@@ -60,15 +65,33 @@ namespace LeaveManagement {
             };
 
             app.UseRequestLocalization(new RequestLocalizationOptions {
-                DefaultRequestCulture = new RequestCulture("en-US"),
+                DefaultRequestCulture = new RequestCulture(DefaultCulture),
                 RequestCultureProviders = cultureProviders.ToList(),
                 // Formatting numbers, dates, etc.
-                SupportedCultures = supportedCultures,
+                SupportedCultures = SupportedCultures,
                 // UI strings that we have localized.
-                SupportedUICultures = supportedCultures
+                SupportedUICultures = SupportedCultures
             });
 
         }
         #endregion
+    }
+
+
+    public class LocalizationPipeline {
+        public void Configure(IApplicationBuilder app) {
+
+
+            var options = new RequestLocalizationOptions() {
+
+                DefaultRequestCulture = new RequestCulture(GlobalizationStartup.DefaultCulture),
+                SupportedCultures = GlobalizationStartup.SupportedCultures,
+                SupportedUICultures = GlobalizationStartup.SupportedCultures,
+            };
+
+            options.RequestCultureProviders = new[] { new RouteDataRequestCultureProvider() { Options = options, RouteDataStringKey = GlobalizationStartup.CultureRoutePartName, UIRouteDataStringKey = GlobalizationStartup.CultureRoutePartName } };
+
+            app.UseRequestLocalization(options);
+        }
     }
 }

@@ -20,6 +20,9 @@ using Microsoft.Extensions.Options;
 using LeaveManagement.PasswordGenerator;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using LeaveManagement.EmailSender;
+using Microsoft.AspNetCore.Http;
+using LeaveManagement.Code;
+using Microsoft.AspNetCore.Routing;
 
 namespace LeaveManagement {
     public class Startup {
@@ -66,6 +69,7 @@ namespace LeaveManagement {
                     () => Configuration.GetSection(nameof(SmtpSettings)).Get<EmailSender.SmtpSettings>()
                 )
             );
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,12 +98,14 @@ namespace LeaveManagement {
             app.UseAuthorization();
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{culture}/{controller}/{action}/{id?}",
-                    defaults: new { culture = CultureInfo.CurrentCulture.Name, controller = "Home", action = "Index" });
+                    name: "LocalizedDefault",
+                    pattern: $"{{{GlobalizationStartup.CultureRoutePartName}}}/{{controller}}/{{action}}/{{id?}}",
+                    defaults: new { culture = GlobalizationStartup.DefaultCulture.Name, controller = "Home", action = "Index" });
+                endpoints.MapControllerRoute(name: "default", pattern: "{*catchall}",  defaults: new { controller = "Home", action = "RedirectToDefaultLanguage", culture = GlobalizationStartup.DefaultCulture.Name});
                 endpoints.MapRazorPages();
             });
             GlobalizationStartup.Configure(app, env);
+
             try {
                 seedingTask.Wait();
             }
