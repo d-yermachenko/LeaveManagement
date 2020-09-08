@@ -120,19 +120,123 @@
   <data name="Accepted requests" xml:space="preserve">
     <value>Demandes acceptées</value>
   </data>
+  <data name="Approuved" xml:space="preserve">
+    <value>Approuved</value>
+    <comment>Approuved</comment>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Commentaire</value>
+    <comment>Comment</comment>
+  </data>
   <data name="Date of beginning" xml:space="preserve">
     <value>Date de debut</value>
+  </data>
+  <data name="Date of ending" xml:space="preserve">
+    <value>Date de fin</value>
+    <comment>Date of ending</comment>
+  </data>
+  <data name="Days that you can request for leave" xml:space="preserve">
+    <value>Jours restantes</value>
+    <comment>Days that you can request for leave</comment>
+  </data>
+  <data name="End date" xml:space="preserve">
+    <value>Date de fin</value>
+    <comment>End date</comment>
+  </data>
+  <data name="End date is required" xml:space="preserve">
+    <value>La date de fin est requise</value>
+    <comment>End date is required</comment>
+  </data>
+  <data name="Leave type" xml:space="preserve">
+    <value>Type de congé</value>
+    <comment>Leave type</comment>
+  </data>
+  <data name="Leave Type is required" xml:space="preserve">
+    <value>Type de congé requis</value>
+    <comment>Leave Type is required</comment>
   </data>
   <data name="List of requests without any sorting" xml:space="preserve">
     <value>Liste total de demandes</value>
   </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>Modérateur</value>
+    <comment>Moderator</comment>
+  </data>
+  <data name="Number of days in not still reviewed request" xml:space="preserve">
+    <value>Nombre de jours en requettes en attente</value>
+    <comment>Number of days in not still reviewed request</comment>
+  </data>
+  <data name="Number of days, that was approuved" xml:space="preserve">
+    <value>Nombre des jours approuvees</value>
+    <comment>Number of days, that was approuved</comment>
+  </data>
+  <data name="Number of days, which was approuved, and period of leave began" xml:space="preserve">
+    <value>Nombre des jours approuvées et période de départ as déjà commence</value>
+    <comment>Number of days, which was approuved, and period of leave began</comment>
+  </data>
+  <data name="Number of days, which were rejected" xml:space="preserve">
+    <value>Nombre des jours rejetés par manager</value>
+    <comment>Number of days, which were rejected</comment>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Attente</value>
+    <comment>Pending</comment>
+  </data>
   <data name="Pending requests" xml:space="preserve">
     <value>Demandes en attente</value>
+  </data>
+  <data name="Please select leaveType" xml:space="preserve">
+    <value>Sélectionnez le type de départ, s'il vous plait</value>
+    <comment>Please select leaveType</comment>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Rejeté</value>
+    <comment>Rejected</comment>
   </data>
   <data name="Rejected requests requests" xml:space="preserve">
     <value>Demandes refusees</value>
   </data>
+  <data name="Requested at" xml:space="preserve">
+    <value>Demandé à</value>
+    <comment>Requested at</comment>
+  </data>
+  <data name="Requesting employee" xml:space="preserve">
+    <value>Demande d’employé</value>
+    <comment>Requesting employee</comment>
+  </data>
   <data name="Requests to handle by manager" xml:space="preserve">
     <value>Demandes à traiter par responsable</value>
+  </data>
+  <data name="Requests, accepted by manager. Employee can take his leave in indicated period" xml:space="preserve">
+    <value>Demandes acceptées par manager. Employee peut partir en period indiqué</value>
+    <comment>Requests, accepted by manager. Employee can take his leave in indicated period</comment>
+  </data>
+  <data name="Requests, rejected by manager. Employee cant leave the company in indicated period" xml:space="preserve">
+    <value>Demandes rejetées par manager. Employee doit rester</value>
+    <comment>Requests, rejected by manager. Employee cant leave the company in indicated period</comment>
+  </data>
+  <data name="Sold of days" xml:space="preserve">
+    <value>Vendu de jours</value>
+    <comment>Sold of days</comment>
+  </data>
+  <data name="Start date" xml:space="preserve">
+    <value>Date de début</value>
+    <comment>Start date</comment>
+  </data>
+  <data name="Start date is required" xml:space="preserve">
+    <value>La date de début est requise</value>
+    <comment>Start date is required</comment>
+  </data>
+  <data name="Total number of leave requests" xml:space="preserve">
+    <value>Nombre total de demandes de congés</value>
+    <comment>Total number of leave requests</comment>
+  </data>
+  <data name="Used" xml:space="preserve">
+    <value>Utilisé</value>
+    <comment>Used</comment>
+  </data>
+  <data name="Your allocation" xml:space="preserve">
+    <value>Votre allocation</value>
+    <comment>Your allocation</comment>
   </data>
 </root>

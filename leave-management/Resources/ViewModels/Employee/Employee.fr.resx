@@ -117,42 +117,156 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Confirm new password" xml:space="preserve">
-    <value>Confirmez mot de pas</value>
-    <comment>Confirm new password</comment>
+  <data name="Accept th conditions" xml:space="preserve">
+    <value>Accepter les conditions th</value>
+    <comment>Accept th conditions</comment>
+  </data>
+  <data name="Agree to all conditions" xml:space="preserve">
+    <value>Accepter toutes les conditions</value>
+    <comment>Agree to all conditions</comment>
   </data>
   <data name="Confirm password" xml:space="preserve">
-    <value>Confirmez mot de passe</value>
+    <value>Confirmer le mot de passe</value>
+    <comment>Confirm password</comment>
   </data>
-  <data name="Current password" xml:space="preserve">
-    <value>Mot de passe courant</value>
-    <comment>Current password</comment>
+  <data name="Confirm your password" xml:space="preserve">
+    <value>Confirmez votre mot de passe</value>
+    <comment>Confirm your password</comment>
   </data>
-  <data name="Date when this person joined the company" xml:space="preserve">
-    <value>Date quand ce personne rejoiné la companie</value>
+  <data name="Date of birth" xml:space="preserve">
+    <value>Date de naissance</value>
+    <comment>Date of birth</comment>
   </data>
-  <data name="New email" xml:space="preserve">
-    <value>Nouvelle email</value>
-    <comment>New email</comment>
+  <data name="Date of birth cant be empty" xml:space="preserve">
+    <value>Date de naissance ne peut pas être vide</value>
+    <comment>Date of birth cant be empty</comment>
   </data>
-  <data name="New password" xml:space="preserve">
-    <value>Nouvelle mot de pass</value>
-    <comment>New password</comment>
+  <data name="Date of birth of employee" xml:space="preserve">
+    <value>Date de naissance de l’employé</value>
+    <comment>Date of birth of employee</comment>
   </data>
-  <data name="Remember me?" xml:space="preserve">
-    <value>Rappeler moi</value>
-    <comment>Remember me?</comment>
+  <data name="Date of employement" xml:space="preserve">
+    <value>Date d’emploi</value>
+    <comment>Date of employement</comment>
   </data>
-  <data name="The new password and confirmation password do not match." xml:space="preserve">
-    <value>Nouveau mot de pas et sa confirmation de sont pas egaux</value>
-    <comment>The new password and confirmation password do not match.</comment>
+  <data name="Email" xml:space="preserve">
+    <value>Messagerie électronique</value>
+    <comment>Email</comment>
   </data>
-  <data name="The {0} field is not a valid e-mail address." xml:space="preserve">
-    <value>Le champ {0} n'est pas addresse e-mail valide.</value>
-    <comment>The New email field is not a valid e-mail address.</comment>
+  <data name="Employee title" xml:space="preserve">
+    <value>Titre de l’employé</value>
+    <comment>Employee title</comment>
+  </data>
+  <data name="Employement date" xml:space="preserve">
+    <value>Date d’emploi</value>
+    <comment>Employement date</comment>
+  </data>
+  <data name="Enter first name" xml:space="preserve">
+    <value>Entrez le prénom</value>
+    <comment>Enter first name</comment>
+  </data>
+  <data name="Enter last(family) name" xml:space="preserve">
+    <value>Entrez le nom de la dernière (famille)</value>
+    <comment>Enter last(family) name</comment>
+  </data>
+  <data name="Enter phone number" xml:space="preserve">
+    <value>Entrez le numéro de téléphone</value>
+    <comment>Enter phone number</comment>
+  </data>
+  <data name="Enter user name" xml:space="preserve">
+    <value>Entrez le nom d’utilisateur</value>
+    <comment>Enter user name</comment>
+  </data>
+  <data name="First name" xml:space="preserve">
+    <value>Prénom</value>
+    <comment>First name</comment>
+  </data>
+  <data name="First name required" xml:space="preserve">
+    <value>Prénom requis</value>
+    <comment>First name required</comment>
+  </data>
+  <data name="Function of this employee" xml:space="preserve">
+    <value>Fonction de cet employé</value>
+    <comment>Function of this employee</comment>
+  </data>
+  <data name="Last (family) name" xml:space="preserve">
+    <value>Nom du famille</value>
+    <comment>Last (family) name</comment>
+  </data>
+  <data name="Last name" xml:space="preserve">
+    <value>Nom de famille</value>
+    <comment>Last name</comment>
+  </data>
+  <data name="Last name required" xml:space="preserve">
+    <value>Nom de famille requis</value>
+    <comment>Last name required</comment>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Nom</value>
+    <comment>LastName</comment>
+  </data>
+  <data name="M., Ms., Mrs., Miss" xml:space="preserve">
+    <value>M., Mme, Mme, Mlle</value>
+    <comment>M., Ms., Mrs., Miss</comment>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mot de passe</value>
+    <comment>Password</comment>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Téléphone</value>
+    <comment>Phone</comment>
+  </data>
+  <data name="Phone number" xml:space="preserve">
+    <value>Numéro de téléphone</value>
+    <comment>Phone number</comment>
+  </data>
+  <data name="Phone number required" xml:space="preserve">
+    <value>Numéro de téléphone requis</value>
+    <comment>Phone number required</comment>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rôles</value>
+    <comment>Roles</comment>
+  </data>
+  <data name="The main user name which will be displayed like your login" xml:space="preserve">
+    <value>Le nom d’utilisateur principal qui s’affichera comme votre connexion</value>
+    <comment>The main user name which will be displayed like your login</comment>
+  </data>
+  <data name="The main user name which will be displayed like your login1" xml:space="preserve">
+    <value>Le nom d’utilisateur principal qui s’affichera comme votre connexion</value>
+    <comment>The main user name which will be displayed like your login</comment>
+  </data>
+  <data name="The password and confirmation password do not match." xml:space="preserve">
+    <value>Le mot de passe et le mot de passe de confirmation ne correspondent pas.</value>
+    <comment>The password and confirmation password do not match.</comment>
   </data>
   <data name="The {0} must be at least {2} and at max {1} characters long." xml:space="preserve">
-    <value>Le {0} doit etre entre {2} et {1} characters de longeur</value>
-    <comment>The New password must be at least 6 and at max 100 characters long.</comment>
+    <value>Le {0} doit être au moins {2} et au maximum {1} caractères longs.</value>
+    <comment>The Password must be at least 6 and at max 100 characters long.</comment>
+  </data>
+  <data name="User name" xml:space="preserve">
+    <value>Nom d’utilisateur</value>
+    <comment>User name</comment>
+  </data>
+  <data name="User name is required" xml:space="preserve">
+    <value>Le nom d’utilisateur est requis</value>
+    <comment>User name is required</comment>
+  </data>
+  <data name="Users' first name" xml:space="preserve">
+    <value>Prénom de l'utilisateur</value>
+    <comment>Users' first name</comment>
+  </data>
+  <data name="You must accept contract" xml:space="preserve">
+    <value>Vous devez accepter le contrat</value>
+    <comment>You must accept contract</comment>
+  </data>
+  <data name="Your email" xml:space="preserve">
+    <value>Votre e-mail</value>
+    <comment>Your email</comment>
+  </data>
+  <data name="Your password" xml:space="preserve">
+    <value>Votre mot de passe</value>
+    <comment>Your password</comment>
   </data>
 </root>

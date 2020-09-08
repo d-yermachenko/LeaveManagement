@@ -117,6 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Allocate leave" xml:space="preserve">
+    <value>Выделение отпуска</value>
+    <comment>Allocate leave</comment>
+  </data>
+  <data name="Allocate {0}" xml:space="preserve">
+    <value>Выделите {0}</value>
+    <comment>Allocate Illness</comment>
+  </data>
+  <data name="Allocate {0} to all employees" xml:space="preserve">
+    <value>Выделение {0} всем сотрудникам</value>
+    <comment>Allocate Illness to all employees</comment>
+  </data>
+  <data name="Are you sure you want to allocate this leave type to all employees?" xml:space="preserve">
+    <value>Вы уверены, что хотите выделить этот тип отпуска всем сотрудникам?</value>
+    <comment>Are you sure you want to allocate this leave type to all employees?</comment>
+  </data>
   <data name="Back to List" xml:space="preserve">
     <value>Вернуться</value>
   </data>
@@ -125,6 +141,9 @@
   </data>
   <data name="Create" xml:space="preserve">
     <value>Создать</value>
+  </data>
+  <data name="Create leave request" xml:space="preserve">
+    <value>Запросить отпуск</value>
   </data>
   <data name="Create New" xml:space="preserve">
     <value>Новый</value>

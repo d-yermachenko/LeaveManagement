@@ -126,6 +126,9 @@
   <data name="Create" xml:space="preserve">
     <value>Créer</value>
   </data>
+  <data name="Create leave request" xml:space="preserve">
+    <value>Demander l'absence</value>
+  </data>
   <data name="Create New" xml:space="preserve">
     <value>Nouveau</value>
   </data>

@@ -24,6 +24,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Controllers {
     [Authorize]
+    [MiddlewareFilter(typeof(LocalizationPipeline))]
     public class LeaveAllocationController : Controller {
         #region Constructor and depencies
 

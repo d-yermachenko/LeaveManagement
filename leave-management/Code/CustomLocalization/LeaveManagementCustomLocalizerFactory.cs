@@ -1,11 +1,16 @@
-﻿using LeaveManagement.Data.Entities;
+﻿using AutoMapper.Configuration;
+using Microsoft.Extensions.Configuration;
+using LeaveManagement.Data.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
+using ResourceAutoCompleter;
 using System;
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Code.CustomLocalization {
     public class LeaveManagementCustomLocalizerFactory : ILeaveManagementCustomLocalizerFactory {
@@ -20,15 +25,21 @@ namespace LeaveManagement.Code.CustomLocalization {
         private readonly IStringLocalizerFactory StringLocalizerFactory;
 
         private readonly IHtmlLocalizerFactory HtmlLocalizerFactory; //For possible future ViewLocalizer
-
         private readonly IWebHostEnvironment WebHostEnvironment; //For possible future ViewLocalizer
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _Configuration;
+        private readonly ILogger<LeaveManagementCustomLocalizerFactory> _Logger;
 
         public LeaveManagementCustomLocalizerFactory(IStringLocalizerFactory stringLocalizerFactory,
         IHtmlLocalizerFactory htmlLocalizerFactory,
-        IWebHostEnvironment hostEnvironement = null) {
+        Microsoft.Extensions.Configuration.IConfiguration configuration,
+        ILogger<LeaveManagementCustomLocalizerFactory> logger,
+        IWebHostEnvironment hostEnvironement = null
+        ) {
             StringLocalizerFactory = stringLocalizerFactory;
             HtmlLocalizerFactory = htmlLocalizerFactory;
             WebHostEnvironment = hostEnvironement;
+            _Configuration = configuration;
+            _Logger = logger;
             InitMappers();
         }
         #endregion
@@ -64,12 +75,32 @@ namespace LeaveManagement.Code.CustomLocalization {
                 }
             });
             if (knownMapping != null)
-                result = factory.Create(knownMapping.Item1, knownMapping.Item2);
+                result = CreateLocalizer(knownMapping.Item1, knownMapping.Item2, factory);
             else
                 result = factory.Create(type);
             return result;
         }
 
+
+        protected IStringLocalizer CreateLocalizer(string baseName, string assembly, IStringLocalizerFactory factory) {
+            IStringLocalizer realLocalizer = factory.Create(baseName, assembly);
+            if (!(Environment.GetEnvironmentVariable("ResourcesDebug")?.Equals("ResourcesDebug") ??false))
+                return realLocalizer;
+            AutocompleteResourceConfiguration configuration = _Configuration.GetSection(nameof(AutocompleteResourceConfiguration)).Get<AutocompleteResourceConfiguration>();
+            IStringLocalizer debugLocalizer = new AutoCompleterStringLocalizer(realLocalizer, CultureInfo.CurrentCulture,
+                baseName, configuration, _Logger);
+            return debugLocalizer;
+        }
+
+        protected IStringLocalizer CreateLocalizer(Type type, IStringLocalizerFactory factory) {
+            IStringLocalizer realLocalizer = factory.Create(type);
+            if (!(Environment.GetEnvironmentVariable("ResourcesDebug")?.Equals("ResourcesDebug") ?? false))
+                return realLocalizer;
+            AutocompleteResourceConfiguration configuration = _Configuration.GetSection(nameof(AutocompleteResourceConfiguration)).Get<AutocompleteResourceConfiguration>();
+            IStringLocalizer debugLocalizer = new AutoCompleterStringLocalizer(realLocalizer, CultureInfo.CurrentCulture,
+                type.FullName, configuration, _Logger);
+            return debugLocalizer;
+        }
 
         private void InitMappers() {
             ConventionalResourceMappers = new ConcurrentBag<Func<Type, Tuple<string, string>>>();
@@ -136,7 +167,7 @@ namespace LeaveManagement.Code.CustomLocalization {
 
         public IStringLocalizer Create(Type type) => MapRessourceToType(StringLocalizerFactory, type);
 
-        public IStringLocalizer Create(string baseName, string location) => StringLocalizerFactory.Create(baseName, location);
+        public IStringLocalizer Create(string baseName, string location) => CreateLocalizer(baseName, location, StringLocalizerFactory);
 
 
         private IStringLocalizer CommandsLocalizerField = null;
@@ -144,7 +175,7 @@ namespace LeaveManagement.Code.CustomLocalization {
         public IStringLocalizer CommandsLocalizer {
             get {
                 if (CommandsLocalizerField == null)
-                    CommandsLocalizerField = StringLocalizerFactory.Create("LeaveManagement.CommandsLocalizer.CommandLocalization", this.GetType().Assembly.FullName);
+                    CommandsLocalizerField = CreateLocalizer("LeaveManagement.CommandsLocalizer.CommandLocalization", this.GetType().Assembly.FullName, StringLocalizerFactory);
                 return CommandsLocalizerField;
             }
         }
@@ -154,7 +185,7 @@ namespace LeaveManagement.Code.CustomLocalization {
         public IStringLocalizer MenuLocalizer {
             get {
                 if(MenuLocalizerField == null)
-                    MenuLocalizerField = StringLocalizerFactory.Create("LeaveManagement.MenuLocalizer.MenuLocalizer", this.GetType().Assembly.FullName);
+                    MenuLocalizerField = CreateLocalizer("LeaveManagement.MenuLocalizer.MenuLocalizer", this.GetType().Assembly.FullName, StringLocalizerFactory);
                 return MenuLocalizerField;
             }
         }

@@ -19,6 +19,8 @@ namespace LeaveManagement.Areas.Identity
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();*/
             });
+
+
         }
     }
 }

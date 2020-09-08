@@ -123,6 +123,10 @@
   <data name="Date when this leave type was created" xml:space="preserve">
     <value>Дата, когда данный тип отутствия был создан</value>
   </data>
+  <data name="Default number of days" xml:space="preserve">
+    <value>Количество дней по умолчанию</value>
+    <comment>Default number of days</comment>
+  </data>
   <data name="Id of leave type" xml:space="preserve">
     <value>Код типа отсутствия</value>
   </data>

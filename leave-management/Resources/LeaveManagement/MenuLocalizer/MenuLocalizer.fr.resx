@@ -117,6 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Administration" xml:space="preserve">
+    <value>Administration</value>
+    <comment>Administration</comment>
+  </data>
+  <data name="Allocate leaves" xml:space="preserve">
+    <value>Attribuer les congés</value>
+    <comment>Allocate leaves</comment>
+  </data>
+  <data name="Apply for leave" xml:space="preserve">
+    <value>Demander un congé</value>
+    <comment>Apply for leave</comment>
+  </data>
+  <data name="Change email" xml:space="preserve">
+    <value>Modifier le courrier électronique</value>
+    <comment>Change email</comment>
+  </data>
+  <data name="Change password" xml:space="preserve">
+    <value>Modifier le mot de passe</value>
+    <comment>Change password</comment>
+  </data>
+  <data name="Create employee" xml:space="preserve">
+    <value>Créer un employé</value>
+    <comment>Create employee</comment>
+  </data>
+  <data name="Edit profile" xml:space="preserve">
+    <value>Modifier le profil</value>
+    <comment>Edit profile</comment>
+  </data>
+  <data name="Employees" xml:space="preserve">
+    <value>Employés</value>
+    <comment>Employees</comment>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Page maison</value>
   </data>
@@ -124,15 +156,31 @@
     <value>Prises d'absence</value>
   </data>
   <data name="Leave history" xml:space="preserve">
-    <value>Historique des absences</value>
+    <value>Historique des congés</value>
+  </data>
+  <data name="Leave management" xml:space="preserve">
+    <value>Gestion des congés</value>
+    <comment>Leave management</comment>
   </data>
   <data name="Leave requests" xml:space="preserve">
-    <value>Demandes de l'absence</value>
+    <value>Demandes des congés</value>
   </data>
   <data name="Leave types" xml:space="preserve">
-    <value>Types d'absence</value>
+    <value>Types des congés</value>
+  </data>
+  <data name="My leaves" xml:space="preserve">
+    <value>Mes feuilles</value>
+    <comment>My leaves</comment>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>Vie privé</value>
+  </data>
+  <data name="Review leave requests" xml:space="preserve">
+    <value>Examiner les demandes de congés</value>
+    <comment>Review leave requests</comment>
+  </data>
+  <data name="Review requests" xml:space="preserve">
+    <value>Examiner les demandes</value>
+    <comment>Review requests</comment>
   </data>
 </root>

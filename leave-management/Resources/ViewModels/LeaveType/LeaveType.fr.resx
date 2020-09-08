@@ -117,11 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Author of this leave type" xml:space="preserve">
+    <value>Auteur de ce type de congé</value>
+    <comment>Author of this leave type</comment>
+  </data>
   <data name="Date of creation" xml:space="preserve">
-    <value>Date de creation</value>
+    <value>Date de création</value>
   </data>
   <data name="Date when this leave type was created" xml:space="preserve">
     <value>Quand ce type d'absence était crée</value>
+  </data>
+  <data name="Default number of days" xml:space="preserve">
+    <value>Nombre des jours par défaut </value>
+    <comment>Default number of days</comment>
   </data>
   <data name="Expected value: text" xml:space="preserve">
     <value>Valeur attendue: texte</value>

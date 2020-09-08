@@ -12,38 +12,39 @@ namespace LeaveManagement.ViewModels.Employee {
         [HiddenInput()]
         public string Id { get; set; }
 
-        [Display(Name ="User name", Description ="", ShortName ="")]
+        [Display(Name ="User name", Description ="", ShortName ="", Prompt = "User name")]
         public string UserName { get; set; }
 
-        [Display(Name = "Title", Description ="Mr/Ms/Mrs")]
+        [Display(Name = "Title", Description ="Mr/Ms/Mrs", Prompt = "Title")]
         public string Title { get; set; }
 
-        [Display(Name = "First name", Description = "Users' first name")]
+        [Display(Name = "First name", Description = "Users' first name", Prompt = "First name")]
         public string FirstName { get; set; }
 
-        [Display(Name = "Last name", Description = "Last (family) name")]
+        [Display(Name = "Last name", Description = "Last (family) name", Prompt = "Last name")]
         public string LastName { get; set; }
 
-        [Display(Name = "Phone number", Description = "Phone")]
+        [Display(Name = "Phone number", Description = "Phone", Prompt = "Please enter the phone number")]
         public string PhoneNumber { get; set; }
 
-        [Display(Name = "Email")]
+        [Display(Name = "Email", Description ="Email", Prompt = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Tax of employee")]
+        [Display(Name = "Tax of employee", Description ="Tax rate", Prompt ="Enter tax of employee")]
         public string TaxRate { get; set; }
 
-        [Display(Name = "Date of birth of employee")]
+        [Display(Name = "Date of birth", Description = "Date of birth of employee", Prompt ="Enter date of birth")]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
-        [Display(Name = "Date of employement")]
+        [Display(Name = "Date of employement", Description = "Date of the beginning of the contract", Prompt ="Enter day of the beginning of the contract")]
         [DataType(DataType.Date)]
         public DateTime EmploymentDate { get; set; }
 
-        [Display(Name ="RH Manager")]
+        [Display(Name ="RH Manager", Description ="Manager who can validate his ", Prompt = "RH manager")]
         public EmployeePresentationDefaultViewModel Manager { get; set; }
 
+        [Display(Name = "RH Manager", Description = "Manager who can validate his ", Prompt = "RH manager")]
         public string ManagerId { get; set; }
     }
 }

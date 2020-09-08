@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-leave_management-843EE85D-BF16-42E2-9B13-C0F91729D284</UserSecretsId>
     <RootNamespace>LeaveManagement</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,12 +26,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\Views\LeaveAllocation\" />
+    <Folder Include="Resources\Views\Company\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\lib\dataTables\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResourceAutoCompleter\ResourceAutoCompleter.csproj" />
   </ItemGroup>
 
 </Project>

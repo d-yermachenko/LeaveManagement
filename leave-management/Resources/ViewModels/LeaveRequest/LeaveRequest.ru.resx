@@ -117,67 +117,126 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Administration" xml:space="preserve">
-    <value>Управление</value>
-    <comment>Administration</comment>
+  <data name="Accepted requests" xml:space="preserve">
+    <value>Одобренные запросы</value>
   </data>
-  <data name="Allocate leaves" xml:space="preserve">
-    <value>Типы отпусков</value>
-    <comment>Allocate leaves</comment>
+  <data name="Approuved" xml:space="preserve">
+    <value>Одобрено</value>
+    <comment>Approuved</comment>
   </data>
-  <data name="Apply for leave" xml:space="preserve">
-    <value>Запросить отпуск</value>
-    <comment>Apply for leave</comment>
+  <data name="Comment" xml:space="preserve">
+    <value>Комментарий</value>
+    <comment>Comment</comment>
   </data>
-  <data name="Change email" xml:space="preserve">
-    <value>Изменить адрес электронной почты</value>
-    <comment>Change email</comment>
+  <data name="Date of beginning" xml:space="preserve">
+    <value>Дата начала</value>
   </data>
-  <data name="Change password" xml:space="preserve">
-    <value>Изменить пароль</value>
-    <comment>Change password</comment>
+  <data name="Date of ending" xml:space="preserve">
+    <value>Дата окончания</value>
+    <comment>Date of ending</comment>
   </data>
-  <data name="Create employee" xml:space="preserve">
-    <value>Создать анкету сотрудника</value>
-    <comment>Create employee</comment>
+  <data name="Days that you can request for leave" xml:space="preserve">
+    <value>Оставшиеся дни</value>
+    <comment>Days that you can request for leave</comment>
   </data>
-  <data name="Edit profile" xml:space="preserve">
-    <value>Редактировать анкету</value>
-    <comment>Edit profile</comment>
+  <data name="End date" xml:space="preserve">
+    <value>Дата окончания</value>
+    <comment>End date</comment>
   </data>
-  <data name="Employees" xml:space="preserve">
-    <value>Сотрудники</value>
-    <comment>Employees</comment>
+  <data name="End date is required" xml:space="preserve">
+    <value>Дата окончания - обязательное поле</value>
+    <comment>End date is required</comment>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Домой</value>
+  <data name="Leave type" xml:space="preserve">
+    <value>Тип отпуска</value>
+    <comment>Leave type</comment>
   </data>
-  <data name="Leave allocation" xml:space="preserve">
-    <value>Запрос отстутствия</value>
+  <data name="Leave Type is required" xml:space="preserve">
+    <value>Тип отпуска - обязательное поле</value>
+    <comment>Leave Type is required</comment>
   </data>
-  <data name="Leave history" xml:space="preserve">
-    <value>История отсутствий</value>
+  <data name="List of requests without any sorting" xml:space="preserve">
+    <value>Полный список запросов</value>
   </data>
-  <data name="Leave management" xml:space="preserve">
-    <value>Управление отсутствиями</value>
-    <comment>Leave management</comment>
+  <data name="Moderator" xml:space="preserve">
+    <value>Модератор</value>
+    <comment>Moderator</comment>
   </data>
-  <data name="Leave types" xml:space="preserve">
-    <value>Типы отсутствий</value>
+  <data name="Number of days in not still reviewed request" xml:space="preserve">
+    <value>Количество дней в необработанных запросах</value>
+    <comment>Number of days in not still reviewed request</comment>
   </data>
-  <data name="My leaves" xml:space="preserve">
-    <value>Мои отпуска</value>
-    <comment>My leaves</comment>
+  <data name="Number of days, that was approuved" xml:space="preserve">
+    <value>Количество одобренных дней</value>
+    <comment>Number of days, that was approuved</comment>
   </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Приватность</value>
+  <data name="Number of days, which was approuved, and period of leave began" xml:space="preserve">
+    <value>Количество дней в одобренных и начавшихся отсутствиях</value>
+    <comment>Number of days, which was approuved, and period of leave began</comment>
   </data>
-  <data name="Review leave requests" xml:space="preserve">
-    <value>Обработать запросы на отпуска</value>
-    <comment>Review leave requests</comment>
+  <data name="Number of days, which were rejected" xml:space="preserve">
+    <value>Количество отклоненных дней</value>
+    <comment>Number of days, which were rejected</comment>
   </data>
-  <data name="Review requests" xml:space="preserve">
-    <value>Обработать запросы</value>
-    <comment>Review requests</comment>
+  <data name="Pending" xml:space="preserve">
+    <value>В ожидании обработки</value>
+    <comment>Pending</comment>
+  </data>
+  <data name="Pending requests" xml:space="preserve">
+    <value>Ожидающие запросы</value>
+  </data>
+  <data name="Please select leaveType" xml:space="preserve">
+    <value>Выберите тип отпуска</value>
+    <comment>Please select leaveType</comment>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Отклонено</value>
+    <comment>Rejected</comment>
+  </data>
+  <data name="Rejected requests requests" xml:space="preserve">
+    <value>Отклоненные запросы</value>
+  </data>
+  <data name="Requested at" xml:space="preserve">
+    <value>Дата запроса</value>
+    <comment>Requested at</comment>
+  </data>
+  <data name="Requesting employee" xml:space="preserve">
+    <value>Запрашивающий сотрудник</value>
+    <comment>Requesting employee</comment>
+  </data>
+  <data name="Requests to handle by manager" xml:space="preserve">
+    <value>Запросы, которые должен обработать начальник</value>
+  </data>
+  <data name="Requests, accepted by manager. Employee can take his leave in indicated period" xml:space="preserve">
+    <value>Запросы, одобренные начальником. Сотрудник может взять отпуск.</value>
+    <comment>Requests, accepted by manager. Employee can take his leave in indicated period</comment>
+  </data>
+  <data name="Requests, rejected by manager. Employee cant leave the company in indicated period" xml:space="preserve">
+    <value>Запросы, отклоненные начальником. Сотрудник должен остаться.</value>
+    <comment>Requests, rejected by manager. Employee cant leave the company in indicated period</comment>
+  </data>
+  <data name="Sold of days" xml:space="preserve">
+    <value>Остаток дней</value>
+    <comment>Sold of days</comment>
+  </data>
+  <data name="Start date" xml:space="preserve">
+    <value>Дата начала</value>
+    <comment>Start date</comment>
+  </data>
+  <data name="Start date is required" xml:space="preserve">
+    <value>Дата начала - обязательное поле</value>
+    <comment>Start date is required</comment>
+  </data>
+  <data name="Total number of leave requests" xml:space="preserve">
+    <value>Общее количество запрошенных дней</value>
+    <comment>Total number of leave requests</comment>
+  </data>
+  <data name="Used" xml:space="preserve">
+    <value>Использовано</value>
+    <comment>Used</comment>
+  </data>
+  <data name="Your allocation" xml:space="preserve">
+    <value>Вам назначено</value>
+    <comment>Your allocation</comment>
   </data>
 </root>
