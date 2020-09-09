@@ -9,6 +9,10 @@ namespace LeaveManagement.Data.Entities {
 
         public string CompanyName { get; set; }
 
+        public DateTime CompanyRegistrationDate { get; set; }
+
+        public DateTime CompanyCreationDate { get; set; }
+
         public string TaxId { get; set; }
 
         public string CompanyData { get; set; }

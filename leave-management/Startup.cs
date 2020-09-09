@@ -50,6 +50,7 @@ namespace LeaveManagement {
             services.AddScoped<ILeaveTypeRepositoryAsync, LeaveTypeRepository>();
             services.AddScoped<ILeaveAllocationRepositoryAsync, LeaveAllocationRepository>();
             services.AddScoped<ILeaveRequestsRepositoryAsync, LeaveRequestsRepository>();
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
             GlobalizationStartup.ConfigureServices(services);
             services.AddScoped<IEmployeeRepositoryAsync, EmployeeRepository>();
