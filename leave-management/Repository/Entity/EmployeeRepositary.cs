@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using KellermanSoftware.CompareNetObjects;
 using LeaveManagement.Code.CustomLocalization;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data;
@@ -16,7 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Repository.Entity {
@@ -82,13 +80,14 @@ namespace LeaveManagement.Repository.Entity {
 
         public async Task<bool> DeleteAsync(Employee entity) => await _UserManager.DeleteAsync(entity).ContinueWith((identityResult) => identityResult.Result.Succeeded);
 
-        public async Task<ICollection<Employee>> FindAllAsync() => await Task.Run(() => (ICollection<Employee>)_ApplicationDbContext.Employees.ToList());
+        public async Task<ICollection<Employee>> FindAllAsync() => await Task.Run(() =>
+        (ICollection<Employee>)_ApplicationDbContext.Employees.Include(c=>c.Company).ToList());
 
         public async Task<Employee> FindByIdAsync(string id) {
             var hasEmployee = await _ApplicationDbContext.Employees.AnyAsync(x => x.Id.Equals(id));
             var hasUser = await _ApplicationDbContext.Users.AnyAsync(x => x.Id.Equals(id));
             if (hasEmployee)
-                return await _ApplicationDbContext.Employees.FindAsync(id);
+                return await _ApplicationDbContext.Employees.Include(x=>x.Company).FirstAsync(x=>x.Id.Equals(id));
             else if (hasUser) {
                 var user = await _ApplicationDbContext.Users.FindAsync(id);
                 var employee = _Mapper.Map<Employee>(user);
@@ -134,7 +133,8 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public async Task<ICollection<Employee>> WhereAsync(Func<Employee, bool> predicate) {
-            return await Task.Run(() => _ApplicationDbContext.Employees.Where(predicate).ToList());
+            return await Task.Run(() => _ApplicationDbContext.Employees.
+            Include(c=>c.Company).Where(predicate).ToList());
         }
     }
 }

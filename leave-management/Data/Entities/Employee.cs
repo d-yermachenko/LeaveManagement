@@ -25,5 +25,9 @@ namespace LeaveManagement.Data.Entities {
         public Employee Manager { get; set; }
 
         public string ManagerId { get; set; }
+
+        public Company Company { get; set; }
+
+        public int CompanyId { get; set; }
     }
 }

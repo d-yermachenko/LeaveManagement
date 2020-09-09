@@ -11,10 +11,9 @@ namespace LeaveManagement.Data.Entities {
 
         public int DefaultDays { get; set; }
 
-        public string AuthorId { get; set; }
+        public int CompanyId { get; set; }
 
-        public Employee Author { get; set; }
-
+        public Company Company { get; set; }
 
     }
 }

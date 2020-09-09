@@ -66,7 +66,6 @@ namespace LeaveManagement.Controllers {
                 return StatusCode(StatusCodes.Status404NotFound, errorMessage);
             }
             var viewModel = _Mapper.Map<Data.Entities.LeaveType, LeaveTypeNavigationViewModel>(entry);
-            viewModel.AuthorLastName = $"{entry.Author?.Title} {entry.Author?.FirstName} {entry.Author?.LastName}";
             return View(viewModel);
         }
         #endregion
@@ -103,7 +102,6 @@ namespace LeaveManagement.Controllers {
                 }
                 var createdLeaveType = _Mapper.Map<Data.Entities.LeaveType>(creationModel);
                 createdLeaveType.DateCreated = DateTime.Now;
-                createdLeaveType.AuthorId = (await _SignInManager.UserManager.FindByNameAsync(User.Identity.Name)).Id;
                 if (!(await _Repository.CreateAsync(createdLeaveType))) {
                     string errorTitle = ControllerLocalizer["Saving failed"];
                     string errorMessage = ControllerLocalizer["Failed to save leave type '{0}' in repositary", newName];
