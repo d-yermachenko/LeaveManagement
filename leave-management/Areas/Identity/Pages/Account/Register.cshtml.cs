@@ -22,17 +22,14 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender) {
+            ILogger<RegisterModel> logger) {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -100,7 +97,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid) {
                 var user = new Employee {

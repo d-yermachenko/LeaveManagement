@@ -82,10 +82,7 @@ namespace LeaveManagement {
 
     public class LocalizationPipeline {
         public void Configure(IApplicationBuilder app) {
-
-
             var options = new RequestLocalizationOptions() {
-
                 DefaultRequestCulture = new RequestCulture(GlobalizationStartup.DefaultCulture),
                 SupportedCultures = GlobalizationStartup.SupportedCultures,
                 SupportedUICultures = GlobalizationStartup.SupportedCultures,

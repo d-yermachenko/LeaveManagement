@@ -11,9 +11,9 @@ namespace LeaveManagementTests.Units.Code {
 
         public Func<DateTime, DateTime, int[], bool> GetValidationMethod() {
             var methodInfo = typeof(LeaveRequestsController).GetMethod("ValidateDays", BindingFlags.NonPublic | BindingFlags.Static);
-            Func<DateTime, DateTime, int[], bool> result = (startDate, endDate, periods) => {
+            bool result(DateTime startDate, DateTime endDate, int[] periods) {
                 return (bool)methodInfo?.Invoke(null, new object[] { startDate, endDate, periods });
-            };
+            }
             return result;
         }
 

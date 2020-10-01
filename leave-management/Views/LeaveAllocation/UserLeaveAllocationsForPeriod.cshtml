@@ -68,7 +68,7 @@
                     </a>
                 </td>
                 <td>
-                        @if (await _UserManager.IsPrivelegedUser(User))
+                        @if (await _UserManager.IsCompanyPrivelegedUser(User))
                         {
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-block">
                                 <i class="fa fa-pencil"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]

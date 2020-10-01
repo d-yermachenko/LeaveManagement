@@ -1,0 +1,93 @@
+﻿@model IEnumerable<LeaveManagement.ViewModels.Employee.EmployeePresentationDefaultViewModel>
+@{
+    ViewData["Title"] = Localizer["Allocate by employees"];
+    ViewData["ActiveView"] = "EmployeesIndex";
+}
+<a class="btn btn-outline-primary" asp-controller="Employee" asp-action="CreateEmployee" title=">@LeaveManagementLocalizerFactory.MenuLocalizer["Create employee"]">
+    <i class="fa fa-user nav-icon"></i>
+</a>
+<hr />
+<h1>@Localizer["Employees"]</h1>
+
+<table class="table dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmploymentDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @if (!String.IsNullOrWhiteSpace(item.ContactMail))
+                    {
+                        @Html.DisplayFor(modelItem => item.ContactMail)
+                    }
+
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.Email)
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmploymentDate)
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary" asp-controller="LeaveAllocation" asp-action="AllocateByEmployee" asp-route-employeeId="@item.Id"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate leave"]">
+                        <i class="fa fa-calendar"></i>
+                    </a>
+
+                    <a class="btn btn-outline-success" asp-area="Identity" asp-page="/Account/Manage/Index" asp-route-userId="@item.Id"
+                       title="@Localizer["Edit user"]">
+                        <i class="fa fa-user"></i>
+                    </a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts{
+    <partial name="_DataTablesScripts" />
+}
+@section Styles{
+    <partial name="_DataTablesStyles" />
+}

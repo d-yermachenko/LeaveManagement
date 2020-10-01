@@ -26,17 +26,38 @@ namespace LeaveManagement.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("CompanyCreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CompanyData")
+                    b.Property<string>("CompanyEmail")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CompanyPostAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyProtectedComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyPublicComment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CompanyRegistrationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CompanyState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyZipCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EnableLockoutForEmployees")
+                        .HasColumnType("bit");
 
                     b.Property<string>("TaxId")
                         .HasColumnType("nvarchar(max)");
@@ -364,8 +385,11 @@ namespace LeaveManagement.Data.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ContactMail")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CurrentConnectionDate")
                         .HasColumnType("datetime2");
@@ -498,9 +522,7 @@ namespace LeaveManagement.Data.Migrations
                 {
                     b.HasOne("LeaveManagement.Data.Entities.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("LeaveManagement.Data.Entities.Employee", "Manager")
                         .WithMany()

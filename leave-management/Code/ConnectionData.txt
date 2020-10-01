@@ -6,14 +6,3 @@ sJ8K>@G.ey6t(=Z5
 
 admin@localtost.com
 P@ssw0rd
-
-bc90c4d2-8e57-4721-b6e8-41b0cb11772a - HRStaff
-9662f95a-79f7-4113-9b5e-2fc1de61b8fd - LocalTost
-
-            migrationBuilder.Sql($"update LeaveTypes set AuthorId = (select top(1) Id AspNetUsers from  where UserName = '{SeedData.DefaultAdminUserName}') where AuthorId IS Null");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "AuthorId",
-                table: "LeaveTypes",
-                oldNullable: true,
-                nullable: false);

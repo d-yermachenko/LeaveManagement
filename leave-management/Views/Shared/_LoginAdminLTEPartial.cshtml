@@ -15,6 +15,12 @@
             </a>
             <ul class="nav nav-treeview" data-wid>
                 <li class="nav-item">
+                    <a class="nav-link" asp-controller="Employee" asp-action="UpdateEmployee">
+                        <i class="nav-icon fa fa-address-card"></i>&nbsp;
+                        <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Edit profile"]</p>
+                    </a>
+                </li>
+                <li class="nav-item disabled">
                     <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">
                         <i class="nav-icon fa fa-address-card"></i>&nbsp;
                         <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Edit profile"]</p>

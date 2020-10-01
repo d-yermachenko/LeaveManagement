@@ -1,4 +1,5 @@
 ﻿using LeaveManagement.Data.Entities;
+using LeaveManagement.ViewModels.Company;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,8 +18,8 @@ namespace LeaveManagement.ViewModels.LeaveType {
         [Display(Name = "Default number of days", Description = "Number of days for this leave type for period")]
         public int DefaultDays { get; set; }
 
-        [Display(Name = "Author of this leave type", Description = "Employee created this leave type")]
-        public string AuthorLastName { get; set; }
+        [Display(Name = "Company", Description = "Name of the company")]
+        public CompanyVM Company { get; set; }
 
     }
 }

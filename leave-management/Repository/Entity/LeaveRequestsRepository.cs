@@ -8,13 +8,17 @@ using LeaveManagement.Contracts;
 using LeaveManagement.Data;
 using LeaveManagement.Data.Entities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 
 namespace LeaveManagement.Repository.Entity {
     public class LeaveRequestsRepository : ILeaveRequestsRepositoryAsync {
         public ApplicationDbContext ApplicationDbContext;
+        public ILogger<LeaveRequestsRepository> _Logger;
 
-        public LeaveRequestsRepository(ApplicationDbContext applicationDbContext) {
+        public LeaveRequestsRepository(ApplicationDbContext applicationDbContext,
+            ILogger<LeaveRequestsRepository> logger) {
             ApplicationDbContext = applicationDbContext;
+            _Logger = logger;
         }
 
 
@@ -34,15 +38,15 @@ namespace LeaveManagement.Repository.Entity {
             .Include(x => x.LeaveType)
             .ToArrayAsync();
 
-        public async Task <LeaveRequest> FindByIdAsync(long id) => await ApplicationDbContext.LeaveRequests
-            .Include(x=>x.ApprouvedBy)
-            .Include(x=>x.RequestingEmployee)
-            .Include(x=>x.LeaveType)
-            .FirstOrDefaultAsync(x=>x.Id == id);
+        public async Task<LeaveRequest> FindByIdAsync(long id) => await ApplicationDbContext.LeaveRequests
+            .Include(x => x.ApprouvedBy)
+            .Include(x => x.RequestingEmployee)
+            .Include(x => x.LeaveType)
+            .FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<bool> SaveAsync() {
             var affectedRecords = await ApplicationDbContext.SaveChangesAsync();
-            return affectedRecords> 0;
+            return affectedRecords > 0;
         }
 
         public async Task<bool> UpdateAsync(LeaveRequest entity) {
@@ -51,11 +55,19 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public async Task<ICollection<LeaveRequest>> WhereAsync(Func<LeaveRequest, bool> predicate) {
-            return await Task.Run(() => ApplicationDbContext.LeaveRequests
-            .Include(x => x.ApprouvedBy)
-            .Include(x => x.RequestingEmployee)
-            .Include(x => x.LeaveType)
-            .Where(predicate).ToList());
+            return await Task.Run<ICollection<LeaveRequest>>(() => {
+                try {
+                  return ApplicationDbContext.LeaveRequests
+                 .Include(x => x.ApprouvedBy)
+                 .Include(x => x.RequestingEmployee)
+                 .Include(x => x.LeaveType)
+                 .Where(predicate).ToList();
+                }
+                catch (Exception e) {
+                    _Logger.LogError(e, e.Message);
+                    return new LeaveRequest[] { };
+                }
+            });
         }
     }
 }

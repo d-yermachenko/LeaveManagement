@@ -20,57 +20,6 @@
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.Title"></label>
-                <input asp-for="Input.Title" class="form-control" />
-                <span asp-validation-for="Input.Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.DisplayName"></label>
-                <input asp-for="Input.DisplayName" class="form-control" />
-                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.FirstName"></label>
-                <input asp-for="Input.FirstName" class="form-control" />
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.LastName"></label>
-                <input asp-for="Input.LastName" class="form-control" />
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.DateOfBirth"></label>
-                @if (Model.Input.CanChangeBirthDate)
-                {
-            <input asp-for="Input.DateOfBirth" class="form-control" />
-                }
-                else
-                {
-            <input asp-for="Input.DateOfBirth" class="form-control" disabled />
-                }
-                
-                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
-
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.EmployementDate"></label>
-                @if (Model.Input.CanChangeDateOfEmployement)
-                {
-                    <input asp-for="Input.EmployementDate" class="form-control" />
-                }
-                else
-                {
-                    <input asp-for="Input.EmployementDate" class="form-control" disabled/>
-                }
-                <span asp-validation-for="Input.EmployementDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.TaxRate"></label>
-                <input asp-for="Input.TaxRate" class="form-control" />
-                <span asp-validation-for="Input.TaxRate" class="text-danger"></span>
-            </div>
             <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>

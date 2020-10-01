@@ -18,16 +18,29 @@ namespace LeaveManagement.Repository.Entity {
             ILogger<CompanyRepository> logger) {
             _DBContext = dbContext;
             _Logger = logger;
-
         }
         public async Task<bool> CreateAsync(Company entity) {
-            _DBContext.Companies.Add(entity);
-            return await SaveAsync();
+            bool result = false;
+            try {
+                _DBContext.Companies.Add(entity);
+                result = await SaveAsync();
+            }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+            }
+            return result;
         }
 
         public async Task<bool> DeleteAsync(Company entity) {
-            _DBContext.Companies.Remove(entity);
-            return await SaveAsync();
+            bool result = false;
+            try {
+                _DBContext.Companies.Remove(entity);
+                result = await SaveAsync();
+            }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+            }
+            return result;
         }
 
         public async Task<ICollection<Company>> FindAllAsync() {
@@ -39,16 +52,34 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public async Task<bool> SaveAsync() {
-            return (await _DBContext.SaveChangesAsync()) > 0;
+            bool result = false;
+            try {
+                result = (await _DBContext.SaveChangesAsync()) > 0;
+            }
+            catch (AggregateException ae) {
+                ae.Flatten().InnerExceptions.ToList().ForEach((ie) => _Logger.LogError(ie, ie.Message, new object[] { }));
+            }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+            }
+            return result;
+
         }
 
         public async Task<bool> UpdateAsync(Company entity) {
-            _DBContext.Companies.Update(entity);
-            return await SaveAsync();
+            bool result = false;
+            try {
+                _DBContext.Companies.Update(entity);
+                result = await SaveAsync();
+            }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+            }
+            return result;
         }
 
         public async Task<ICollection<Company>> WhereAsync(Func<Company, bool> predicate) {
-            return await Task.Run<ICollection<Company>>(()=> { return _DBContext.Companies.Where(predicate).ToList(); });
+            return await Task.Run<ICollection<Company>>(() => { return _DBContext.Companies.Where(predicate).ToList(); });
         }
     }
 }

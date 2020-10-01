@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LeaveManagement.Data.Entities;
+using LeaveManagement.ViewModels.Company;
 using LeaveManagement.ViewModels.Employee;
 using LeaveManagement.ViewModels.LeaveAllocation;
 using LeaveManagement.ViewModels.LeaveRequest;
@@ -16,18 +17,14 @@ namespace LeaveManagement.Mappings {
                 .ForMember(txt => txt.Text, act => act.MapFrom(src => src.LeaveTypeName))
                 .ForMember(val => val.Value, act => act.MapFrom(src => src.Id))
                 .ForAllOtherMembers(act => act.Ignore());
-
-
             CreateMap<Employee, EmployeePresentationDefaultViewModel>();
             CreateMap<Employee, IdentityUser>().ReverseMap();
             CreateMap<Employee, Areas.Identity.Pages.Account.Manage.IndexModel.InputModel>().ReverseMap();
             CreateMap<IdentityUser, Areas.Identity.Pages.Account.Manage.IndexModel.InputModel>().ReverseMap();
             CreateMap<Employee, EmployeeCreationVM>().ReverseMap();
-
+            CreateMap<Company, CompanyVM>().ReverseMap();
             CreateMap<LeaveAllocation, LeaveAllocationEditionViewModel>().ReverseMap();
             CreateMap<LeaveAllocation, LeaveAllocationPresentationViewModel>().ReverseMap();
-            
-
             CreateMap<LeaveRequest, LeaveRequestDefaultViewModel>().ReverseMap();
         }
 

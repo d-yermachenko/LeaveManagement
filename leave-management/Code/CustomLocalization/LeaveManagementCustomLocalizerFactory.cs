@@ -29,11 +29,12 @@ namespace LeaveManagement.Code.CustomLocalization {
         private readonly Microsoft.Extensions.Configuration.IConfiguration _Configuration;
         private readonly ILogger<LeaveManagementCustomLocalizerFactory> _Logger;
 
-        public LeaveManagementCustomLocalizerFactory(IStringLocalizerFactory stringLocalizerFactory,
-        IHtmlLocalizerFactory htmlLocalizerFactory,
-        Microsoft.Extensions.Configuration.IConfiguration configuration,
-        ILogger<LeaveManagementCustomLocalizerFactory> logger,
-        IWebHostEnvironment hostEnvironement = null
+        public LeaveManagementCustomLocalizerFactory(
+            IStringLocalizerFactory stringLocalizerFactory,
+            IHtmlLocalizerFactory htmlLocalizerFactory,
+            Microsoft.Extensions.Configuration.IConfiguration configuration,
+            ILogger<LeaveManagementCustomLocalizerFactory> logger,
+            IWebHostEnvironment hostEnvironement = null
         ) {
             StringLocalizerFactory = stringLocalizerFactory;
             HtmlLocalizerFactory = htmlLocalizerFactory;
@@ -103,10 +104,12 @@ namespace LeaveManagement.Code.CustomLocalization {
         }
 
         private void InitMappers() {
-            ConventionalResourceMappers = new ConcurrentBag<Func<Type, Tuple<string, string>>>();
-            ConventionalResourceMappers.Add(LeaveManagementViewModelDataAnnotationsMapper);
-            ConventionalResourceMappers.Add(LeaveManagementControllerMapper);
-            ConventionalResourceMappers.Add(LeaveManagementIdentityMapper);
+            if (ConventionalResourceMappers == null) {
+                ConventionalResourceMappers = new ConcurrentBag<Func<Type, Tuple<string, string>>>();
+                ConventionalResourceMappers.Add(LeaveManagementViewModelDataAnnotationsMapper);
+                ConventionalResourceMappers.Add(LeaveManagementControllerMapper);
+                ConventionalResourceMappers.Add(LeaveManagementIdentityMapper);
+            }
         }
 
 

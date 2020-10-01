@@ -1,0 +1,112 @@
+﻿@model IEnumerable<LeaveManagement.ViewModels.Company.CompanyVM>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@Localizer["Index"]</h1>
+
+<p>
+    <a class="btn d-inline btn-success" asp-action="Create" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Create new"]">
+    
+    <i class="fa fa-building-o"></i>@LeaveManagementLocalizerFactory.CommandsLocalizer["Create new"]</a>
+    <a class="btn d-inline btn-primary" asp-action="Index" asp-route-showDisabled="true" title=" @LeaveManagementLocalizerFactory.CommandsLocalizer["Show all"]">
+        <i class="fa fa-glass"></i>
+    </a>
+</p>
+<table class="table dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyRegistrationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyCreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaxId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyState)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyZipCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyEmail)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Show details about {0}", item.CompanyName]">
+                        @Html.DisplayFor(modelItem => item.CompanyName)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyRegistrationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyCreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TaxId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyState)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyZipCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyEmail)
+                </td>
+                
+                <td>
+                    <a class="btn btn-success" asp-controller="Employee" asp-action="CreateLocalAdmin" asp-route-companyId="@item.Id"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Create local administrator"]">
+                        <span class="fa fa-user-plus"></span>
+                    </a>
+                    <a class="btn btn-info" asp-action="Edit" asp-route-id="@item.Id" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                    @if (item.Active)
+                    {
+                        <a class="btn btn-outline-danger" asp-action="DisableCompany" asp-route-id="@item.Id"
+                           title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Lock company"]"
+                           onclick="confirm(@LeaveManagementLocalizerFactory.CommandsLocalizer["Are you sure that you want lock company {0}", item.CompanyName])">
+                            <i class="fa fa-lock"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-warning" asp-action="EnableCompany" asp-route-id="@item.Id"
+                           title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Unlock company"]"
+                           onclick="confirm(@LeaveManagementLocalizerFactory.CommandsLocalizer["Are you sure that you want unlock company {0}", item.CompanyName])">
+                            <i class="fa fa-unlock"></i>
+                        </a>
+                    }
+                    <a class="btn btn-danger" asp-action="PermanentDeleteCompany" asp-route-id="@item.Id"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Remove company. Once removed, you cant recover its data"]"
+                       onclick="return confirm(@LeaveManagementLocalizerFactory.CommandsLocalizer["Are you sure that you want permanently remove this company {0}", item.CompanyName])">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Styles{
+    <partial name="_DataTablesStyles" />
+}
+@section Scripts{
+    <partial name="_DataTablesScripts" />
+}

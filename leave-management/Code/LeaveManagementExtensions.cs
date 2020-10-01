@@ -24,6 +24,12 @@ namespace LeaveManagement {
         }
 
 
+        public static async Task<bool> IsMemberOfOneAsync<T>(this UserManager<T> userManager, System.Security.Claims.ClaimsPrincipal user, UserRoles roles) where T : class {
+            T connectedUser = await userManager.GetUserAsync(user);
+            return await IsMemberOfOneAsync(userManager, connectedUser, roles);
+        }
+
+
         public static async Task<bool> IsMemberOfOneAsync<T>(this UserManager<T> userManager, T user, UserRoles roles) where T : class {
             if (user == null)
                 return false;
@@ -31,15 +37,17 @@ namespace LeaveManagement {
             return (userRoles & roles) > 0;
         }
 
-        public static async Task<bool> IsPrivelegedUser<T>(this UserManager<T> userManager, System.Security.Claims.ClaimsPrincipal user) where T : class {
+        public static async Task<bool> IsCompanyPrivelegedUser<T>(this UserManager<T> userManager, System.Security.Claims.ClaimsPrincipal user) where T : class {
             T appUser = await userManager.GetUserAsync(user);
             if (appUser == null)
                 return false;
-            return await userManager.IsPrivelegedUser<T>(appUser);
+            return await userManager.IsCompanyPrivelegedUser<T>(appUser);
         }
 
-        public static async Task<bool> IsPrivelegedUser<T>(this UserManager<T> userManager, T user) where T : class {
-            UserRoles privelegedRoles = UserRoles.HRManager | UserRoles.Administrator | UserRoles.LocalAdministrator;
+        public static async Task<bool> IsCompanyPrivelegedUser<T>(this UserManager<T> userManager, T user) where T : class {
+            if (user == null)
+                return false;
+            UserRoles privelegedRoles = UserRoles.HRManager | UserRoles.CompanyAdministrator;
             var rolesStrings = await userManager.GetRolesAsync(user);
             var roles = ToUserRoles(rolesStrings );
             return (roles & privelegedRoles) > 0;
@@ -76,8 +84,6 @@ namespace LeaveManagement {
             return result;
         }
         #endregion
-
-
     }
 
     public static class HtmlHelpersExtensions {

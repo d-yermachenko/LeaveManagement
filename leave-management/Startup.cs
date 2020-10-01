@@ -10,19 +10,13 @@ using LeaveManagement.Contracts;
 using LeaveManagement.Repository.Entity;
 using AutoMapper;
 using System;
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using System.Data.Common;
-using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Options;
 using LeaveManagement.PasswordGenerator;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using LeaveManagement.EmailSender;
 using Microsoft.AspNetCore.Http;
-using LeaveManagement.Code;
-using Microsoft.AspNetCore.Routing;
 
 namespace LeaveManagement {
     public class Startup {
@@ -61,13 +55,17 @@ namespace LeaveManagement {
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            /*services.Configure<PasswordHasherOptions>(options =>
+                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
+            );*/
             services.AddTransient<IPasswordGenerator>(
-                (serviceProvider) => new PasswordGenerator.PasswordGenerator(
-                    () => Configuration.GetSection(nameof(PasswordGeneratorOptions)).Get<PasswordGeneratorOptions>()
+                (serviceProvider) => new PasswordGenerator.MyPasswordGenerator(
+                    () => Configuration.GetSection(nameof(MyPasswordGeneratorOptions)).Get<MyPasswordGeneratorOptions>()
             ));
             services.AddTransient<IEmailSender>(
                 (serviceProvider) => new EmailSender.SmtpEmailSender(
-                    () => Configuration.GetSection(nameof(SmtpSettings)).Get<EmailSender.SmtpSettings>()
+                    () => Configuration.GetSection(nameof(SmtpSettings)).Get<EmailSender.SmtpSettings>(),
+                    logger: serviceProvider.GetService<ILogger<IEmailSender>>()
                 )
             );
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -88,7 +86,7 @@ namespace LeaveManagement {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseStatusCodePages();
             var logger = app.ApplicationServices.GetService<ILogger>();
             var seedingTask = applicationDbContext.Database.MigrateAsync().ContinueWith(task => SeedData.Seed(userManager, roleManagement, logger).Wait()
             , TaskContinuationOptions.OnlyOnRanToCompletion);
@@ -97,12 +95,13 @@ namespace LeaveManagement {
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "LocalizedDefault",
                     pattern: $"{{{GlobalizationStartup.CultureRoutePartName}}}/{{controller}}/{{action}}/{{id?}}",
                     defaults: new { culture = GlobalizationStartup.DefaultCulture.Name, controller = "Home", action = "Index" });
-                endpoints.MapControllerRoute(name: "default", pattern: "{*catchall}",  defaults: new { controller = "Home", action = "RedirectToDefaultLanguage", culture = GlobalizationStartup.DefaultCulture.Name});
+                endpoints.MapControllerRoute(name: "default", pattern: "{*catchall}", defaults: new { controller = "Home", action = "RedirectToDefaultLanguage", culture = GlobalizationStartup.DefaultCulture.Name });
                 endpoints.MapRazorPages();
             });
             GlobalizationStartup.Configure(app, env);

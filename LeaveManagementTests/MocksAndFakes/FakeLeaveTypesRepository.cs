@@ -80,9 +80,6 @@ namespace LeaveManagementTests.MocksAndFakes {
             throw new NotImplementedException();
         }
 
-        public Task<ICollection<LeaveType>> GetLeaveTypesByEmployeeIdAsync(string employeeId) {
-            throw new NotImplementedException();
-        }
 
         public Task<bool> SaveAsync() {
             throw new NotImplementedException();

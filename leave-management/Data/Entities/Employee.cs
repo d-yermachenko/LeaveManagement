@@ -4,6 +4,11 @@ using System;
 
 namespace LeaveManagement.Data.Entities {
     public class Employee : IdentityUser {
+
+        public Employee() : base() {
+            ;
+        }
+
         public string DisplayName { get; set; }
 
         public string Title { get; set; }
@@ -13,6 +18,8 @@ namespace LeaveManagement.Data.Entities {
         public string LastName { get; set; }
 
         public string TaxRate  { get; set; }
+
+        public string ContactMail { get; set; }
         
         public DateTime DateOfBirth  { get; set; }
         
@@ -28,6 +35,6 @@ namespace LeaveManagement.Data.Entities {
 
         public Company Company { get; set; }
 
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
     }
 }

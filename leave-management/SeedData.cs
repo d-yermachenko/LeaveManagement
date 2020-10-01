@@ -35,11 +35,11 @@ namespace LeaveManagement {
                 if (success)
                     possibleAdminUser = await userManager.FindByNameAsync(DefaultAdminUserName);
             }
-            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, UserRoles.Administrator.ToString()))
-                success &= (await userManager.AddToRoleAsync(possibleAdminUser, UserRoles.Administrator.ToString())).Succeeded;
+            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, UserRoles.AppAdministrator.ToString()))
+                success &= (await userManager.AddToRoleAsync(possibleAdminUser, UserRoles.AppAdministrator.ToString())).Succeeded;
 
-            if (success && !await userManager.IsInRoleAsync(possibleAdminUser, UserRoles.Employee.ToString()))
-                success &= (await userManager.AddToRoleAsync(possibleAdminUser, UserRoles.Employee.ToString())).Succeeded;
+            if (success && await userManager.IsInRoleAsync(possibleAdminUser, UserRoles.Employee.ToString()))
+                success &= (await userManager.RemoveFromRoleAsync(possibleAdminUser, UserRoles.Employee.ToString())).Succeeded;
 
             if (!success)
                 throw new OperationFailedException();

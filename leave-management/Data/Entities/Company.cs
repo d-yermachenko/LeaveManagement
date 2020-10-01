@@ -15,6 +15,20 @@ namespace LeaveManagement.Data.Entities {
 
         public string TaxId { get; set; }
 
-        public string CompanyData { get; set; }
+        public string CompanyState { get; set; }
+
+        public string CompanyZipCode { get; set; }
+
+        public string CompanyEmail { get; set; }
+
+        public string CompanyPostAddress { get; set; }
+
+        public string CompanyPublicComment { get; set; }
+
+        public string CompanyProtectedComment { get; set; }
+
+        public bool Active { get; set; } = true;
+
+        public bool EnableLockoutForEmployees { get; set; } = false;
     }
 }

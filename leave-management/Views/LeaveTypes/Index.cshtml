@@ -22,9 +22,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.DefaultDays)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AuthorLastName)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -40,9 +37,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DefaultDays)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AuthorLastName)
                 </td>
                 <td>
                     <a asp-action="Edit" class="btn btn-success col-md-3" asp-route-id="@item.Id" 

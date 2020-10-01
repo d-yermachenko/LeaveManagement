@@ -15,11 +15,9 @@ using LeaveManagement.Repository.Entity;
 using LeaveManagement.Contracts;
 using Microsoft.Extensions.Localization;
 
-namespace LeaveManagement.Areas.Identity.Pages.Account
-{
+namespace LeaveManagement.Areas.Identity.Pages.Account {
     [AllowAnonymous]
-    public class LoginModel : PageModel
-    {
+    public class LoginModel : PageModel {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
@@ -31,8 +29,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
             ILogger<LoginModel> logger,
             UserManager<IdentityUser> userManager,
             IEmployeeRepositoryAsync employeeRepository,
-            IStringLocalizerFactory stringLocalizerFactory)
-        {
+            IStringLocalizerFactory stringLocalizerFactory) {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -51,10 +48,8 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
         [TempData]
         public string ErrorMessage { get; set; }
 
-        public class InputModel
-        {
+        public class InputModel {
             [Required]
-            [EmailAddress]
             public string Email { get; set; }
 
             [Required]
@@ -65,10 +60,8 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
-        {
-            if (!string.IsNullOrEmpty(ErrorMessage))
-            {
+        public async Task OnGetAsync(string returnUrl = null) {
+            if (!string.IsNullOrEmpty(ErrorMessage)) {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
@@ -82,47 +75,45 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
             returnUrl = returnUrl ?? Url.Content("~/");
 
-            if (ModelState.IsValid)
-            {
+            if (ModelState.IsValid) {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 Microsoft.AspNetCore.Identity.SignInResult result = null;
                 try {
-                    result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                    var user = await _userManager.FindByNameAsync(Input.Email);
+                    if (user == null)
+                        user = await _userManager.FindByEmailAsync(Input.Email);
+                    result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 }
-                catch(Exception e) {
+                catch (Exception e) {
                     _logger.LogError(e, e.Message);
                     ModelState.AddModelError(string.Empty, _stringLocalizer["Cant connect sign in manager. Please contact your system administrator"]);
                     return Page();
                 }
-                 
-                if (result.Succeeded)
-                {
+                if (result.Succeeded) {
                     _logger.LogInformation("User logged in.");
                     var user = await _userManager.FindByEmailAsync(Input.Email);
-                    if(user == null)
+                    if (user == null)
                         return LocalRedirect(returnUrl);
                     var employee = (await _employeeRepository.FindByIdAsync(user.Id));
-                    employee.LastConnectionDate = employee.CurrentConnectionDate;
-                    employee.CurrentConnectionDate = DateTime.Now;
-                    await _employeeRepository.SaveAsync();
+                    if (employee != null) {
+                        employee.LastConnectionDate = employee.CurrentConnectionDate;
+                        employee.CurrentConnectionDate = DateTime.Now;
+                        await _employeeRepository.SaveAsync();
+                    }
                     return LocalRedirect(returnUrl);
                 }
-                if (result.RequiresTwoFactor)
-                {
+                if (result.RequiresTwoFactor) {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
-                if (result.IsLockedOut)
-                {
+                if (result.IsLockedOut) {
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
-                else
-                {
+                else {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }

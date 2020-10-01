@@ -1,0 +1,137 @@
+﻿@model LeaveManagement.ViewModels.Company.CompanyVM
+
+@{
+    ViewData["Title"] = LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"];
+}
+
+<h1>@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit company"]</h1>
+
+<h4>@Localizer["Company data"]</h4>
+<hr />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="@ViewData["Action"]">
+    @Html.Hidden("Id")
+    @Html.Hidden("Active")
+    <div class="row">
+        <div class="col-md-5">
+            <h4>@Localizer["Principal data"]</h4>
+            <div class="form-group input-group">
+                <input class="form-control" asp-for="CompanyName" placeholder="@Html.PromptFor(m=>m.CompanyName)" />
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyName)">
+                        <span class="fa fa-edit"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group input-group">
+                <input class="form-control" asp-for="TaxId" placeholder="@Html.PromptFor(m=>m.TaxId)" />
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.TaxId)">
+                        <span class="fa fa-money"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group input-group">
+                <input class="form-control" asp-for="CompanyRegistrationDate" placeholder="@Html.PromptFor(m=>m.CompanyRegistrationDate)" />
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyRegistrationDate)">
+                        <span class="fa fa-institution"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group input-group">
+                <input class="form-control" asp-for="CompanyCreationDate" placeholder="@Html.PromptFor(m=>m.CompanyCreationDate)" />
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyCreationDate)">
+                        <span class="fa fa-institution"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group input-group">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="EnableLockoutForEmployees" placeholder="@Html.PromptFor(m=>m.EnableLockoutForEmployees)" />
+                    <label class="form-check-label" asp-for="EnableLockoutForEmployees"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <h4>@Localizer["Contact"]</h4>
+            <div class="input-group form-group">
+                <input class="form-control" asp-for="CompanyEmail" placeholder="@Html.PromptFor(m=>m.CompanyEmail)" />
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyEmail)">
+                        <span class="fa fa-at"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                <textarea class="form-control" asp-for="CompanyPostAddress" placeholder="@Html.PromptFor(m=>m.CompanyPostAddress)">
+                </textarea>
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyPostAddress)">
+                        <span class="fa fa-address-card"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group form-group">
+                        <input class="form-control" asp-for="CompanyState" placeholder="@Html.PromptFor(m=>m.CompanyState)" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyState)">
+                                <span class="fa fa-globe"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group form-group">
+                        <input class="form-control" asp-for="CompanyZipCode" placeholder="@Html.PromptFor(m=>m.CompanyZipCode)" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyZipCode)">
+                                <span class="fa fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <hr />
+    <h4>@Localizer["Comments"]</h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="input-group  form-group">
+                <textarea class="form-control" asp-for="CompanyPublicComment" placeholder="@Html.PromptFor(m=>m.CompanyPublicComment)">
+</textarea>
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyPublicComment)">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="input-group form-group">
+                <textarea class="form-control" asp-for="CompanyProtectedComment" placeholder="@Html.PromptFor(m=>m.CompanyProtectedComment)">
+</textarea>
+                <div class="input-group-append">
+                    <div class="input-group-text" title="@Html.DescriptionFor(m=>m.CompanyProtectedComment)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="@LeaveManagementLocalizerFactory.CommandsLocalizer["Create"]" class="btn btn-primary" />
+    </div>
+
+
+</form>
+
+<div>
+    <a asp-action="Index">@LeaveManagementLocalizerFactory.CommandsLocalizer["Back to List"]</a>
+</div>
+

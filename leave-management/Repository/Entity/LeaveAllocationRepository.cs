@@ -40,12 +40,16 @@ namespace LeaveManagement.Repository.Entity {
         public async Task<ICollection<LeaveAllocation>> FindAllAsync() => 
             await ApplicationDbContext.LeaveAllocations
             .Include(ai => ai.AllocationEmployee)
+            .ThenInclude(emc=>emc.Company)
             .Include(lt => lt.AllocationLeaveType)
+            .ThenInclude(ltc=>ltc.Company)
             .ToListAsync();
 
         public async Task<LeaveAllocation> FindByIdAsync(long id) => await ApplicationDbContext.LeaveAllocations
             .Include(ai => ai.AllocationEmployee)
+            .ThenInclude(emc => emc.Company)
             .Include(lt => lt.AllocationLeaveType)
+            .ThenInclude(ltc => ltc.Company)
             .FirstOrDefaultAsync(x=>x.Id == id);
 
         public async Task<bool> SaveAsync() {
@@ -62,8 +66,10 @@ namespace LeaveManagement.Repository.Entity {
 
         public async Task<ICollection<LeaveAllocation>> WhereAsync(Func<LeaveAllocation, bool> predicate) {
             return await Task.Run(()=>ApplicationDbContext.LeaveAllocations
-            .Include(ai=>ai.AllocationEmployee)
+            .Include(ae=>ae.AllocationEmployee)
+            .ThenInclude(aec => aec.Company)
             .Include(lt=>lt.AllocationLeaveType)
+            .ThenInclude(lte => lte.Company)
             .Where(predicate).ToList());
         }
 

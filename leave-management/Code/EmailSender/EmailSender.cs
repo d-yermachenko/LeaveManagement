@@ -1,5 +1,6 @@
 ﻿using MailKit.Security;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,14 @@ namespace LeaveManagement.EmailSender {
         }
 
         private SmtpSettings _Settings;
+        private ILogger<IEmailSender> _Logger;
 
-        public SmtpEmailSender(Func<SmtpSettings> configure) {
+
+
+        public SmtpEmailSender(Func<SmtpSettings> configure,
+            ILogger<IEmailSender> logger) {
             _Settings = configure.Invoke();
+            _Logger = logger;
         }
 
         public async Task SendEmail(string email, string subject, string htmlMessage) {
@@ -29,9 +35,7 @@ namespace LeaveManagement.EmailSender {
                 bodyBuilder.TextBody = htmlMessage;
                 MimeMessage mimeMessage = new MimeMessage(fromList, toList, subject, bodyBuilder.ToMessageBody());
                 await mailTransport.SendAsync(mimeMessage);
-
             } ;
-            
         }
 
         private async Task<MailKit.IMailTransport> CreateTransport() {
@@ -47,6 +51,7 @@ namespace LeaveManagement.EmailSender {
                     return smtpClient;
             }
             catch(AggregateException e) {
+                _Logger?.LogError(e, e.Message);
                 throw;
             }
             return smtpClient;

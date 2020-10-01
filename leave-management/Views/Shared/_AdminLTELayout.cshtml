@@ -41,10 +41,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fa fa-bars"></i></a>
                 </li>
-                
 
-                
-                
+
+
+
             </ul>
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
@@ -92,7 +92,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
                         <li class="nav-item">
                             <a asp-controller="Home" asp-action="Index" class="nav-link">
                                 <i class="nav-icon fa fa-home"></i>
@@ -101,7 +101,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </p>
                             </a>
                         </li>
-                        @if (SignInManager.IsSignedIn(User))
+                        @if (await UserManager.IsMemberOfOneAsync(User, LeaveManagement.UserRoles.Employee | LeaveManagement.UserRoles.HRManager | LeaveManagement.UserRoles.CompanyAdministrator))
                         {
                             <li class="nav-item">
                                 <a asp-controller="LeaveRequests" asp-action="Create" class="nav-link">
@@ -120,7 +120,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </a>
                             </li>
                         }
-                        @if (await _UserManager.IsPrivelegedUser(User))
+                        @if (await UserManager.IsMemberOfOneAsync(User, LeaveManagement.UserRoles.AppAdministrator))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Company" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fa fa-building"></i>
+                                    <p>
+                                        @LeaveManagementLocalizerFactory.MenuLocalizer["Manage companies"]
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Employee" asp-action="CreateEmployee" class="nav-link">
+                                    <i class="nav-icon fa fa-user-plus"></i>
+                                    <p>
+                                        @LeaveManagementLocalizerFactory.MenuLocalizer["Create company admin"]
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                        @if (await _UserManager.IsCompanyPrivelegedUser(User))
                         {
                             <li class="nav-item has-treeview menu-open">
                                 <a href="#" class="nav-link active">
@@ -153,22 +172,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Allocate leaves"]</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="LeaveAllocation" asp-action="AllocateByEmployees">
+                                    <li class="nav-item active">
+                                        <a class="nav-link" asp-controller="Employee" asp-action="Index">
                                             <i class="fa fa-group nav-icon"></i>
                                             <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Employees"]</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="Employee" asp-action="CreateEmployee">
-                                            <i class="fa fa-user nav-icon"></i>
-                                            <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Create employee"]</p>
                                         </a>
                                     </li>
 
                                 </ul>
                             </li>
                         }
+                        
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

@@ -89,10 +89,10 @@ namespace ResourceAutoCompleter {
                 }
             }
             catch (FileNotFoundException fe) {
-                ;
+                _Logger.LogError(fe, fe.FileName);
             }
             catch (Exception ce) {
-                ;
+                _Logger.LogError(ce, ce.Message);
             }
             return localisationDatas;
 

@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
+using LeaveManagement.Code.CustomLocalization;
 
 namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
 {
@@ -18,15 +20,18 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IStringLocalizer _MessageLocalizer;
 
         public EmailModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ILeaveManagementCustomLocalizerFactory localizerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _MessageLocalizer = localizerFactory.StringIdentityLocalizer;
         }
 
         public string Username { get; set; }
@@ -79,7 +84,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound(_MessageLocalizer["Unable to load user with ID '{0}'.", _userManager.GetUserId(User)]);
             }
 
             if (!ModelState.IsValid)
@@ -96,18 +101,18 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmailChange",
                     pageHandler: null,
-                    values: new { userId = userId, email = Input.NewEmail, code = code },
+                    values: new { userId, email = Input.NewEmail, code },
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    _MessageLocalizer["Confirm your email"],
+                    _MessageLocalizer["Please confirm your account by <a href='{0}'>clicking here</a>.", HtmlEncoder.Default.Encode(callbackUrl)]);
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                StatusMessage = _MessageLocalizer["Confirmation link to change email sent. Please check your email."];
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = _MessageLocalizer["Your email is unchanged."];
             return RedirectToPage();
         }
 
@@ -116,7 +121,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound(_MessageLocalizer["Unable to load user with ID '{0}'.", _userManager.GetUserId(User)]);
             }
 
             if (!ModelState.IsValid)
@@ -132,14 +137,14 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 pageHandler: null,
-                values: new { area = "Identity", userId = userId, code = code },
+                values: new { area = "Identity", userId, code },
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                _MessageLocalizer["Confirm your email"],
+                _MessageLocalizer["Please confirm your account by <a href='{0}'>clicking here</a>.", HtmlEncoder.Default.Encode(callbackUrl)]);
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = _MessageLocalizer["Confirmation link to change email sent. Please check your email."];
             return RedirectToPage();
         }
     }

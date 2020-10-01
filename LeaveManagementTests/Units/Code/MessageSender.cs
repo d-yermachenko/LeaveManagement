@@ -19,7 +19,7 @@ namespace LeaveManagementTests.Units.Code {
                 settings.SenderPassword = "Gxk~KE7A('@44)Q'";
                 settings.SenderEmail = "dmi.yermachenko@gmail.com";
                 return settings;
-            });
+            }, null);
             emailSender.SendEmailAsync("d.yermachenko@gmail.com", "Your test was succees", "Reporting entry").Wait();
         }
     }

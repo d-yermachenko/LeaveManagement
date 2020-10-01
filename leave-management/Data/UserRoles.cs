@@ -10,9 +10,9 @@ namespace LeaveManagement {
         Employee = 1,
         [Display(Name = "HR Manager", Description = "Human resources manager")]
         HRManager = 2,
-        [Display(Name = "Local administrator", Description = "Section admin")]
-        LocalAdministrator = 4,
-        [Display(Name = "Global administrator", Description = "App admin")]
-        Administrator = 8
+        [Display(Name = "Local administrator", Description = "Company administrator. Can manage all data inside the company, but can't create company")]
+        CompanyAdministrator = 4,
+        [Display(Name = "Application administrator", Description = "Application administrator. Can add or remove company, but cant manage leaves and normal employees ")]
+        AppAdministrator = 8
     }
 }

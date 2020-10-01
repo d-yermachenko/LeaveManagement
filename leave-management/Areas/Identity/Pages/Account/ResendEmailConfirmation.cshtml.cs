@@ -17,7 +17,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ResendEmailConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender emailSender) {
+        protected ResendEmailConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender emailSender) {
             _userManager = userManager;
             _emailSender = emailSender;
         }
@@ -54,7 +54,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 pageHandler: null,
-                values: new { userId = userId, code = code },
+                values: new { userId, code },
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.Email,

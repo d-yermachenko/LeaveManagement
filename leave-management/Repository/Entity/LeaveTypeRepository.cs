@@ -8,76 +8,124 @@ using LeaveManagement.Data.Entities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Security;
 
 namespace LeaveManagement.Repository.Entity {
     public class LeaveTypeRepository : ILeaveTypeRepositoryAsync {
 
         ApplicationDbContext ApplicationDbContext;
+        ILogger<LeaveTypeRepository> _Logger;
 
 
-        public LeaveTypeRepository(ApplicationDbContext applicationDbContext) {
+        public LeaveTypeRepository(ApplicationDbContext applicationDbContext,
+             ILogger<LeaveTypeRepository> logger) {
             ApplicationDbContext = applicationDbContext;
+            _Logger = logger;
         }
 
         public async Task<bool> CreateAsync(LeaveType entity) {
+            bool result = false;
             try {
                 ApplicationDbContext.LeaveTypes.Add(entity);
-                return await SaveAsync();
+                result = await SaveAsync();
             }
-            catch {
+            catch (AggregateException ae) {
+                var logableAE = ae.Flatten();
+                _Logger.LogError(logableAE, logableAE.Message);
                 throw;
             }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+                throw;
+            }
+            return result;
         }
 
         public async Task<bool> DeleteAsync(LeaveType entity) {
+            bool result = false;
             try {
                 ApplicationDbContext.LeaveTypes.Remove(entity);
-                return await SaveAsync();
+                result =  await SaveAsync();
             }
-            catch {
+            catch (AggregateException ae) {
+                var logableAE = ae.Flatten();
+                _Logger.LogError(logableAE, logableAE.Message);
                 throw;
             }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+                throw;
+            }
+            return result;
         }
 
         public async Task<ICollection<LeaveType>> FindAllAsync() => await Task.Run(()=> ApplicationDbContext.LeaveTypes.ToList());
 
         public async Task<LeaveType> FindByIdAsync(int id) {
-            return await ApplicationDbContext.LeaveTypes.FindAsync( id );
-        }
-
-        public async Task<ICollection<LeaveType>> GetLeaveTypesByEmployeeIdAsync(string employeeId) {
-            Func<LeaveType, bool> selectExpression = (leaveType) => {
-                var historyOfEmployee = ApplicationDbContext.LeaveRequests.Where(lh => lh.RequestingEmployeeId.Equals(employeeId));
-                var leaveTypesIds = historyOfEmployee.Select(hoe => hoe.LeaveTypeId).GroupBy(lti => lti).Select(gr => gr.Key);
-                return leaveTypesIds.Contains(leaveType.Id);
-            };
-            return await Task.Run(() => {
-                return ApplicationDbContext.LeaveTypes.Where(x => selectExpression.Invoke(x)).ToArray();
-            });
-        }
-
-        public async Task<bool> SaveAsync() {
+            LeaveType result = null;
             try {
-                return (await ApplicationDbContext.SaveChangesAsync()) > 0;
-                
+                result =  await ApplicationDbContext.LeaveTypes.FindAsync(id);
             }
-            catch {
+            catch (AggregateException ae) {
+                var logableAE = ae.Flatten();
+                _Logger.LogError(logableAE, logableAE.Message);
                 throw;
             }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+                throw;
+            }
+            return result;
+        }
+
+
+        public async Task<bool> SaveAsync() {
+            bool result = false;
+            try {
+                result = (await ApplicationDbContext.SaveChangesAsync()) > 0;
+                
+            }
+            catch(AggregateException ae) {
+                var logableAE = ae.Flatten();
+                _Logger.LogError(logableAE, logableAE.Message);
+                throw;
+            }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+                throw;
+            }
+            return result;
         }
 
         public async Task<bool> UpdateAsync(LeaveType entity) {
+            bool result = false;
             try {
                 ApplicationDbContext.LeaveTypes.Update(entity);
-                return await SaveAsync();
+                result = await SaveAsync();
             }
-            catch {
-                throw;
+            catch(AggregateException ae)  {
+                var loggableAE = ae.Flatten();
+                _Logger.LogError(loggableAE, loggableAE.Message);
             }
+            catch(Exception e) {
+                _Logger.LogError(e, e.Message);
+            }
+            return result;
         }
 
         public async Task<ICollection<LeaveType>> WhereAsync(Func<LeaveType, bool> predicate) {
-            return await Task.Run(() => ApplicationDbContext.LeaveTypes.Where(predicate).ToList());
+            ICollection<LeaveType> result = new LeaveType[] { };
+            try {
+                result = await Task.Run(() => ApplicationDbContext.LeaveTypes.Where(predicate)?.ToList());
+            }
+            catch (AggregateException ae) {
+                var loggableAE = ae.Flatten();
+                _Logger.LogError(loggableAE, loggableAE.Message);
+            }
+            catch (Exception e) {
+                _Logger.LogError(e, e.Message);
+            }
+            return result;
         }
     }
 }

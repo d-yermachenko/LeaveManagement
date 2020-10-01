@@ -57,7 +57,7 @@
                                     @LeaveManagementLocalizerFactory.MenuLocalizer["Manage"]
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    @if (await UserManager.IsPrivelegedUser(AppUser))
+                                    @if (await UserManager.IsCompanyPrivelegedUser(AppUser))
                                     {
                                         <a class="dropdown-item" asp-area="" asp-controller="LeaveTypes" asp-action="Index">
                                             @LeaveManagementLocalizerFactory.MenuLocalizer["Edit leave types"]
@@ -74,7 +74,7 @@
                                         </a>
 
                                     }
-                                    @if (UserRoles?.Contains(LeaveManagement.UserRoles.Administrator.ToString()) ?? false)
+                                    @if (UserRoles?.Contains(LeaveManagement.UserRoles.AppAdministrator.ToString()) ?? false)
                                     {
                                         <a class="dropdown-item" asp-area="" asp-controller="LeaveRequests" asp-action="ModeratorIndex">
                                             @LeaveManagementLocalizerFactory.MenuLocalizer["Leave requests"]

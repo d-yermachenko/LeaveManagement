@@ -3,9 +3,6 @@ using Microsoft.Extensions.Options;
 using System;
 
 namespace LeaveManagement.PasswordGenerator {
-    public interface IPasswordGenerator {
-        string GeneratePassword();
-    }
 
 
     public class PasswordGenerator : IPasswordGenerator {
@@ -38,7 +35,6 @@ namespace LeaveManagement.PasswordGenerator {
             bool includeSpecial = true,
             bool includeSpaces = false,
             int lengthOfPassword = 12) {
-            const int MAXIMUM_IDENTICAL_CONSECUTIVE_CHARS = 2;
             const string LOWERCASE_CHARACTERS = "abcdefghijklmnopqrstuvwxyz";
             const string UPPERCASE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const string NUMERIC_CHARACTERS = "0123456789";

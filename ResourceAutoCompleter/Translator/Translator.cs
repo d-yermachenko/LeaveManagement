@@ -69,9 +69,10 @@ namespace ResourceAutoCompleter.Translator {
         }
 
         private static string GetQueryString(string[] languages, string fromLanguage = null) {
-            List<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
-            queryParams.Add(new KeyValuePair<string, string>("api-version", "3.0"));
-            if(!String.IsNullOrWhiteSpace(fromLanguage))
+            List<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>> {
+                new KeyValuePair<string, string>("api-version", "3.0")
+            };
+            if (!String.IsNullOrWhiteSpace(fromLanguage))
                 queryParams.Add(new KeyValuePair<string, string>("from", fromLanguage));
             foreach (string lang in languages) {
                 queryParams.Add(new KeyValuePair<string, string>("to", lang));

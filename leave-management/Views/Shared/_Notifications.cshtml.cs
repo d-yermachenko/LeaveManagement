@@ -123,8 +123,9 @@ namespace LeaveManagement.Views.Shared {
                 return this;
             var employee = await _EmployeeRepository.FindByIdAsync(_UserManager.GetUserId(_UserData));
             List<LeaveNotification> Data = new List<LeaveNotification>();
-            if (await _UserManager.IsPrivelegedUser(employee)) {
-                var pendingRequestsNotifications = (await _LeaveRequestsRepository.WhereAsync(q => q.RequestedDate.CompareTo(employee.LastConnectionDate) > 0 &&
+            if (await _UserManager.IsCompanyPrivelegedUser(employee)) {
+                var pendingRequestsNotifications = (
+                    await _LeaveRequestsRepository.WhereAsync(q => q.RequestedDate.CompareTo(employee.LastConnectionDate) > 0 &&
                 q.Approuved == null && !q.RequestCancelled))
                     .Select(x=> LeaveNotification.CreateRequestAdded(x, _NotificationLocalizer))
                     .ToList();
@@ -141,10 +142,13 @@ namespace LeaveManagement.Views.Shared {
                 }
 
             }
-            var actionedRequestsNotifications = (await _LeaveRequestsRepository.WhereAsync(q => q.RequestedDate.CompareTo(employee.LastConnectionDate) > 0 &&
-                q.Approuved != null && !q.RequestCancelled && q.RequestingEmployeeId.Equals(employee.Id)))
+            /*var actionedRequestsNotifications = (await _LeaveRequestsRepository.WhereAsync(q => q.RequestedDate.CompareTo(employee.LastConnectionDate) > 0 &&
+                q.Approuved != null && !q.RequestCancelled && (q?.RequestingEmployeeId?.Equals(employee.Id)??false)))
                 .Select(x=> LeaveNotification.CreateRequestHandled(x, _NotificationLocalizer))
-                .ToList();
+                .ToList();*/
+            var requestConcernedCurrentEmployee = (await _LeaveRequestsRepository.WhereAsync(q => q.RequestingEmployeeId?.Equals(employee.Id)??false));
+
+            var actionedRequestsNotifications = new List<LeaveNotification>();
             Data.AddRange(actionedRequestsNotifications);
             if (actionedRequestsNotifications.Count() > 0) {
                 LeaveNotificationsLinks.Add(new LeaveNotificationLink() {

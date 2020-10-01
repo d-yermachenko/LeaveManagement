@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using LeaveManagement.Contracts;
+using System.Linq;
 
 namespace LeaveManagement.Areas.Identity.Pages.Account
 {
@@ -18,11 +20,13 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IEmployeeRepositoryAsync _EmployeeRepository;
 
-        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender, IEmployeeRepositoryAsync employeeRepository)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _EmployeeRepository = employeeRepository;
         }
 
         [BindProperty]
@@ -45,7 +49,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
                 }
-
+                var employee = (await _EmployeeRepository.WhereAsync(x=>x.Email.Equals(Input.Email) || (x.ContactMail?.Equals(Input.Email)??false))).FirstOrDefault();
                 // For more information on how to enable account confirmation and password reset please 
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -55,9 +59,14 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
                     pageHandler: null,
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
+                string email = Input.Email;
+                if(employee != null) {
+                    if (!String.IsNullOrWhiteSpace(employee.ContactMail))
+                        email = employee.ContactMail;
+                }
 
                 await _emailSender.SendEmailAsync(
-                    Input.Email,
+                    email,
                     "Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
