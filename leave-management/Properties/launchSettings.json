@@ -12,8 +12,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ResourcesDebug": "ResourcesDebug",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ResourcesDebug": "ResourcesRelease",
+        "ASPNETCORE_ENVIRONMENT": "Azure"
       }
     },
     "leave_management": {

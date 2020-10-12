@@ -620,7 +620,7 @@ namespace LeaveManagement.Controllers {
         }
 
         public async Task<IActionResult> UpdateIdentityUser(IdentityUser user) {
-            return await Task.FromResult(RedirectToPage($"/Account/Manage/Index"));
+            return Redirect("~/Identity/Account/Manage/Index");
         }
         #endregion
 

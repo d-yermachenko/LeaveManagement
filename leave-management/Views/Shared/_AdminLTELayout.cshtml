@@ -100,6 +100,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a asp-controller="Home" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fa fa-home"></i>
+                                <p>
+                                    @LeaveManagementLocalizerFactory.MenuLocalizer["Help"]
+                                </p>
+                            </a>
+                        </li>
                         @if (await UserManager.IsMemberOfOneAsync(User, LeaveManagement.UserRoles.Employee | LeaveManagement.UserRoles.HRManager | LeaveManagement.UserRoles.CompanyAdministrator))
                         {
                             <li class="nav-item">
