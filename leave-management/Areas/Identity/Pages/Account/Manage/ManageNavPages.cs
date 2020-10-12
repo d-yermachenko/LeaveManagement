@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
+namespace LeaveManagement
 {
     public static class ManageNavPages
     {
+        public static string ActivePageSection => "ActivePage";
+
         public static string Index => "Index";
 
         public static string Email => "Email";
@@ -15,6 +17,20 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
         public static string ChangePassword => "ChangePassword";
 
         public static string PersonalData => "PersonalData";
+
+        public static string LeaveAllocation => "LeaveAllocation";
+
+        public static string LeaveRequest => "LeaveRequest";
+
+        public static string Company => "Company";
+
+        public static string Employees => "Employees";
+
+        public static string Home => "Home";
+
+        public static string Privacy => "Privacy";
+
+
 
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);

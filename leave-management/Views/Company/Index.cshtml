@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<LeaveManagement.ViewModels.Company.CompanyVM>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = LeaveManagementLocalizerFactory.MenuLocalizer["List companies"];
+    ViewData[LeaveManagement.ManageNavPages.Employees] = LeaveManagement.ManageNavPages.Company;
 }
 
 <h1>@Localizer["Index"]</h1>

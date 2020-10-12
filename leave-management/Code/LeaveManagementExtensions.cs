@@ -75,8 +75,10 @@ namespace LeaveManagement {
         }
 
         public static UserRoles ToUserRoles(IEnumerable<string> rolesNames) {
+            if(rolesNames == null)
+                return UserRoles.None;
             UserRoles result = UserRoles.None;
-            foreach(var roleName in rolesNames) {
+            foreach (var roleName in rolesNames) {
                 if (Enum.TryParse<UserRoles>(roleName, out UserRoles roleValue)) {
                     result |= roleValue;
                 }

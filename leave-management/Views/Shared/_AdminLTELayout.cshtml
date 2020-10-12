@@ -60,7 +60,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         @foreach (var culture in GlobalizationStartup.SupportedCultures)
                         {
                             <div class="dropdown-divider"></div>
-
                             <a class="dropdown-item" asp-controller="Home" asp-action="SwitchCulture" asp-route-cultureCode="@culture.Name"
                                asp-route-refController="@(CurrentRoute.ContainsKey("controller")? CurrentRoute["controller"] :"")"
                                asp-route-refAction="@(CurrentRoute.ContainsKey("action")? CurrentRoute["action"] :"")"
@@ -119,6 +118,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     </p>
                                 </a>
                             </li>
+
                         }
                         @if (await UserManager.IsMemberOfOneAsync(User, LeaveManagement.UserRoles.AppAdministrator))
                         {
@@ -136,6 +136,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <p>
                                         @LeaveManagementLocalizerFactory.MenuLocalizer["Create company admin"]
                                     </p>
+                                </a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link" asp-controller="Employee" asp-action="Index">
+                                    <i class="fa fa-users nav-icon"></i>
+                                    <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Users"]</p>
                                 </a>
                             </li>
                         }
@@ -173,7 +179,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         </a>
                                     </li>
                                     <li class="nav-item active">
-                                        <a class="nav-link" asp-controller="Employee" asp-action="Index">
+                                        <a class="nav-link" asp-controller="Employee" asp-action="IndexForYourCompany">
                                             <i class="fa fa-group nav-icon"></i>
                                             <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Employees"]</p>
                                         </a>
@@ -182,7 +188,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </ul>
                             </li>
                         }
-                        
+
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

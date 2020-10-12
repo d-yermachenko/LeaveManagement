@@ -61,7 +61,6 @@ namespace LeaveManagement.ViewModels.Employee {
         [Display(Name = "RH Manager", Description = "Manager who can validate his leave", Prompt = "RH manager")]
         public string ManagerId { get; set; }
 
-        [Required(ErrorMessage = "Each employee must be attached to company")]
         [Display(Name = "Company", Prompt = "Please assign employee to the company", Description = "Employees company")]
         public int CompanyId { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<LeaveManagement.ViewModels.Employee.EmployeePresentationDefaultViewModel>
 @{
     ViewData["Title"] = Localizer["Allocate by employees"];
-    ViewData[LeaveManagement.ManageNavPages.Employees] = LeaveManagement.ManageNavPages.Employees;
+    ViewData[LeaveManagement.ManageNavPages.ActivePageSection] = LeaveManagement.ManageNavPages.Employees;
 }
 <a class="btn btn-outline-primary" asp-controller="Employee" asp-action="CreateEmployee" title="@LeaveManagementLocalizerFactory.MenuLocalizer["Create employee"]">
     <i class="fa fa-user nav-icon"></i>
@@ -70,6 +70,11 @@
                     @Html.DisplayFor(modelItem => item.EmploymentDate)
                 </td>
                 <td>
+                    <a class="btn btn-outline-primary" asp-controller="LeaveAllocation" asp-action="AllocateByEmployee" asp-route-employeeId="@item.Id"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate leave"]">
+                        <i class="fa fa-calendar"></i>
+                    </a>
+
                     <a class="btn btn-outline-info" asp-action="UpdateEmployee" asp-route-employeeId="@item.Id"
                        title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit employee"]">
                         <i class="fa fa-edit"></i>
@@ -78,6 +83,7 @@
                        title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit employee"]">
                         <i class="fa fa-remove"></i>
                     </a>
+
 
                 </td>
             </tr>

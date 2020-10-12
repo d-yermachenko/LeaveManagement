@@ -10,6 +10,7 @@ namespace LeaveManagement.ViewModels.Employee {
 
     public class EmployeeCreationVM  {
 
+
         [HiddenInput]
         public string Id { get; set; }
 
@@ -69,7 +70,8 @@ namespace LeaveManagement.ViewModels.Employee {
         [DataType(DataType.EmailAddress)]
         public string ContactMail { get; set; }
 
-        public bool AccessDataEnabled { get; set; } = true;
+        #region Roles
+        public bool RolesListEnabled { get; set; } = true;
 
         [Display(Name = "Roles", Prompt = "Roles", Description ="Function of this employee")]
         public IEnumerable<SelectListItem> RolesList { get; set; }
@@ -79,18 +81,21 @@ namespace LeaveManagement.ViewModels.Employee {
         [Required(ErrorMessage ="You must accept contract")]
         [Display(Name = "Agree to all conditions", Prompt = "Accept th conditions", Description = "Accept the conditions of thez contract")]
         public bool AcceptContract { get; set; }
+        #endregion
 
+        #region Company
         public virtual bool CompanyEnabled { get; set; } = false;
 
-        [Required(ErrorMessage = "Each employee must be attached to company")]
         [Display(Name ="Company", Prompt="Please assign employee to the company", Description ="Employees company")]
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
 
         public Data.Entities.Company Company { get; set; }
 
         [Display(Name = "Company", Prompt = "Please assign employee to the company", Description = "Employees company")]
         public IEnumerable<SelectListItem> Companies { get; set; }
+        #endregion
 
+        #region Manager
         public bool ManagerEnabled { get; set; }
 
         [Display(Name = "Manager id", Prompt = "Please assign employee to the company", Description = "Employees' manager")]
@@ -101,5 +106,6 @@ namespace LeaveManagement.ViewModels.Employee {
 
         [Display(Name = "Manager", Prompt = "Please choose the manager", Description = "Employee manager")]
         public IEnumerable<SelectListItem> Managers { get; set; }
+        #endregion
     }
 }

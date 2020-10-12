@@ -1,18 +1,21 @@
-﻿@model LeaveManagement.ViewModels.Employee.EmployeeCreationVM
+﻿@using LeaveManagement.Areas.Identity;
+@model LeaveManagement.ViewModels.Employee.EmployeeCreationVM
 @inject ILeaveManagementCustomLocalizerFactory CustomLocalizerFactory
 
 @{
     Microsoft.Extensions.Localization.IStringLocalizer RegisterLocalizer = CustomLocalizerFactory.StringIdentityLocalizer;
     ViewData["Title"] = Localizer["Add new employee"];
+    ViewData[ManageNavPages.ActivePageSection] = ManageNavPages.Employees;
 }
 <div asp-validation-summary="All"></div>
 <form asp-action="@ViewBag.Action">
     @Html.Hidden("Id")
+    <input type="hidden" asp-for="UserName" />
+    <input type="hidden" asp-for="Email" />
     <!--Principal data-->
     <div class="form-row">
 
         <!--Column with account data-->
-
         <!--Column with employee data-->
         <div class="col-md-12">
             <h4>@RegisterLocalizer["Profile"]</h4>
@@ -194,8 +197,11 @@
                                 </div>
                             </div>
                         </div>
-                        <span asp-validation-for="CompanyId" class="text-danger d-block"></span>
-                    </div>
+                        @if (Model.CompanyEnabled)
+                        {
+                            <span asp-validation-for="CompanyId" class="text-danger d-block"></span>
+                        }
+                        </div>
                 </div>
                 <div class="col-6">
                     <div class="form-group">
@@ -238,9 +244,18 @@
         <div class="col-md-12 col-lg-12 col-sm-12">
             <div class="form-group">
                 <div class="input-group">
-                    <select asp-items="Model.RolesList" asp-for="Roles" class="form-control" multiple="multiple"
-                            placeholder="@Html.DisplayNameFor(Model=>Model.RolesList)">
-                    </select>
+                    @if (Model.RolesListEnabled)
+                    {
+                        <select asp-items="Model.RolesList" asp-for="Roles" class="form-control" multiple="multiple"
+                                placeholder="@Html.DisplayNameFor(Model => Model.RolesList)">
+                        </select>
+                    }
+                    else
+                    {
+                        <select asp-items="Model.RolesList" asp-for="Roles" class="form-control" multiple="multiple"
+                                placeholder="@Html.DisplayNameFor(Model => Model.RolesList)" disabled>
+                        </select>
+                    }
                     <div class="input-group-append">
                         <div class="input-group-text" title="@Html.DescriptionFor(m=>m.RolesList)">
                             <span class="fa fa-4x fa-users"></span>
@@ -251,7 +266,7 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Sign in</button>
+    <button type="submit" class="btn btn-primary">@CustomLocalizerFactory.CommandsLocalizer["Update user"]</button>
 </form>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
