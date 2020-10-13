@@ -28,14 +28,6 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: AzureKeyVault@1
-  inputs:
-    azureSubscription: 'Azure leave management application(6a7b0937-77ed-47c1-9cda-ecb4c8a04828)'
-    KeyVaultName: 'LeaveManagementVault'
-    SecretsFilter: 'AzureSqlAdminId,AzureSqlAdminPassword'
-    RunAsPreJob: false
-
-
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
