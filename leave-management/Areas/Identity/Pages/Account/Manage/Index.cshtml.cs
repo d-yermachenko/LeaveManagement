@@ -50,7 +50,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage {
             Input = new InputModel {
                 Id = user.Id,
                 PhoneNumber = user.PhoneNumber,
-                UserName = user.UserName
+                UserName = String.IsNullOrWhiteSpace(user.UserName) ? user.Email : user.UserName
             };
         }
 
