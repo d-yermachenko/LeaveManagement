@@ -45,6 +45,7 @@ namespace LeaveManagement {
             services.AddScoped<ILeaveAllocationRepositoryAsync, LeaveAllocationRepository>();
             services.AddScoped<ILeaveRequestsRepositoryAsync, LeaveRequestsRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddTransient<ILeaveManagementUnitOfWork, LeaveManagementUnitOfWork>();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
             GlobalizationStartup.ConfigureServices(services);
             services.AddScoped<IEmployeeRepositoryAsync, EmployeeRepository>();

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Contracts {
-    public interface ILeaveManagementUnitOfWork {
+    public interface ILeaveManagementUnitOfWork : IDisposable {
         public IRepository<LeaveType> LeaveTypes { get; }
 
         public IRepository<LeaveAllocation> LeaveAllocations { get; }

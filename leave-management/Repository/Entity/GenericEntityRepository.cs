@@ -41,7 +41,7 @@ namespace LeaveManagement.Repository.Entity {
             return result;
         }
 
-        public async Task<TEntity> FindByIdAsync(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, object>>[] includes= null) {
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, object>>[] includes= null) {
             IQueryable<TEntity> query = _ObjectSet;
             if (includes != null) {
                 foreach (var include in includes)

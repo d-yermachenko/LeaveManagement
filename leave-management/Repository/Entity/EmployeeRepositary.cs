@@ -62,11 +62,9 @@ namespace LeaveManagement.Repository.Entity {
 
         public async Task<bool> RegisterEmployeeAsync(Employee entity, string password) {
             if (await CreateAsync(entity)) {
-                string passwordHash = _UserManager.PasswordHasher.HashPassword(entity, password);
                 var result = await _UserManager.AddPasswordAsync(entity, password);
                 if (result.Succeeded) {
                     var updatedUser = await _UserManager.FindByNameAsync(entity.UserName);
-                    CompareHash(updatedUser.PasswordHash, passwordHash);
                 }
                 return result.Succeeded;
             }
@@ -74,11 +72,6 @@ namespace LeaveManagement.Repository.Entity {
                 return false;
         }
 
-        private bool CompareHash(string expected, string received) {
-            bool result = expected.Equals(received);
-            _Logger.LogDebug($"Hash compared {expected.Equals(received)}");
-            return result;
-        }
 
         public async Task<bool> CreateAsync(Employee entity) {
             var result = await _UserManager.CreateAsync(entity);
