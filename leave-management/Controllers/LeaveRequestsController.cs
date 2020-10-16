@@ -8,6 +8,7 @@ using AutoMapper;
 using LeaveManagement.Code.CustomLocalization;
 using LeaveManagement.Contracts;
 using LeaveManagement.Data.Entities;
+using LeaveManagement.Repository.Entity;
 using LeaveManagement.ViewModels.Employee;
 using LeaveManagement.ViewModels.LeaveRequest;
 using Microsoft.AspNetCore.Authorization;
@@ -28,39 +29,32 @@ namespace LeaveManagement.Controllers {
         private const string ReviewViewName = "Review";
 
         #region Dependencies
-        private readonly ILeaveRequestsRepositoryAsync _LeaveRequestsRepository;
+        private readonly ILeaveManagementUnitOfWork _UnitOfWork;
         private readonly IMapper _Mapper;
         private readonly ILeaveManagementCustomLocalizerFactory _LocalizerFactory;
         private readonly IStringLocalizer _ControllerLocalizer;
-
         private readonly UserManager<IdentityUser> _UserManager;
-        private readonly ILeaveTypeRepositoryAsync _LeaveTypeRepository;
-        private readonly ILeaveAllocationRepositoryAsync _LeaveAllocationsRepository;
-        private readonly IEmployeeRepositoryAsync _EmployeeRepository;
 
         public LeaveRequestsController(
-            ILeaveRequestsRepositoryAsync leaveRequestsRepository,
+            ILeaveManagementUnitOfWork unitOfWork,
             IMapper mapper,
             ILeaveManagementCustomLocalizerFactory localizerFactory,
             UserManager<IdentityUser> userManager,
             ILeaveTypeRepositoryAsync leaveTypeRepository,
             ILeaveAllocationRepositoryAsync leaveAllocationRepository,
             IEmployeeRepositoryAsync employeeRepository) {
-            _LeaveRequestsRepository = leaveRequestsRepository;
+            _UnitOfWork = unitOfWork;
             _Mapper = mapper;
             _LocalizerFactory = localizerFactory;
             _UserManager = userManager;
-            _LeaveTypeRepository = leaveTypeRepository;
-            _LeaveAllocationsRepository = leaveAllocationRepository;
             _ControllerLocalizer = _LocalizerFactory.Create(this.GetType());
-            _EmployeeRepository = employeeRepository;
         }
         #endregion
 
         [HttpGet]
         public async Task<IActionResult> Index() {
             var currentUser = _UserManager.GetUserAsync(User);
-            var leaveRequests = await _LeaveRequestsRepository.WhereAsync(x => x.RequestingEmployeeId.Equals(currentUser.Id));
+            var leaveRequests = await _UnitOfWork.LeaveRequest.WhereAsync(x => x.RequestingEmployeeId.Equals(currentUser.Id));
             var leaveRequestsModel = _Mapper.Map<List<LeaveRequestDefaultViewModel>>(leaveRequests);
             LeaveRequestsStatisticsViewModel leaveRequestsStatistics = new LeaveRequestsStatisticsViewModel() {
                 Moderation = false,
@@ -75,7 +69,7 @@ namespace LeaveManagement.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> ModeratorIndex() {
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if(currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
@@ -85,8 +79,8 @@ namespace LeaveManagement.Controllers {
                 return Forbid();
             }
    
-            var leaveRequests = await _LeaveRequestsRepository.WhereAsync(lr=>lr.LeaveType?.CompanyId == currentEmployee.CompanyId &&
-            lr.RequestingEmployee?.CompanyId == currentEmployee.CompanyId);
+            var leaveRequests = await _UnitOfWork.LeaveRequest.WhereAsync(lr=>lr.LeaveType.CompanyId == currentEmployee.CompanyId &&
+            lr.RequestingEmployee != null && lr.RequestingEmployee.CompanyId == currentEmployee.CompanyId);
             var leaveRequestsModel = _Mapper.Map<List<LeaveRequestDefaultViewModel>>(leaveRequests);
             ViewBag.DisplayReviewButton = true;
             LeaveRequestsStatisticsViewModel leaveRequestsStatistics = new LeaveRequestsStatisticsViewModel() {
@@ -102,13 +96,13 @@ namespace LeaveManagement.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Create() {
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
             }
             var createLeaveRequestViewModel = new CreateLeaveRequestVM();
-            var leaveTypes = await _LeaveTypeRepository.WhereAsync(x=>x.CompanyId == currentEmployee.CompanyId);
+            var leaveTypes = await _UnitOfWork.LeaveTypes.WhereAsync(x=>x.CompanyId == currentEmployee.CompanyId);
             createLeaveRequestViewModel.LeaveTypes = _Mapper.Map<List<SelectListItem>>(leaveTypes);
             createLeaveRequestViewModel.StartDate = DateTime.Now.Date;
             createLeaveRequestViewModel.EndDate = DateTime.Now.AddDays(7).Date;
@@ -118,7 +112,7 @@ namespace LeaveManagement.Controllers {
         [HttpPost]
         public async Task<IActionResult> Create(CreateLeaveRequestVM leaveRequest) {
             
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
@@ -126,7 +120,7 @@ namespace LeaveManagement.Controllers {
             if (!ModelState.IsValid) {
                 return View(leaveRequest);
             }
-            leaveRequest.LeaveTypes = _Mapper.Map<IEnumerable<SelectListItem>>(await _LeaveTypeRepository.WhereAsync(c=>c.CompanyId == currentEmployee.CompanyId));
+            leaveRequest.LeaveTypes = _Mapper.Map<IEnumerable<SelectListItem>>(await _UnitOfWork.LeaveTypes.WhereAsync(c=>c.CompanyId == currentEmployee.CompanyId));
 
             if (DateTime.Compare(leaveRequest.StartDate, leaveRequest.EndDate) > 1) {
                 ModelState.AddModelError("Date", _ControllerLocalizer["Start date must be earlier that the end date"]);
@@ -150,8 +144,9 @@ namespace LeaveManagement.Controllers {
                 RequestingEmployeeId = currentEmployee.Id,
                 RequestComment = leaveRequest.RequestComment,
             };
-
-            if (!await _LeaveRequestsRepository.CreateAsync(request)) {
+            bool result = await _UnitOfWork.LeaveRequest.CreateAsync(request);
+            result &= await _UnitOfWork.Save();
+            if (!result) {
                 ModelState.AddModelError("", _ControllerLocalizer[
                     @"Something went wrong when submitting your request. Please wait a moment and retry or contact your system administrator"]);
                 return View(leaveRequest);
@@ -163,7 +158,7 @@ namespace LeaveManagement.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Review(int requestId) {
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
@@ -172,7 +167,7 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _ControllerLocalizer["Your role not allows you to administrate leave requests"]);
                 return Forbid();
             }
-            var leaveRequest = await _LeaveRequestsRepository.FindByIdAsync(requestId);
+            var leaveRequest = await _UnitOfWork.LeaveRequest.FindAsync(x=>x.Id == requestId);
             if (leaveRequest == null)
                 return NotFound(_ControllerLocalizer["Leave request #{0} was not found", requestId]);
             var currentUser = await _UserManager.GetUserAsync(User);
@@ -186,7 +181,7 @@ namespace LeaveManagement.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Review(int requestId, LeaveRequestDefaultViewModel viewModel) {
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
@@ -195,7 +190,7 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _ControllerLocalizer["You not authorized to review leave requests"]);
                 Forbid();
             }
-            var leaveRequest = await _LeaveRequestsRepository.FindByIdAsync(requestId);
+            var leaveRequest = await _UnitOfWork.LeaveRequest.FindAsync(x=>x.Id == requestId);
             if (leaveRequest == null) {
                 return NotFound(_ControllerLocalizer["Leave request #{0} was not found", requestId]);
             }
@@ -219,7 +214,9 @@ namespace LeaveManagement.Controllers {
             leaveRequest.ApprouvedById = currentEmployee.Id;
             leaveRequest.RequestCancelled = viewModel.RequestCancelled;
             leaveRequest.ValidationComment = viewModel.ValidationComment;
-            if (!await _LeaveRequestsRepository.UpdateAsync(leaveRequest)) {
+            bool result = await _UnitOfWork.LeaveRequest.UpdateAsync(leaveRequest);
+            result &= await _UnitOfWork.Save();
+            if (!result) {
                 ModelState.AddModelError("", _ControllerLocalizer["Failed to action the request"]);
                 return View(viewModel);
             }
@@ -232,14 +229,17 @@ namespace LeaveManagement.Controllers {
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> EmployeeRequests(int? period) {
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
             }
             int currentPeriod = period == null ? DateTime.Now.Year : (int)period;
 
-            var requests = (await _LeaveRequestsRepository.WhereAsync(q => q.RequestingEmployeeId.Equals(currentEmployee.Id))).ToList();
+            var requests = (await _UnitOfWork.LeaveRequest.WhereAsync(filter: q => q.RequestingEmployeeId.Equals(currentEmployee.Id),
+                order: o => o.OrderByDescending(el => el.RequestedDate).ThenBy(el => el.StartDate),
+                includes: new System.Linq.Expressions.Expression<Func<LeaveRequest, object>>[] { x => x.RequestingEmployee,
+                    x => x.LeaveType, x=>x.ApprouvedBy })).ToList();
             
             Task<List<LeaveRequestDefaultViewModel>> mappingRequestsTask = Task.Run(() => _Mapper.Map<List<LeaveRequestDefaultViewModel>>(requests));
             Task<IDictionary<int, LeaveSold>> requestedLeaveSoldsClass = Task.Run(() => {
@@ -258,8 +258,9 @@ namespace LeaveManagement.Controllers {
                 }
                 return leaveSolds;
                 });
-            
-            var allocations = await _LeaveAllocationsRepository.WhereAsync(q => q.AllocationEmployeeId.Equals(currentEmployee.Id));
+
+            var allocations = await _UnitOfWork.LeaveAllocations.WhereAsync(filter: q => q.AllocationEmployeeId.Equals(currentEmployee.Id),
+                includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationLeaveType, x => x.AllocationEmployee }) ;
             
             Task<IDictionary<int, LeaveSold>> allocatedLeaveSoldsTask = Task.Run(() => {
                 var grouppedAllocations = allocations.GroupBy(g => g.AllocationLeaveTypeId);
@@ -274,7 +275,7 @@ namespace LeaveManagement.Controllers {
                 return result;
             });
 
-            var leaveTypes = (await _LeaveTypeRepository.WhereAsync(lt=>lt.CompanyId == currentEmployee.CompanyId)).Select(v => new LeaveSold() {
+            var leaveTypes = (await _UnitOfWork.LeaveTypes.WhereAsync(lt=>lt.CompanyId == currentEmployee.CompanyId)).Select(v => new LeaveSold() {
                 LeaveTypeId = v.Id,
                 LeaveTypeName = v.LeaveTypeName,
                 DefaultDays = v.DefaultDays
@@ -312,8 +313,8 @@ namespace LeaveManagement.Controllers {
 
         [Authorize]
         public async Task<IActionResult> RemoveRequest(long requestId) {
-            var request = await _LeaveRequestsRepository.FindByIdAsync(requestId);
-            var currentEmployee = await _EmployeeRepository.GetEmployeeAsync(User);
+            var request = await _UnitOfWork.LeaveRequest.FindAsync(x=>x.Id == requestId);
+            var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
                 return Forbid();
@@ -340,7 +341,8 @@ namespace LeaveManagement.Controllers {
             }
                 
             request.RequestCancelled = true;
-            bool result = await _LeaveRequestsRepository.UpdateAsync(request);
+            bool result = await _UnitOfWork.LeaveRequest.UpdateAsync(request);
+            result &= await _UnitOfWork.Save();
             if (!result) {
                 ModelState.AddModelError("", _ControllerLocalizer["Database error while updating leave request #{0}", requestId]);
                 return BadRequest(ModelState);
@@ -350,15 +352,15 @@ namespace LeaveManagement.Controllers {
 
         #region Validation methods
         private async Task<bool> ValidateRequestDaysAsync(string employeeId, int leaveTypeId, DateTime startDate, DateTime endDate) {
-            var allocationsForThisEmployee = await _LeaveAllocationsRepository.WhereAsync(x =>
+            var allocationsForThisEmployee = await _UnitOfWork.LeaveAllocations.WhereAsync(filter: x =>
                 x.AllocationLeaveTypeId == leaveTypeId
-                && x.AllocationEmployeeId.Equals(employeeId)
-            );
+                && x.AllocationEmployeeId.Equals(employeeId),
+                includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationLeaveType, x => x.AllocationEmployee }
+            ) ;
 
-            var requestsForThisEmployee = (await _LeaveRequestsRepository.FindAllAsync())
-                .Where(q => q.LeaveTypeId == leaveTypeId
+            var requestsForThisEmployee = await _UnitOfWork.LeaveRequest.WhereAsync(filter: q => q.LeaveTypeId == leaveTypeId
                 && q.RequestingEmployeeId.Equals(employeeId)
-            );
+            ) ;
 
             int requestedDays = (int)(endDate - startDate).TotalDays;
             int totalAllocatedForThisEmployee = allocationsForThisEmployee.Sum(a => a.NumberOfDays);
