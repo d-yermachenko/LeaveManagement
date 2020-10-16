@@ -41,13 +41,13 @@ namespace LeaveManagement.Repository.Entity {
             return result;
         }
 
-        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, object>>[] includes= null) {
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> filter, IEnumerable<Expression<Func<TEntity, object>>> includes= null) {
             IQueryable<TEntity> query = _ObjectSet;
             if (includes != null) {
                 foreach (var include in includes)
                     query = query.Include(include);
             }
-            return await query.FirstOrDefaultAsync(predicate);
+            return await query.FirstOrDefaultAsync(filter);
         }
 
         public async Task<bool> UpdateAsync(TEntity entity) {
@@ -62,7 +62,7 @@ namespace LeaveManagement.Repository.Entity {
             return result;
         }
 
-        public async Task<ICollection<TEntity>> WhereAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order = null, Expression<Func<TEntity, object>>[] includes = null) {
+        public async Task<ICollection<TEntity>> WhereAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order = null, IEnumerable<Expression<Func<TEntity, object>>> includes = null) {
 
             IQueryable<TEntity> query = _ObjectSet;
             if (filter != null) {
@@ -77,5 +77,7 @@ namespace LeaveManagement.Repository.Entity {
 
             return await query.ToListAsync();
          }
+
+
     }
 }

@@ -264,8 +264,10 @@ namespace LeaveManagement.Controllers {
             employeeCreationVM.ManagerEnabled = editionPermissions.AllowChangeManager;
             if (editionPermissions.AllowChangeManager) {
                 var managers = await GetEmployeesByCompany(employeeCreationVM.CompanyId, employeeCreationVM.ManagerId);
+                managers.Insert(0, new SelectListItem(_DataLocalizer["None"], null));
                 employeeCreationVM.Managers = managers;
             }
+
             return employeeCreationVM;
         }
 
@@ -322,7 +324,7 @@ namespace LeaveManagement.Controllers {
         }
 
         [HttpPost]
-        public async Task<IEnumerable<SelectListItem>> GetEmployeesByCompany(int? companyId, string managerId) {
+        public async Task<IList<SelectListItem>> GetEmployeesByCompany(int? companyId, string managerId) {
             if (string.IsNullOrWhiteSpace(managerId))
                 managerId = string.Empty;
             ICollection<Employee> employees;
@@ -332,9 +334,9 @@ namespace LeaveManagement.Controllers {
             else
                 employees = await _UnitOfWork.Employees.WhereAsync(filter: empl => empl.CompanyId == null,
                     includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
-            IEnumerable<SelectListItem> result = Array.Empty<SelectListItem>();
+            IList<SelectListItem> result = new List<SelectListItem>();
             if (employees.Count > 0)
-                result = employees.Select(x => new SelectListItem(x.FormatEmployeeSNT(), x.Id, managerId.Equals(x.Id)));
+                result = employees.Select(x => new SelectListItem(x.FormatEmployeeSNT(), x.Id, managerId.Equals(x.Id))).ToList();
             return result;
         }
 

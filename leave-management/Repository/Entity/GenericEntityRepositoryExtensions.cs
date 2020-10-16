@@ -20,5 +20,9 @@ namespace LeaveManagement.Repository.Entity {
             return hasEmployee;
         }
 
+        public static async Task<Employee> GetEmployeeAsync(this IRepository<Employee> repository, System.Security.Claims.ClaimsPrincipal user) {
+            return await repository.FindAsync(x => x.UserName == user.Identity.Name);
+        }
+
     }
 }
