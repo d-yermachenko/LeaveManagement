@@ -17,6 +17,7 @@ using LeaveManagement.PasswordGenerator;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using LeaveManagement.EmailSender;
 using Microsoft.AspNetCore.Http;
+using LeaveManagement.Notifications;
 
 namespace LeaveManagement {
     public class Startup {
@@ -41,14 +42,11 @@ namespace LeaveManagement {
             services.AddDataProtection()
                 .SetApplicationName("leave-management")
                 .PersistKeysToFileSystem(new System.IO.DirectoryInfo(Configuration.GetValue<string>("KeysFolder")));
-            services.AddScoped<ILeaveTypeRepositoryAsync, LeaveTypeRepository>();
-            services.AddScoped<ILeaveAllocationRepositoryAsync, LeaveAllocationRepository>();
-            services.AddScoped<ILeaveRequestsRepositoryAsync, LeaveRequestsRepository>();
-            services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddTransient<ILeaveManagementUnitOfWork, LeaveManagementUnitOfWork>();
+            services.AddTransient<IVisualNotificationService, VisualNotificationService>();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
             GlobalizationStartup.ConfigureServices(services);
-            services.AddScoped<IEmployeeRepositoryAsync, EmployeeRepository>();
+
             services.AddDefaultIdentity<IdentityUser>(options => {
                 options.SignIn.RequireConfirmedAccount = false;
             })

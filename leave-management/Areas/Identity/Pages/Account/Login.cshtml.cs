@@ -21,19 +21,19 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-        private readonly IEmployeeRepositoryAsync _employeeRepository;
+        private readonly ILeaveManagementUnitOfWork _UnitOfWork;
         private readonly IStringLocalizerFactory _stringLocalizerFactory;
         private readonly IStringLocalizer _stringLocalizer;
 
         public LoginModel(SignInManager<IdentityUser> signInManager,
             ILogger<LoginModel> logger,
             UserManager<IdentityUser> userManager,
-            IEmployeeRepositoryAsync employeeRepository,
+            ILeaveManagementUnitOfWork unitOfWork,
             IStringLocalizerFactory stringLocalizerFactory) {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _employeeRepository = employeeRepository;
+            _UnitOfWork = unitOfWork;
             _stringLocalizerFactory = stringLocalizerFactory;
             _stringLocalizer = stringLocalizerFactory.Create(typeof(LoginModel));
         }
@@ -98,11 +98,12 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     if (user == null)
                         return LocalRedirect(returnUrl);
-                    var employee = (await _employeeRepository.FindByIdAsync(user.Id));
+                    var employee = (await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(user.Id)));
                     if (employee != null) {
                         employee.LastConnectionDate = employee.CurrentConnectionDate;
                         employee.CurrentConnectionDate = DateTime.Now;
-                        await _employeeRepository.SaveAsync();
+                        await _UnitOfWork.Employees.UpdateAsync(employee);
+                        await _UnitOfWork.Save();
                     }
                     return LocalRedirect(returnUrl);
                 }

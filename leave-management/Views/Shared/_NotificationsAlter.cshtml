@@ -1,21 +1,14 @@
-﻿@using LeaveManagement.Notifications;
-@inject UserManager<IdentityUser>  _UserManager;
-@inject ILeaveManagementCustomLocalizerFactory _LocalizerFactory;
-@inject SignInManager<IdentityUser>  _SignInManager;
-@inject IVisualNotificationService  _NotificationService;
-@{
-    var NModel = await _NotificationService.LoadNotificationsAsync(User);
-}
+﻿@model LeaveManagement.Notifications.NotificationsModel 
 
 
 <li class="nav-item dropdown">
     <a class="nav-link" data-toggle="dropdown" href="#">
         <i class="fa fa-bell"></i>
-        <span class="badge badge-warning navbar-badge">@NModel.TotalEvents</span>
+        <span class="badge badge-warning navbar-badge">@Model.TotalEvents</span>
     </a>
     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-        <span class="dropdown-header">@Localizer["{0} Notifications", NModel.TotalEvents]</span>
-        @foreach (var evnt in NModel.LeaveNotifications)
+        <span class="dropdown-header">@Localizer["{0} Notifications", Model.TotalEvents]</span>
+        @foreach (var evnt in Model.LeaveNotifications)
         {
             <div class="dropdown-divider"></div>
 
@@ -24,7 +17,7 @@
                 <span class="float-right text-muted text-sm">@evnt.EventDate</span>
             </a>
         }
-        @foreach (var notificationLink in NModel.LeaveNotificationsLinks)
+        @foreach (var notificationLink in Model.LeaveNotificationsLinks)
         {
             <div class="dropdown-divider"></div>
             <a asp-action="@notificationLink.Action"
