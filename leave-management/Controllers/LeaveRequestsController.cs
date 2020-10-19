@@ -15,10 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Math.EC.Rfc7748;
+
 
 namespace LeaveManagement.Controllers {
     [Authorize]
@@ -76,8 +74,11 @@ namespace LeaveManagement.Controllers {
                 return Forbid();
             }
 
-            var leaveRequests = await _UnitOfWork.LeaveRequest.WhereAsync(lr => lr.LeaveType.CompanyId == currentEmployee.CompanyId &&
-            lr.RequestingEmployee != null && lr.RequestingEmployee.CompanyId == currentEmployee.CompanyId);
+            var leaveRequests = await _UnitOfWork.LeaveRequest.WhereAsync(
+                filter: lr => lr.LeaveType.CompanyId == currentEmployee.CompanyId &&
+            lr.RequestingEmployee != null && lr.RequestingEmployee.CompanyId == currentEmployee.CompanyId,
+                includes: new System.Linq.Expressions.Expression<Func<LeaveRequest, object>>[] { x => x.RequestingEmployee, x=>x.LeaveType },
+                order: x=>x.OrderBy(o => o.StartDate) );
             var leaveRequestsModel = _Mapper.Map<List<LeaveRequestDefaultViewModel>>(leaveRequests);
             ViewBag.DisplayReviewButton = true;
             LeaveRequestsStatisticsViewModel leaveRequestsStatistics = new LeaveRequestsStatisticsViewModel() {
@@ -164,7 +165,9 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _ControllerLocalizer["Your role not allows you to administrate leave requests"]);
                 return Forbid();
             }
-            var leaveRequest = await _UnitOfWork.LeaveRequest.FindAsync(x => x.Id == requestId);
+            var leaveRequest = await _UnitOfWork.LeaveRequest.FindAsync(x => x.Id == requestId,
+                includes: new System.Linq.Expressions.Expression<Func<LeaveRequest, object>>[] {
+                    x => x.LeaveType, x=>x.RequestingEmployee, x=>x.RequestingEmployee.Company });
             if (leaveRequest == null)
                 return NotFound(_ControllerLocalizer["Leave request #{0} was not found", requestId]);
             var currentUser = await _UserManager.GetUserAsync(User);

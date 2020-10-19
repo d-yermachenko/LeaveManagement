@@ -24,6 +24,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using LeaveManagement.Code;
 using Org.BouncyCastle.Utilities.IO;
+using System.Linq.Expressions;
 
 namespace LeaveManagement.Controllers {
     [Authorize]
@@ -222,7 +223,8 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> UserLeaveAllocationsForPeriod(string userId = "", string period = "", int? leaveTypeId = null, bool showRequestButton = false) {
             var currentEmployee = await GetCurrentEmployeeAsync();
             IEnumerable<LeaveAllocation> leaveAllocations = await _UnitOfWork.LeaveAllocations.WhereAsync(al => al.AllocationEmployee != null &&
-                al.AllocationEmployee.CompanyId != null && al.AllocationEmployee.CompanyId == currentEmployee.CompanyId);
+                al.AllocationEmployee.CompanyId != null && al.AllocationEmployee.CompanyId == currentEmployee.CompanyId,
+                includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationEmployee, x => x.AllocationLeaveType });
             var isPreveleged = await _UserManager.IsCompanyPrivelegedUser(currentEmployee);
             //------------------------- Filtering by user.
             if (userId.Equals("*")) { // All users
@@ -304,7 +306,7 @@ namespace LeaveManagement.Controllers {
                 return View(CreateLeaveAllocationView, leaveAllocationViewModel);
             }
             var concernedEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(leaveAllocationViewModel.AllocationEmployeeId));
-            var concernedLeaveType = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(leaveAllocationViewModel.AllocationLeaveTypeId));
+            var concernedLeaveType = await _UnitOfWork.LeaveTypes.FindAsync(x => x.Id.Equals(leaveAllocationViewModel.AllocationLeaveTypeId));
             bool companyIsIntegral = concernedEmployee.CompanyId == concernedLeaveType.CompanyId &&
                 concernedLeaveType.CompanyId == currentEmployee.CompanyId;
             if (!companyIsIntegral) {
@@ -345,7 +347,8 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> Details(int id) {
             LeaveAllocation leaveAllocation = null;
             try {
-                leaveAllocation = await _UnitOfWork.LeaveAllocations.FindAsync(x => x.Id == id);
+                leaveAllocation = await _UnitOfWork.LeaveAllocations.FindAsync(x => x.Id == id,
+                    includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationEmployee, x => x.AllocationLeaveType });
                 if (leaveAllocation == null)
                     return NotFound();
 
@@ -409,7 +412,7 @@ namespace LeaveManagement.Controllers {
             if (!await _UserManager.IsCompanyPrivelegedUser(User))
                 return Forbid();
             LeaveAllocation originalLeaveAllocation = await _UnitOfWork.LeaveAllocations.FindAsync(x => x.Id == id,
-                includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationLeaveType });
+                includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationLeaveType, x => x.AllocationEmployee });
             try {
                 if (originalLeaveAllocation == null)
                     return NotFound();
@@ -537,28 +540,32 @@ namespace LeaveManagement.Controllers {
                         leaveAllocationVM.AllocationLeaveTypeId = leaveType.Id;
                         leaveAllocationVM.AllocationLeaveType = _Mapper.Map<LeaveTypeNavigationViewModel>(leaveType);
                     }
-                    if (employee == null) {
+                    if (employee == null)
                         employee = GetCurrentEmployeeAsync().Result;
-                        leaveAllocationVM.AllocationEmployee = _Mapper.Map<EmployeePresentationDefaultViewModel>(employee);
-                        leaveAllocationVM.AllocationEmployeeId = leaveAllocationVM.AllocationEmployee.Id;
-                    }
+                    leaveAllocationVM.AllocationEmployee = _Mapper.Map<EmployeePresentationDefaultViewModel>(employee);
+                    leaveAllocationVM.AllocationEmployeeId = leaveAllocationVM.AllocationEmployee.Id;
+
                     if (duration == null && leaveType != null) {
                         leaveAllocationVM.NumberOfDays = leaveType.DefaultDays;
                     }
                     leaveAllocationVM.Period = effectivePeriod;
                 }
                 else {
-                    leaveAllocationVM = _Mapper.Map<LeaveAllocationEditionViewModel>(_UnitOfWork.LeaveAllocations.FindAsync(x => x.Id == (long)id).Result);
+                    leaveAllocationVM = _Mapper.Map<LeaveAllocationEditionViewModel>(_UnitOfWork.LeaveAllocations.FindAsync(x => x.Id == (long)id,
+                        includes: new Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationEmployee, x => x.AllocationLeaveType }).Result);
                 }
 
                 includeEmployeesDictionary &= _UserManager.IsCompanyPrivelegedUser(User).Result;
                 if (includeEmployeesDictionary) {
-                    leaveAllocationVM.Employees = _UnitOfWork.Employees.WhereAsync(x => currentEmployee != null && currentEmployee.CompanyId != null && x.CompanyId == currentEmployee.CompanyId)
+                    leaveAllocationVM.Employees = _UnitOfWork.Employees.WhereAsync(filter: x => currentEmployee != null && currentEmployee.CompanyId != null && x.CompanyId == currentEmployee.CompanyId,
+                        includes: new Expression<Func<Employee, object>>[] { e => e.Company, e => e.Manager })
                         .Result
                         .Select(x => new SelectListItem(x.FormatEmployeeSNT(), x.Id, leaveAllocationVM.AllocationEmployeeId?.Equals(x.Id) ?? false));
                 }
                 if (includeLeaveTypesDictionary) {
-                    leaveAllocationVM.AllocationLeaveTypes = _UnitOfWork.LeaveTypes.WhereAsync(lt => currentEmployee != null && currentEmployee.CompanyId != null && lt.CompanyId == currentEmployee.CompanyId)
+                    leaveAllocationVM.AllocationLeaveTypes = _UnitOfWork.LeaveTypes.WhereAsync(
+                        filter: lt => currentEmployee != null && currentEmployee.CompanyId != null && lt.CompanyId == currentEmployee.CompanyId,
+                        includes: new Expression<Func<LeaveType, object>>[] { e => e.Company })
                     .Result
                     .Select(x => new SelectListItem(x.LeaveTypeName, x.Id.ToString(), leaveAllocationVM.AllocationLeaveTypeId.Equals(x.Id)));
                 }
@@ -600,7 +607,9 @@ namespace LeaveManagement.Controllers {
 
         public async Task<IEnumerable<LeaveAllocation>> GetLeaveAllocationsAsync() {
             var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
-            return await _UnitOfWork.LeaveAllocations.WhereAsync(x => x.AllocationLeaveType.CompanyId == currentEmployee.CompanyId);
+            return await _UnitOfWork.LeaveAllocations.WhereAsync(
+                filter: x => x.AllocationLeaveType.CompanyId == currentEmployee.CompanyId,
+                includes: new Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationEmployee, x => x.AllocationLeaveType });
         }
     }
 }

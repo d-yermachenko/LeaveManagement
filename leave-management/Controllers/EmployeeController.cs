@@ -7,6 +7,7 @@ using LeaveManagement.ViewModels.Employee;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
@@ -15,8 +16,11 @@ using Org.BouncyCastle.Math.EC.Rfc7748;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Resources;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Controllers {
@@ -376,7 +380,8 @@ namespace LeaveManagement.Controllers {
                 AllowEditAccount = true,
                 AllowEditContacts = true,
                 AllowEdition = true,
-                AllowEditProfile = true
+                AllowEditProfile = true,
+                AllowRemoveAccount = true
             };
 
             public static EditionPermissions AllForbidden => new EditionPermissions();
@@ -389,6 +394,8 @@ namespace LeaveManagement.Controllers {
             public bool AllowChangeManager;
             public bool AllowChangeCompany;
             public bool IsSelfEdition;
+            public bool AllowRemoveAccount;
+
         }
 
         private async Task<EditionPermissions> GetEditionPermission(
@@ -428,6 +435,7 @@ namespace LeaveManagement.Controllers {
             bool allowEditContact = isAppAdministrator || (isItSameCompanyEdition && isCompanyPriveleged) || isItSelfEdition;
             bool allowChangeManager = (isCompanyPriveleged && isItSameCompanyEdition) || isAppAdministrator;
             bool allowChangeCompany = (currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator;
+            bool allowRemoveProfile = (currentUserRoles & (UserRoles.AppAdministrator| UserRoles.CompanyAdministrator)) > UserRoles.None;
             return new EditionPermissions() {
                 AllowEdition = allowEdition,
                 IsSelfEdition = isItSelfEdition,
@@ -435,7 +443,8 @@ namespace LeaveManagement.Controllers {
                 AllowEditProfile = allowEditProfile,
                 AllowEditContacts = allowEditContact,
                 AllowChangeManager = allowChangeManager,
-                AllowChangeCompany = allowChangeCompany
+                AllowChangeCompany = allowChangeCompany,
+                AllowRemoveAccount = allowRemoveProfile
             };
         }
 
@@ -478,7 +487,7 @@ namespace LeaveManagement.Controllers {
         }
 
         private async Task<bool> ValidateRoles(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
-            bool validRoles = true;
+            bool validRoles;
             UserRoles employeeRoles = await _UserManager.GetUserRolesAsync(employee);
             if (employeeVM.Roles == null || !employeeVM.RolesListEnabled)
                 return true;
@@ -537,21 +546,25 @@ namespace LeaveManagement.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> UpdateEmployee(string employeeId) {
-            UserRoles currentUserRoles = UserRoles.None;
-            var currentUser = await _UserManager.GetUserAsync(User);
-            if (string.IsNullOrWhiteSpace(employeeId))
-                employeeId = currentUser.Id;
-            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(currentUser.Id),
-                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
-            var consernedUser = await _UserManager.FindByIdAsync(employeeId);
-            var consernedEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(employeeId),
-                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
-            if (currentUser == null)
+            var currentUserData = await GetCurrentUserData();
+            if (currentUserData.Item1 == null)
                 return Forbid();
+
+            IdentityUser consernedUser;
+            Employee consernedEmployee;
+            if (!String.IsNullOrWhiteSpace(employeeId)) {
+                consernedUser = await _UserManager.FindByIdAsync(employeeId);
+                consernedEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(employeeId),
+                    includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
+            }
+            else {
+                consernedUser = currentUserData.Item1;
+                consernedEmployee = currentUserData.Item2;
+            }
+            
             if (consernedUser == null)
                 return NotFound();
-            currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            if (consernedUser != null && consernedEmployee == null && (currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
+            if (consernedUser != null && consernedEmployee == null && (currentUserData.Item3 & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                 return await UpdateIdentityUser(consernedUser);
 
             var editionPermission = await GetEditionPermission(consernedEmployee);
@@ -698,6 +711,51 @@ namespace LeaveManagement.Controllers {
             return View(employeesList);
         }
         #endregion
+
+        public async Task<ActionResult> Details(string userId) {
+            var currentUserData = await GetCurrentUserData();
+            if (currentUserData?.Item1 == null)
+                return NotFound();
+            if (String.IsNullOrWhiteSpace(userId))
+                userId = currentUserData.Item1.Id;
+            if (currentUserData.Item1.Id.Equals(userId)
+                || await _UserManager.IsCompanyPrivelegedUser(currentUserData.Item3)
+                || ((currentUserData.Item3 & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)) {
+                Employee consernedEmployee;
+                if (currentUserData.Item1.Id.Equals(userId))
+                    consernedEmployee = currentUserData.Item2 != null ? currentUserData.Item2 : null;
+                else
+                    consernedEmployee = await _UnitOfWork.Employees.FindAsync(predicate: x => x.Id.Equals(userId),
+                        includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
+                if (consernedEmployee != null) {
+                    EmployeeCreationVM employeeCreationVM = _Mapper.Map<EmployeeCreationVM>(consernedEmployee);
+                    return View(employeeCreationVM);
+                }
+                else {
+                    return RedirectToPage("~/Identity/Account/Manage/Index", new { userId = currentUserData.Item1.Id });
+                }
+            }
+            else
+                return Forbid();
+        }
+
+        public async Task<ActionResult> RemoveEmployee(string employeeId) {
+            var consernedEmployee = await _UnitOfWork.Employees.FindAsync(
+                predicate: x=>x.Id.Equals(employeeId));
+            if (consernedEmployee == null)
+                return NotFound();
+            var currentUserRights = await GetEditionPermission(consernedEmployee);
+            bool result = true;
+            int? companyId = consernedEmployee.CompanyId;
+            if (currentUserRights.AllowRemoveAccount) {
+                result &= await _UnitOfWork.Employees.DeleteAsync(consernedEmployee);
+                result &= await _UnitOfWork.Save();
+            }
+            if (!result)
+                return RedirectToAction(nameof(Details), new { userId = employeeId });
+            else
+                return RedirectToAction(nameof(Index), new {companyId = companyId } );
+        }
 
         #region Changing password
         [HttpGet]
