@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LeaveManagementTests.MocksAndFakes {
-    public class FakeEmployeeRepository : IEmployeeRepositoryAsync {
+    public class FakeEmployeeRepository  {
         public ConcurrentDictionary<string, Employee> _Employees;
 
         public async Task<bool> CreateAsync(Employee entity) {

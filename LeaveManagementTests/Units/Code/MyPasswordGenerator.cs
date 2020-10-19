@@ -15,5 +15,14 @@ namespace LeaveManagementTests.Units.Code {
             System.Diagnostics.Trace.WriteLine(password);
             Assert.AreEqual(15, password.Length);
         }
+
+        [TestMethod]
+        public void TestShortMyPassword() {
+            LeaveManagement.PasswordGenerator.MyPasswordGenerator myPasswordGenerator = new LeaveManagement.PasswordGenerator.MyPasswordGenerator(
+                () => new LeaveManagement.PasswordGenerator.MyPasswordGeneratorOptions() { LengthOfPassword = 10, MinSpecial = 4, MinSpaces = 0 });
+            string password = myPasswordGenerator.GeneratePassword();
+            System.Diagnostics.Trace.WriteLine(password);
+            Assert.AreEqual(15, password.Length);
+        }
     }
 }

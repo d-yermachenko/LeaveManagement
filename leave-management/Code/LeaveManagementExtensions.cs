@@ -47,10 +47,14 @@ namespace LeaveManagement {
         public static async Task<bool> IsCompanyPrivelegedUser<T>(this UserManager<T> userManager, T user) where T : class {
             if (user == null)
                 return false;
-            UserRoles privelegedRoles = UserRoles.HRManager | UserRoles.CompanyAdministrator;
             var rolesStrings = await userManager.GetRolesAsync(user);
             var roles = ToUserRoles(rolesStrings );
-            return (roles & privelegedRoles) > 0;
+            return await userManager.IsCompanyPrivelegedUser(roles);
+        }
+
+        public static async Task<bool> IsCompanyPrivelegedUser<T>(this UserManager<T> userManager, UserRoles roles) where T : class {
+            UserRoles privelegedRoles = UserRoles.HRManager | UserRoles.CompanyAdministrator;
+            return await Task.FromResult((roles & privelegedRoles) > 0);
         }
 
         public static async Task<UserRoles> GetUserRolesAsync<T>(this UserManager<T> userManager, T user) where T: class {

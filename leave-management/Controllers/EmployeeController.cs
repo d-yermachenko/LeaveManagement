@@ -2,19 +2,25 @@
 using LeaveManagement.Contracts;
 using LeaveManagement.Data.Entities;
 using LeaveManagement.PasswordGenerator;
+using LeaveManagement.Repository.Entity;
 using LeaveManagement.ViewModels.Employee;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Resources;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Controllers {
@@ -29,32 +35,29 @@ namespace LeaveManagement.Controllers {
         private readonly RoleManager<IdentityRole> _RoleManager;
         private readonly ILogger<EmployeePresentationDefaultViewModel> _Logger;
         private readonly IEmailSender _EmailSender;
-        private readonly IEmployeeRepositoryAsync _EmployeeRepository;
+        private readonly ILeaveManagementUnitOfWork _UnitOfWork;
         private readonly IStringLocalizer _DataLocalizer;
         private readonly IMapper _Mapper;
         private readonly IPasswordGenerator _PasswordGenerator;
-        private readonly ICompanyRepository _CompanyRepository;
 
         public EmployeeController(SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<EmployeePresentationDefaultViewModel> logger,
             IEmailSender emailSender,
-            IEmployeeRepositoryAsync employeeRepository,
+            ILeaveManagementUnitOfWork unitOfWork,
             IStringLocalizerFactory localizerFactory,
             IMapper mapper,
-            IPasswordGenerator passwordGenerator,
-            ICompanyRepository companyRepository) {
+            IPasswordGenerator passwordGenerator) {
             _SignInManager = signInManager;
             _UserManager = userManager;
             _RoleManager = roleManager;
             _Logger = logger;
             _EmailSender = emailSender;
-            _EmployeeRepository = employeeRepository;
             _DataLocalizer = localizerFactory.Create(typeof(Areas.Identity.Pages.Account.RegisterModel));
             _Mapper = mapper;
             _PasswordGenerator = passwordGenerator;
-            _CompanyRepository = companyRepository;
+            _UnitOfWork = unitOfWork;
         }
 
         string ReturnUrl = "";
@@ -115,7 +118,7 @@ namespace LeaveManagement.Controllers {
                 if (currentCredentials.Item2?.Company != null)
                     employeeCreationVM.Company = currentCredentials.Item2.Company;
                 else
-                    employeeCreationVM.Company = await _CompanyRepository.FindByIdAsync((int)employeeCreationVM.CompanyId);
+                    employeeCreationVM.Company = await _UnitOfWork.Companies.FindAsync(x=>x.Id == (int)employeeCreationVM.CompanyId);
             }
             //Case when new employee created inside the company
             employeeCreationVM = await SetEmployeeCompanyAndManagerState(employeeCreationVM, editionPermissions);
@@ -154,7 +157,7 @@ namespace LeaveManagement.Controllers {
                 string password = _PasswordGenerator.GeneratePassword();
                 employee.LockoutEnabled = false;
                 employee.EmailConfirmed = true;
-                bool result = await _EmployeeRepository.RegisterEmployeeAsync(employee, password);
+                bool result = await _UnitOfWork.Employees.RegisterEmployeeAsync(_UserManager, employee, password);
                 if (!result)
                     ModelState.AddModelError("", _DataLocalizer["Unabled to save employee into repository"]);
                 else
@@ -242,7 +245,7 @@ namespace LeaveManagement.Controllers {
 
             employeeCreationVM.CompanyEnabled = editionPermissions.AllowChangeCompany;
             if (editionPermissions.AllowChangeCompany) {
-                var companiesList = (await _CompanyRepository.WhereAsync(x => x.Active))
+                var companiesList = (await _UnitOfWork.Companies.WhereAsync(x => x.Active))
                     .Select(x => new SelectListItem(x.CompanyName, x.Id.ToString(), x.Id.Equals(employeeCreationVM?.CompanyId))).ToList();
                 companiesList.Insert(0, new SelectListItem(_DataLocalizer["Please select the company"], "0", true, true));
                 companiesList.Insert(1, new SelectListItem(_DataLocalizer["None"], String.Empty, true, !currentUserIsAppAdmin));
@@ -256,7 +259,7 @@ namespace LeaveManagement.Controllers {
                         if (currentEmployee?.Company != null)
                             employeeCreationVM.Company = currentEmployee.Company;
                         else
-                            employeeCreationVM.Company = await _CompanyRepository.FindByIdAsync((int)employeeCreationVM.CompanyId);
+                            employeeCreationVM.Company = await _UnitOfWork.Companies.FindAsync(x=>x.Id == (int)employeeCreationVM.CompanyId);
                         employeeCreationVM.Companies = new SelectListItem[] {new SelectListItem(employeeCreationVM.Company.CompanyName,
                         employeeCreationVM.Company.Id.ToString(), true, true) };
                     }
@@ -265,8 +268,10 @@ namespace LeaveManagement.Controllers {
             employeeCreationVM.ManagerEnabled = editionPermissions.AllowChangeManager;
             if (editionPermissions.AllowChangeManager) {
                 var managers = await GetEmployeesByCompany(employeeCreationVM.CompanyId, employeeCreationVM.ManagerId);
+                managers.Insert(0, new SelectListItem(_DataLocalizer["None"], null));
                 employeeCreationVM.Managers = managers;
             }
+
             return employeeCreationVM;
         }
 
@@ -290,7 +295,7 @@ namespace LeaveManagement.Controllers {
             bool isCurrentUserIsCompanyAdmin = (currentUserData.Item3 & (UserRoles.CompanyAdministrator | UserRoles.HRManager)) > 0;
             Employee potentialConsernedEmployee;
             if (!String.IsNullOrWhiteSpace(employeeCreationVM?.Id))
-                potentialConsernedEmployee = await _EmployeeRepository.FindByIdAsync(employeeCreationVM.Id);
+                potentialConsernedEmployee = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(employeeCreationVM.Id));
             else
                 potentialConsernedEmployee = null;
 
@@ -298,7 +303,7 @@ namespace LeaveManagement.Controllers {
             if (companyId != null) {
                 if (!isCurrentUserIsAppAdmin &&  !(currentUserData.Item2?.CompanyId?.Equals(companyId) ?? false))
                     ModelState.AddModelError("", _DataLocalizer["Only app admin can assign employee not from his company"]);
-                var company = await _CompanyRepository.FindByIdAsync((int)companyId);
+                var company = await _UnitOfWork.Companies.FindAsync(x=>x.Id==(int)companyId);
                 if( !(company?.Active??false))
                     ModelState.AddModelError("", _DataLocalizer["Company inactive or not found"]);
             }
@@ -309,7 +314,7 @@ namespace LeaveManagement.Controllers {
             if(companyId != null) {
                 if (!string.IsNullOrWhiteSpace(employeeCreationVM.ManagerId)) {
                     string managerId = employeeCreationVM.ManagerId;
-                    Employee manager = await _EmployeeRepository.FindByIdAsync(managerId);
+                    Employee manager = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(managerId));
                     if(!(isCurrentUserIsCompanyAdmin || isCurrentUserIsAppAdmin))
                         ModelState.AddModelError("", _DataLocalizer["You not allowed to assign manager"]);
                     if (manager == null)
@@ -323,17 +328,19 @@ namespace LeaveManagement.Controllers {
         }
 
         [HttpPost]
-        public async Task<IEnumerable<SelectListItem>> GetEmployeesByCompany(int? companyId, string managerId) {
+        public async Task<IList<SelectListItem>> GetEmployeesByCompany(int? companyId, string managerId) {
             if (string.IsNullOrWhiteSpace(managerId))
                 managerId = string.Empty;
             ICollection<Employee> employees;
             if (companyId != null)
-                employees = await _EmployeeRepository.WhereAsync(empl => empl.CompanyId == companyId);
+                employees = await _UnitOfWork.Employees.WhereAsync(filter: empl => empl.CompanyId == companyId,
+                    includes : new System.Linq.Expressions.Expression<Func<Employee, object>>[] {x=>x.Company, x=>x.Manager });
             else
-                employees = await _EmployeeRepository.WhereAsync(empl => empl.CompanyId is null || empl.CompanyId == null);
-            IEnumerable<SelectListItem> result = Array.Empty<SelectListItem>();
+                employees = await _UnitOfWork.Employees.WhereAsync(filter: empl => empl.CompanyId == null,
+                    includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
+            IList<SelectListItem> result = new List<SelectListItem>();
             if (employees.Count > 0)
-                result = employees.Select(x => new SelectListItem(x.FormatEmployeeSNT(), x.Id, managerId.Equals(x.Id)));
+                result = employees.Select(x => new SelectListItem(x.FormatEmployeeSNT(), x.Id, managerId.Equals(x.Id))).ToList();
             return result;
         }
 
@@ -352,7 +359,8 @@ namespace LeaveManagement.Controllers {
                 return _IdentityData;
             else {
                 var currentUser = await _UserManager.GetUserAsync(User);
-                var currentEmployee = await _EmployeeRepository.FindByIdAsync(currentUser.Id);
+                var currentEmployee = await _UnitOfWork.Employees.FindAsync( x=>x.Id.Equals(currentUser.Id),
+                    includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x=>x.Company, x=>x.Manager });
                 UserRoles userRoles = await _UserManager.GetUserRolesAsync(currentUser);
                 lock (identityDataLock) {
                     _IdentityData = Tuple.Create(currentUser, currentEmployee, userRoles);
@@ -372,7 +380,8 @@ namespace LeaveManagement.Controllers {
                 AllowEditAccount = true,
                 AllowEditContacts = true,
                 AllowEdition = true,
-                AllowEditProfile = true
+                AllowEditProfile = true,
+                AllowRemoveAccount = true
             };
 
             public static EditionPermissions AllForbidden => new EditionPermissions();
@@ -385,6 +394,8 @@ namespace LeaveManagement.Controllers {
             public bool AllowChangeManager;
             public bool AllowChangeCompany;
             public bool IsSelfEdition;
+            public bool AllowRemoveAccount;
+
         }
 
         private async Task<EditionPermissions> GetEditionPermission(
@@ -424,6 +435,7 @@ namespace LeaveManagement.Controllers {
             bool allowEditContact = isAppAdministrator || (isItSameCompanyEdition && isCompanyPriveleged) || isItSelfEdition;
             bool allowChangeManager = (isCompanyPriveleged && isItSameCompanyEdition) || isAppAdministrator;
             bool allowChangeCompany = (currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator;
+            bool allowRemoveProfile = (currentUserRoles & (UserRoles.AppAdministrator| UserRoles.CompanyAdministrator)) > UserRoles.None;
             return new EditionPermissions() {
                 AllowEdition = allowEdition,
                 IsSelfEdition = isItSelfEdition,
@@ -431,7 +443,8 @@ namespace LeaveManagement.Controllers {
                 AllowEditProfile = allowEditProfile,
                 AllowEditContacts = allowEditContact,
                 AllowChangeManager = allowChangeManager,
-                AllowChangeCompany = allowChangeCompany
+                AllowChangeCompany = allowChangeCompany,
+                AllowRemoveAccount = allowRemoveProfile
             };
         }
 
@@ -474,7 +487,7 @@ namespace LeaveManagement.Controllers {
         }
 
         private async Task<bool> ValidateRoles(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
-            bool validRoles = true;
+            bool validRoles;
             UserRoles employeeRoles = await _UserManager.GetUserRolesAsync(employee);
             if (employeeVM.Roles == null || !employeeVM.RolesListEnabled)
                 return true;
@@ -533,19 +546,25 @@ namespace LeaveManagement.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> UpdateEmployee(string employeeId) {
-            UserRoles currentUserRoles = UserRoles.None;
-            var currentUser = await _UserManager.GetUserAsync(User);
-            if (string.IsNullOrWhiteSpace(employeeId))
-                employeeId = currentUser.Id;
-            var currentEmployee = await _EmployeeRepository.FindByIdAsync(currentUser.Id);
-            var consernedUser = await _UserManager.FindByIdAsync(employeeId);
-            var consernedEmployee = await _EmployeeRepository.FindByIdAsync(employeeId);
-            if (currentUser == null)
+            var currentUserData = await GetCurrentUserData();
+            if (currentUserData.Item1 == null)
                 return Forbid();
+
+            IdentityUser consernedUser;
+            Employee consernedEmployee;
+            if (!String.IsNullOrWhiteSpace(employeeId)) {
+                consernedUser = await _UserManager.FindByIdAsync(employeeId);
+                consernedEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(employeeId),
+                    includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
+            }
+            else {
+                consernedUser = currentUserData.Item1;
+                consernedEmployee = currentUserData.Item2;
+            }
+            
             if (consernedUser == null)
                 return NotFound();
-            currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            if (consernedUser != null && consernedEmployee == null && (currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
+            if (consernedUser != null && consernedEmployee == null && (currentUserData.Item3 & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                 return await UpdateIdentityUser(consernedUser);
 
             var editionPermission = await GetEditionPermission(consernedEmployee);
@@ -562,7 +581,9 @@ namespace LeaveManagement.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateEmployee(EmployeeCreationVM employeeCreationVM) {
-            var consernedEmployee = await _EmployeeRepository.FindByIdAsync(employeeCreationVM.Id);
+            var consernedEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(employeeCreationVM.Id),
+                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager }
+            );
             if (consernedEmployee == null)
                 return NotFound();
             employeeCreationVM.UserName = consernedEmployee.UserName;
@@ -582,7 +603,8 @@ namespace LeaveManagement.Controllers {
                 if (!permissions.AllowChangeManager)
                     employeeCreationVM.ManagerId = consernedEmployee.ManagerId;
                 consernedEmployee = _Mapper.Map(employeeCreationVM, consernedEmployee);
-                bool result = await _EmployeeRepository.UpdateAsync(consernedEmployee);
+                bool result = await _UnitOfWork.Employees.UpdateAsync(consernedEmployee);
+                result &= await _UnitOfWork.Save();
                 if (!result) {
                     ModelState.AddModelError("", _DataLocalizer["Unable to save user to repository"]);
                 }
@@ -632,7 +654,8 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _DataLocalizer["You not authorized to browse employees"]);
                 return Forbid();
             }
-            var currentEmployee = await _EmployeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(currentUser.Id),
+                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _DataLocalizer["You not authorized to browse employees"]);
                 return await Index(null);
@@ -653,30 +676,86 @@ namespace LeaveManagement.Controllers {
             }
             IList<Employee> selectedEmployees = null;
             var currentEmployeeRoles = await _UserManager.GetUserRolesAsync(User);
-            var currentEmployee = await _EmployeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(currentUser.Id),
+                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
             ///Company admin can browse all
             if ((currentEmployeeRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator) {
-                if (companyId != null)
-                    selectedEmployees = (await _EmployeeRepository.WhereAsync(x => x.CompanyId == (int)companyId)).ToList();
+                if (companyId != null) {
+                    var employeesForThisCompany = await _UnitOfWork.Employees.WhereAsync(
+                        filter: x => x.CompanyId == (int)companyId,
+                        order: o => o.OrderBy(e => e.LastName).ThenBy(e => e.FirstName),
+                        includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
+                    selectedEmployees = employeesForThisCompany.ToList();
+                }
                 else {
-                    selectedEmployees = (await _EmployeeRepository.WhereAsync(x => true)).ToList();
+                    selectedEmployees = (await _UnitOfWork.Employees.WhereAsync(x => true,
+                        order: o => o.OrderBy(e => e.LastName).ThenBy(e => e.FirstName),
+                        includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager }
+                        )).ToList();
                 }
             }
             ///If user is not member of app administrator, but priveleged inside the company, he can still see the users from his company
             else if (currentEmployee != null && ((currentEmployeeRoles & (UserRoles.CompanyAdministrator | UserRoles.HRManager)) > 0)) {
-                selectedEmployees = (await _EmployeeRepository.WhereAsync(x => x.CompanyId == currentEmployee.CompanyId)).ToList();
+                selectedEmployees = (await _UnitOfWork.Employees.WhereAsync(filter: x => x.CompanyId == currentEmployee.CompanyId,
+                    order: o => o.OrderBy(e => e.LastName).ThenBy(e => e.FirstName),
+                    includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager })).ToList();
             }
             else
                 return Forbid();
             var employeesList = new List<EmployeePresentationDefaultViewModel>();
             foreach (Employee employee in selectedEmployees) {
                 var employeePresentation = _Mapper.Map<EmployeePresentationDefaultViewModel>(employee);
-                employeePresentation.CanAllocateLeave = employee.CompanyId == currentEmployee.CompanyId;
+                employeePresentation.CanAllocateLeave = employee.CompanyId == currentEmployee?.CompanyId;
                 employeesList.Add(employeePresentation);
             }
             return View(employeesList);
         }
         #endregion
+
+        public async Task<ActionResult> Details(string userId) {
+            var currentUserData = await GetCurrentUserData();
+            if (currentUserData?.Item1 == null)
+                return NotFound();
+            if (String.IsNullOrWhiteSpace(userId))
+                userId = currentUserData.Item1.Id;
+            if (currentUserData.Item1.Id.Equals(userId)
+                || await _UserManager.IsCompanyPrivelegedUser(currentUserData.Item3)
+                || ((currentUserData.Item3 & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)) {
+                Employee consernedEmployee;
+                if (currentUserData.Item1.Id.Equals(userId))
+                    consernedEmployee = currentUserData.Item2 != null ? currentUserData.Item2 : null;
+                else
+                    consernedEmployee = await _UnitOfWork.Employees.FindAsync(predicate: x => x.Id.Equals(userId),
+                        includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
+                if (consernedEmployee != null) {
+                    EmployeeCreationVM employeeCreationVM = _Mapper.Map<EmployeeCreationVM>(consernedEmployee);
+                    return View(employeeCreationVM);
+                }
+                else {
+                    return RedirectToPage("~/Identity/Account/Manage/Index", new { userId = currentUserData.Item1.Id });
+                }
+            }
+            else
+                return Forbid();
+        }
+
+        public async Task<ActionResult> RemoveEmployee(string employeeId) {
+            var consernedEmployee = await _UnitOfWork.Employees.FindAsync(
+                predicate: x=>x.Id.Equals(employeeId));
+            if (consernedEmployee == null)
+                return NotFound();
+            var currentUserRights = await GetEditionPermission(consernedEmployee);
+            bool result = true;
+            int? companyId = consernedEmployee.CompanyId;
+            if (currentUserRights.AllowRemoveAccount) {
+                result &= await _UnitOfWork.Employees.DeleteAsync(consernedEmployee);
+                result &= await _UnitOfWork.Save();
+            }
+            if (!result)
+                return RedirectToAction(nameof(Details), new { userId = employeeId });
+            else
+                return RedirectToAction(nameof(Index), new {companyId = companyId } );
+        }
 
         #region Changing password
         [HttpGet]

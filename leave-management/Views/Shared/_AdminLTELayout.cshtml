@@ -1,8 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @using LeaveManagement.CustomLocalization;
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-@inject LeaveManagement.Contracts.ILeaveRequestsRepositoryAsync LeaveRequests
+@inject SignInManager<IdentityUser> SignInManager;
+@inject UserManager<IdentityUser> UserManager;
 @{
     IdentityUser AppUser = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
     IList<string> UserRoles = AppUser != null ? await UserManager.GetRolesAsync(AppUser) : null;
@@ -49,6 +48,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Notifications Dropdown Menu -->
+                <!--<partial name="_NotificationsAlter" model="@*new LeaveManagement.Notifications.NotificationsModel()*@" />-->
                 <partial name="_Notifications" />
                 <!--Langudage dropdown menu-->
                 <li class="nav-item dropdown">

@@ -72,15 +72,23 @@
                 <td>
                     <a class="btn btn-outline-primary" asp-controller="LeaveAllocation" asp-action="AllocateByEmployee" asp-route-employeeId="@item.Id"
                        title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Allocate leave"]">
+                        <i class="fa fa-calendar-plus-o"></i>
+                    </a>
+                    <a class="btn btn-outline-info" asp-controller="LeaveAllocation" asp-action="UserLeaveAllocationsForPeriod" asp-route-userId="@item.Id"
+                       asp-route-period="*"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Display leave allocations"]">
                         <i class="fa fa-calendar"></i>
                     </a>
-
+                    <a class="btn btn-outline-success" asp-action="Details" asp-route-userId="@item.Id"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]">
+                        <i class="fa fa-folder-open"></i>
+                    </a>
                     <a class="btn btn-outline-info" asp-action="UpdateEmployee" asp-route-employeeId="@item.Id"
                        title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit employee"]">
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a class="btn btn-outline-info" asp-action="Delete" asp-route-employeeId="@item.Id"
-                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit employee"]">
+                    <a class="btn btn-outline-info" asp-action="RemoveEmployee" asp-route-employeeId="@item.Id"
+                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete employee"]">
                         <i class="fa fa-remove"></i>
                     </a>
 
