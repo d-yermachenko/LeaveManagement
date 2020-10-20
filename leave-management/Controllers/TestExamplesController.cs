@@ -217,13 +217,13 @@ namespace LeaveManagement.Controllers {
             messageBuilder.AppendLine(_StringLocalizer["Hi, Mr/Mrs vacation manager at {0}", company.CompanyName] + "<br/>");
             messageBuilder.AppendLine(_StringLocalizer["Thank you for paying attention to our tool and taking the time to test it"] + "<br/>");
             messageBuilder.AppendLine(_StringLocalizer["You can find some information how to use our application at"] + GetHelpLink() + ".<br/>");
-            messageBuilder.AppendLine(_StringLocalizer["Your test userName is: ", companyAdmin.Item1.Email] + "<br/>");
-            messageBuilder.AppendLine(_StringLocalizer["Your test password: ", companyAdmin.Item2] + "<br/>");
+            messageBuilder.AppendLine(_StringLocalizer["Your test userName is: {0}", companyAdmin.Item1.Email] + "<br/>");
+            messageBuilder.AppendLine(_StringLocalizer["Your test password: {0}", companyAdmin.Item2] + "<br/>");
             messageBuilder.AppendLine("<hr/>");
             messageBuilder.AppendLine($"<h4>{_StringLocalizer["Here the list of your testing employees data"]}</h4>");
             messageBuilder.AppendLine($"<table><thead><tr><td>{_StringLocalizer["Name"]}</td><td>{_StringLocalizer["UserName"]}</td><td>{_StringLocalizer["Password"]}</td></tr></thead><tbody>");
             foreach (var item in employees.OrderBy(x => x.Item1.FormatEmployeeSNT()))
-                messageBuilder.AppendLine($"<tr><td>{item.Item1.FormatEmployeeSNT()}</td>{item.Item1.Email}<td></td><td>{item.Item2}</td></tr>");
+                messageBuilder.AppendLine($"<tr><td>{item.Item1.FormatEmployeeSNT()}</td><td>{item.Item1.Email}</td><td>{item.Item2}</td></tr>");
             messageBuilder.Append("</tbody></table><br/><br/>");
             messageBuilder.Append(_StringLocalizer["Have a nice day and thank you for testing!"]);
             messageBuilder.Append(_StringLocalizer["For all your remarks please dont hesitate to answer to this address"]);
