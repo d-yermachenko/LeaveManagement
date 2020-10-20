@@ -103,7 +103,16 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
                         employee.LastConnectionDate = employee.CurrentConnectionDate;
                         employee.CurrentConnectionDate = DateTime.Now;
                         await _UnitOfWork.Employees.UpdateAsync(employee);
-                        await _UnitOfWork.Save();
+                        try {
+                            await _UnitOfWork.Save();
+                        }
+                        catch(AggregateException ae) {
+                            _logger.LogError(ae.Flatten(), ae.Message);
+                        }
+                        catch(Exception e) {
+                            _logger.LogError(e, e.Message);
+                        }
+
                     }
                     return LocalRedirect(returnUrl);
                 }

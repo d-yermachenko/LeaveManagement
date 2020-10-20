@@ -8,15 +8,15 @@ namespace LeaveManagement.ViewModels.Company {
     public class CompanyQuickRegistrationVm {
 
         [Required(ErrorMessage = "Company name is required field")]
-        [Display(Name = "Company name", Description = "This is name of your company.")]
-        [DataType(DataType.EmailAddress)]
+        [Display(Name = "Company name", Description = "This is name of your company.", Prompt = "Please insert name of your company")]
+        [DataType(DataType.Text)]
         public string CompanyName { get; set; }
 
 
         [Required(ErrorMessage = "This email is required for registration purposes.")]
         [Display(Name = "Email of company admin", Description = @"Email used for registration company. 
             This email will be used like corporate email, but later you can change it.
-                Also it will used like user name of company admin")]
+                Also it will used like user name of company admin", Prompt = "Please insert email for your company")]
         public string CompanyEmail { get; set; }
 
         [Required(ErrorMessage = "Company administrator user name")]

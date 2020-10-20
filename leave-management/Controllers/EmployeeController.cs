@@ -146,7 +146,7 @@ namespace LeaveManagement.Controllers {
             ValidateContractAcceptence(employeeCreationVM.AcceptContract);
             //Validating is company and manager correctly assigned
             await ValidateEmployeeCreationVMState(employeeCreationVM);
-            UserRoles employeeRoles = await ValidateAssignedRoles(LeaveManagementExtensions.ToUserRoles(employeeCreationVM.Roles), null);
+            UserRoles employeeRoles = await ValidateAssignedRoles(UserManagerExtensions.ToUserRoles(employeeCreationVM.Roles), null);
             if (ModelState.ErrorCount > 0) {
                 employeeCreationVM.RolesList = await GetListAllowedRoles(employeeRoles);
             }
@@ -166,7 +166,7 @@ namespace LeaveManagement.Controllers {
             //Validating user roles
             if (ModelState.ErrorCount == 0) {
                 var employeeIdentityUser = await _UserManager.FindByEmailAsync(employeeCreationVM.Email);
-                var newRoles = LeaveManagementExtensions.FromUserRoles(employeeRoles).ToList();
+                var newRoles = UserManagerExtensions.FromUserRoles(employeeRoles).ToList();
                 foreach (var role in newRoles) {
                     var identityResult = await _UserManager.AddToRoleAsync(employeeIdentityUser, role);
                     if (!identityResult.Succeeded)
@@ -465,7 +465,7 @@ namespace LeaveManagement.Controllers {
             if (employeeVM.Roles == null)
                 consernedEmployeeRoles = await _UserManager.GetUserRolesAsync(consernedEmployee);
             else
-                consernedEmployeeRoles = LeaveManagementExtensions.ToUserRoles(employeeVM.Roles);
+                consernedEmployeeRoles = UserManagerExtensions.ToUserRoles(employeeVM.Roles);
             bool isAppAdministrator = (consernedEmployeeRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator;
             if (!isAppAdministrator && employeeVM.CompanyId == default) {
                 ModelState.AddModelError("", _DataLocalizer["Company is required for all employees who is not app administrator"]);
@@ -491,7 +491,7 @@ namespace LeaveManagement.Controllers {
             UserRoles employeeRoles = await _UserManager.GetUserRolesAsync(employee);
             if (employeeVM.Roles == null || !employeeVM.RolesListEnabled)
                 return true;
-            UserRoles employeeVmRoles = LeaveManagementExtensions.ToUserRoles(employeeVM.Roles);
+            UserRoles employeeVmRoles = UserManagerExtensions.ToUserRoles(employeeVM.Roles);
             validRoles = allow || (employeeRoles == employeeVmRoles);
             if (validRoles)
                 validRoles |= allow && ((await ValidateAssignedRoles(employeeVmRoles, employee)) == employeeVmRoles);
@@ -537,7 +537,7 @@ namespace LeaveManagement.Controllers {
             employeeCreationVM = await SetEmployeeCompanyAndManagerState(employeeCreationVM, editionPermissions);
             employeeCreationVM.RolesListEnabled = !concernedEmployee.Id.Equals(currentUserData.Item1.Id);
             employeeCreationVM.RolesList = await GetListAllowedRoles(currentUserData.Item3);
-            employeeCreationVM.Roles = LeaveManagementExtensions.FromUserRoles(concernedEmployeesRoles).ToList();
+            employeeCreationVM.Roles = UserManagerExtensions.FromUserRoles(concernedEmployeesRoles).ToList();
             employeeCreationVM.ManagerEnabled = editionPermissions.AllowChangeManager;
             employeeCreationVM.CompanyEnabled = editionPermissions.AllowChangeCompany;
             return employeeCreationVM;
@@ -632,10 +632,10 @@ namespace LeaveManagement.Controllers {
             if (userRoles == null)
                 return true;
             bool updateResult = true;
-            UserRoles newRoles = LeaveManagementExtensions.ToUserRoles(userRoles);
+            UserRoles newRoles = UserManagerExtensions.ToUserRoles(userRoles);
             UserRoles oldRoles = await _UserManager.GetUserRolesAsync(employee);
-            var addedRoles = LeaveManagementExtensions.FromUserRoles((oldRoles ^ newRoles) & newRoles);
-            var removedRoles = LeaveManagementExtensions.FromUserRoles((oldRoles ^ newRoles) & oldRoles);
+            var addedRoles = UserManagerExtensions.FromUserRoles((oldRoles ^ newRoles) & newRoles);
+            var removedRoles = UserManagerExtensions.FromUserRoles((oldRoles ^ newRoles) & oldRoles);
             updateResult &= (await _UserManager.AddToRolesAsync(employee, addedRoles)).Succeeded;
             updateResult &= (await _UserManager.RemoveFromRolesAsync(employee, removedRoles)).Succeeded;
             return updateResult;
@@ -801,5 +801,28 @@ namespace LeaveManagement.Controllers {
         }
         #endregion
 
+
+        #region Disposing
+
+        public new void Dispose() {
+            Dispose(true);
+            //GC.SuppressFinalize(this);
+        }
+
+        private bool _Disposed = false;
+
+        protected override void Dispose(bool disposing) {
+            if (_Disposed)
+                return;
+
+            if (disposing) {
+                _UnitOfWork.Dispose();
+            }
+            base.Dispose(disposing);
+
+            _Disposed = true;
+        }
+
+        #endregion
     }
 }

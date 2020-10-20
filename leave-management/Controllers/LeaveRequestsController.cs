@@ -391,5 +391,29 @@ namespace LeaveManagement.Controllers {
             return periodsValids;
         }
         #endregion
+
+
+        #region Disposing
+
+        public new void Dispose() {
+            Dispose(true);
+            //GC.SuppressFinalize(this);
+        }
+
+        private bool _Disposed = false;
+
+        protected override void Dispose(bool disposing) {
+            if (_Disposed)
+                return;
+
+            if (disposing) {
+                _UnitOfWork.Dispose();
+            }
+            base.Dispose(disposing);
+
+            _Disposed = true;
+        }
+
+        #endregion
     }
 }

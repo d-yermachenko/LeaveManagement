@@ -30,7 +30,7 @@ namespace LeaveManagement
 
         public static string Privacy => "Privacy";
 
-
+        public static string TestCompanyRegistration => "TestCompanyRegistration";
 
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);

@@ -1,6 +1,7 @@
 ﻿using LeaveManagement.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
@@ -11,17 +12,21 @@ using System.Threading.Tasks;
 namespace LeaveManagement.Repository.Entity {
     public class GenericEntityRepository<TEntity> : IRepository<TEntity> where TEntity : class {
 
+
         public GenericEntityRepository(DbSet<TEntity> entities) {
             _ObjectSet = entities;
         }
 
-        DbSet<TEntity> _ObjectSet;
+        private readonly DbSet<TEntity> _ObjectSet;
 
         public async Task<bool> CreateAsync(TEntity entity) {
             bool result = false;
             try {
                 await _ObjectSet.AddAsync(entity);
                 result = true;
+            }
+            catch {
+                throw;
             }
             finally {
 

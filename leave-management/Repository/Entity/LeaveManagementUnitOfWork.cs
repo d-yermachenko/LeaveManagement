@@ -62,7 +62,16 @@ namespace LeaveManagement.Repository.Entity {
         }
 
         public async Task<bool> Save() {
-            return (await _ApplicationDbContext.SaveChangesAsync()) > 0;
+            bool result;
+            try {
+                int affectedRows = await _ApplicationDbContext.SaveChangesAsync();
+                result = true;
+            }
+            catch {
+                result = false;
+                throw;
+            }
+            return result;
         }
 
         #region Disposing
@@ -84,8 +93,6 @@ namespace LeaveManagement.Repository.Entity {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        ~LeaveManagementUnitOfWork() => Dispose(false);
         #endregion
     }
 }

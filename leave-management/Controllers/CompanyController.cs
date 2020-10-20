@@ -116,9 +116,15 @@ namespace LeaveManagement.Controllers {
                 }
                 Company company = _Mapper.Map<Company>(companyVM);
                 await _UnitOfWork.Companies.CreateAsync(company);
-                if (!(await _UnitOfWork.Save())) {
+                try {
+                    if (!(await _UnitOfWork.Save())) {
+                        ModelState.AddModelError("", _MessageLocalizer["Unabled to create the company due the server error"]);
+                        _CompanyControllerLogger.LogError("Unabled to create the company due the server error");
+                    }
+                }
+                catch(AggregateException ae) {
+                    _CompanyControllerLogger.LogError(ae.Flatten(), ae.Message);
                     ModelState.AddModelError("", _MessageLocalizer["Unabled to create the company due the server error"]);
-                    _CompanyControllerLogger.LogError("Unabled to create the company due the server error");
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -318,20 +324,19 @@ namespace LeaveManagement.Controllers {
             bool operationResult = true;
             var leaveTypesToRemove = await _UnitOfWork.LeaveTypes.WhereAsync(filter: lt => lt.CompanyId == id);
             foreach (var leaveType in leaveTypesToRemove) {
-                operationResult &= await _UnitOfWork.LeaveTypes.DeleteAsync(leaveType);
-                if (!operationResult) {
-                    await SendNotificationToAppAdmins($"Failed to remove leave type #{leaveType.Id}", "Company removing emergency");
-                }
+                (await _UnitOfWork.LeaveAllocations.WhereAsync(filter: x => x.AllocationLeaveTypeId == leaveType.Id))?.
+                    ToList().ForEach( async (el) => {
+                        operationResult &= operationResult ? await _UnitOfWork.LeaveAllocations.DeleteAsync(el) : false;
+                    });
+                (await _UnitOfWork.LeaveRequest.WhereAsync(filter: x => x.LeaveTypeId == leaveType.Id))?.
+                    ToList().ForEach(async (el) => {
+                        operationResult &= operationResult ? await _UnitOfWork.LeaveRequest.DeleteAsync(el) : false;
+                    });
+                operationResult &= operationResult ? await _UnitOfWork.LeaveTypes.DeleteAsync(leaveType) : false;
             }
-            if (!operationResult) {
-                ModelState.AddModelError("", _MessageLocalizer["Failed to remove leave type. Administrator was notified about this problem"]);
-                return await Details(companyData.Id);
-            }
-
-            if (!operationResult) {
-                ModelState.AddModelError("", _MessageLocalizer["Failed to remove employees. Administrator was notified about this problem, he will remove the rests of data in more bref delays"]);
-                return await Details(companyData.Id);
-            }
+            (await _UnitOfWork.Employees.WhereAsync(x => x.CompanyId == id)).ToList().ForEach(async (empl) => {
+                operationResult &= operationResult ? await _UnitOfWork.Employees.DeleteAsync(empl) : false;
+            });
             operationResult &= await _UnitOfWork.Companies.DeleteAsync(companyData);
             operationResult &= await _UnitOfWork.Save();
             if (!operationResult) {
@@ -342,27 +347,7 @@ namespace LeaveManagement.Controllers {
             }
             if ((currentUserRoles & UserRoles.AppAdministrator) != UserRoles.AppAdministrator)
                 await _SignInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
-        private async Task<bool> RemoveEmployeesFromCompany(Company companyData) {
-            if (companyData == null)
-                return false;
-            bool operationResult = true;
-            int id = companyData.Id;
-            var employeesOfTheCompany = await _UnitOfWork.Employees.WhereAsync(emp => emp.CompanyId == id);
-            StringBuilder removedEmployees = new StringBuilder();
-            foreach (var employee in employeesOfTheCompany) {
-                operationResult &= await _UnitOfWork.Employees.DeleteAsync(employee);
-                if (operationResult)
-                    removedEmployees.Append($"{{ id:{employee.Id}, \nuserName: {employee.UserName} }}");
-                else {
-                    await SendNotificationToAppAdmins($"Failed to remove employee {employee?.Id} while permanently removing company {companyData.Id}",
-                        $"Emergency for the company #{id} ({companyData.CompanyName})");
-                    break;
-                }
-            }
-            return operationResult;
+            return RedirectToAction("Index");
         }
 
         public async Task SendNotificationToAppAdmins(string message, string subject) {
@@ -380,7 +365,7 @@ namespace LeaveManagement.Controllers {
 
         public new void Dispose() {
             Dispose(true);
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
 
         private bool _Disposed = false;
@@ -397,7 +382,6 @@ namespace LeaveManagement.Controllers {
             _Disposed = true;
         }
 
-        ~CompanyController() => Dispose(false);
         #endregion
     }
 }
