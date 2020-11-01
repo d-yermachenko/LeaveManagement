@@ -1,0 +1,54 @@
+﻿@using LeaveManagement.ViewModels.LeaveRequest;
+@model IEnumerable<LeaveSold>;
+@foreach (var allocation in Model)
+{
+    <div class="col-3">
+        <div class="card h-100 mr-1 half-opacity">
+            <div class="card-header bg-info">
+                @allocation.LeaveTypeName
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span title="@Html.DescriptionFor(model => model.FirstOrDefault().ApprouvedDays)">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().AllocatedDays)
+                        </span>
+                        <span class="badge badge-pill badge-light">@allocation.AllocatedDays</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span title="@Html.DescriptionFor(model => model.FirstOrDefault().ApprouvedDays)">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().ApprouvedDays)
+                        </span>
+                        <span class="badge badge-pill badge-success">@allocation.ApprouvedDays</span>
+                    </li>
+                    <li class="list-group-item ">
+                        <span title="@Html.DescriptionFor(model => model.FirstOrDefault().RejectedDays)">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().RejectedDays)
+                        </span>
+                        <span class="badge badge-pill badge-danger">@allocation.RejectedDays</span>
+                    </li>
+                    <li class="list-group-item ">
+                        <span title="@Html.DescriptionFor(model => model.FirstOrDefault().PendingDays)">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().PendingDays)
+                        </span>
+                        <span class="badge badge-pill badge-warning">@allocation.PendingDays</span>
+                    </li>
+                    <li class="list-group-item list-grp-item-warning">
+                        <span title="@Html.DescriptionFor(model => model.FirstOrDefault().UsedDays)">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().UsedDays)
+                        </span>
+                        <span class="badge badge-pill badge-warning">@allocation.UsedDays</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span title="@Html.DescriptionFor(model => model.FirstOrDefault().RestOfDays)">
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().RestOfDays)
+                        </span>
+                        <span class="badge badge-pill badge-info">@allocation.RestOfDays</span>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+}
+

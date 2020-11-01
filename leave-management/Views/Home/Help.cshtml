@@ -1,6 +1,24 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<h1>Here will be the help section</h1>
+﻿<div id="help-content">
+
+    <div class="alert alert-danger">
+        @Localizer["Disclaimer"]
+    </div>
+    <div>
+        @Localizer["In brief"]
+        @if (!SignInManager.IsSignedIn(User))
+        {
+            @Localizer["Creating test company"]
+        }
+        else
+        {
+            <h1>@Localizer["Using leave management."]</h1>
+            @Localizer["Applying for leave"]
+            @Localizer["My (your) leaves"]
+            if (await SignInManager.UserManager.IsCompanyPrivelegedUser(User))
+            {
+                @Localizer["Allocating leaves"]
+                @Localizer["Administration"]
+            }
+        }
+    </div>
+</div> 

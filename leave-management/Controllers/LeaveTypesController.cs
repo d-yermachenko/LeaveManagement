@@ -79,7 +79,8 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> Details(int id) {
             if ((await _SignInManager.UserManager?.IsCompanyPrivelegedUser(User)) != true)
                 return Forbid();
-            var entry = await _UnitOfWork.LeaveTypes.FindAsync(x=>x.Id ==id);
+            var entry = await _UnitOfWork.LeaveTypes.FindAsync(x=>x.Id ==id,
+                includes: new System.Linq.Expressions.Expression<Func<LeaveType, object>>[] { x => x.Company});
             if (entry == null) {
                 string errorMessage = _ControllerLocalizer["Impossible to find leave type #{0}. Please check the adress", id];
                 return StatusCode(StatusCodes.Status404NotFound, errorMessage);

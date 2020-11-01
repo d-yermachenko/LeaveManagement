@@ -14,6 +14,8 @@ namespace LeaveManagement
 
         public static string Email => "Email";
 
+        public static string LeaveTypes = "LeaveTypes";
+
         public static string ChangePassword => "ChangePassword";
 
         public static string PersonalData => "PersonalData";
@@ -26,9 +28,15 @@ namespace LeaveManagement
 
         public static string Employees => "Employees";
 
+        public static string CreateEmployee = "CreateEmployee";
+
         public static string Home => "Home";
 
+        public static string Help => "Help";
+
         public static string Privacy => "Privacy";
+
+        public static string EmployeeRequests => "EmployeeRequests";
 
         public static string TestCompanyRegistration => "TestCompanyRegistration";
 

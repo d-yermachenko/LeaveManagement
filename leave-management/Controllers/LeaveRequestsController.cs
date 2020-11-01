@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
-
+using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace LeaveManagement.Controllers {
     [Authorize]
@@ -104,12 +104,15 @@ namespace LeaveManagement.Controllers {
             createLeaveRequestViewModel.LeaveTypes = _Mapper.Map<List<SelectListItem>>(leaveTypes);
             createLeaveRequestViewModel.StartDate = DateTime.Now.Date;
             createLeaveRequestViewModel.EndDate = DateTime.Now.AddDays(7).Date;
+            var requests = await _UnitOfWork.LeaveRequest.WhereAsync(
+                filter: x => x.RequestingEmployeeId == currentEmployee.Id,
+                includes: new System.Linq.Expressions.Expression<Func<LeaveRequest, object>>[] { x => x.RequestingEmployee, x => x.LeaveType, x => x.ApprouvedBy });
+            ViewBag.LeaveData = await GetLeaveSolds(requests, currentEmployee);
             return View(createLeaveRequestViewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateLeaveRequestVM leaveRequest) {
-
             var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
@@ -235,13 +238,24 @@ namespace LeaveManagement.Controllers {
                 return Forbid();
             }
             int currentPeriod = period == null ? DateTime.Now.Year : (int)period;
-
             var requests = (await _UnitOfWork.LeaveRequest.WhereAsync(filter: q => q.RequestingEmployeeId.Equals(currentEmployee.Id),
                 order: o => o.OrderByDescending(el => el.RequestedDate).ThenBy(el => el.StartDate),
                 includes: new System.Linq.Expressions.Expression<Func<LeaveRequest, object>>[] { x => x.RequestingEmployee,
                     x => x.LeaveType, x=>x.ApprouvedBy })).ToList();
 
+
             Task<List<LeaveRequestDefaultViewModel>> mappingRequestsTask = Task.Run(() => _Mapper.Map<List<LeaveRequestDefaultViewModel>>(requests));
+
+            var leaveSolds = GetLeaveSolds(requests, currentEmployee);
+            Task.WaitAll(mappingRequestsTask, leaveSolds);
+            EmployeeLeaveRequestsViewModel viewModel = new EmployeeLeaveRequestsViewModel() {
+                LeaveRequests = mappingRequestsTask.Result,
+                LeaveAllocations = leaveSolds.Result
+            };
+            return View("EmployeeLeaveRequests", viewModel);
+        }
+
+        public async Task<IList<LeaveSold>> GetLeaveSolds(IEnumerable<LeaveRequest> requests, Employee consernedEmployee) {
             Task<IDictionary<int, LeaveSold>> requestedLeaveSoldsClass = Task.Run(() => {
                 var requestsGroups = requests.GroupBy(x => x.LeaveTypeId);
                 IDictionary<int, LeaveSold> leaveSolds = new Dictionary<int, LeaveSold>();
@@ -259,7 +273,7 @@ namespace LeaveManagement.Controllers {
                 return leaveSolds;
             });
 
-            var allocations = await _UnitOfWork.LeaveAllocations.WhereAsync(filter: q => q.AllocationEmployeeId.Equals(currentEmployee.Id),
+            var allocations = await _UnitOfWork.LeaveAllocations.WhereAsync(filter: q => q.AllocationEmployeeId.Equals(consernedEmployee.Id),
                 includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationLeaveType, x => x.AllocationEmployee });
 
             Task<IDictionary<int, LeaveSold>> allocatedLeaveSoldsTask = Task.Run(() => {
@@ -275,7 +289,7 @@ namespace LeaveManagement.Controllers {
                 return result;
             });
 
-            var leaveTypes = (await _UnitOfWork.LeaveTypes.WhereAsync(lt => lt.CompanyId == currentEmployee.CompanyId)).Select(v => new LeaveSold() {
+            var leaveTypes = (await _UnitOfWork.LeaveTypes.WhereAsync(lt => lt.CompanyId == consernedEmployee.CompanyId)).Select(v => new LeaveSold() {
                 LeaveTypeId = v.Id,
                 LeaveTypeName = v.LeaveTypeName,
                 DefaultDays = v.DefaultDays
@@ -303,12 +317,8 @@ namespace LeaveManagement.Controllers {
                 }
                 return records;
             });
-            Task.WaitAll(mappingRequestsTask, mergedData);
-            EmployeeLeaveRequestsViewModel viewModel = new EmployeeLeaveRequestsViewModel() {
-                LeaveRequests = mappingRequestsTask.Result,
-                LeaveAllocations = mergedData.Result
-            };
-            return View("EmployeeLeaveRequests", viewModel);
+
+            return await mergedData;
         }
 
         [Authorize]

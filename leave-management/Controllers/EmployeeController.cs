@@ -271,6 +271,10 @@ namespace LeaveManagement.Controllers {
                 managers.Insert(0, new SelectListItem(_DataLocalizer["None"], null));
                 employeeCreationVM.Managers = managers;
             }
+            else {
+                if(employeeCreationVM?.Manager != null)
+                    employeeCreationVM.Managers = new SelectListItem[] { new SelectListItem(employeeCreationVM.Manager.FormatEmployeeSNT(), employeeCreationVM.ManagerId, true, true) };
+            }
 
             return employeeCreationVM;
         }
@@ -455,7 +459,8 @@ namespace LeaveManagement.Controllers {
             valid &= allow || (consernedEmployee.FirstName?.Equals(employeeVM.FirstName) ?? false);
             valid &= allow || (consernedEmployee.LastName?.Equals(employeeVM.LastName) ?? false);
             valid &= allow || (consernedEmployee.TaxRate?.Equals(employeeVM.TaxRate) ?? false);
-            valid &= allow || (consernedEmployee.DateOfBirth.Equals(employeeVM.DateOfBirth));
+            valid &= allow || (consernedEmployee.DateOfBirth.Date.Equals(employeeVM.DateOfBirth));
+            
             return valid;
         }
 
@@ -475,7 +480,10 @@ namespace LeaveManagement.Controllers {
         }
 
         private bool ValidateManagerData(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
-            return allow || employee.ManagerId == employeeVM.ManagerId;
+            var valid =  allow || employee.ManagerId == employeeVM.ManagerId;
+            valid &= allow || (employee.EmploymentDate.Date.Equals(employeeVM.EmploymentDate));
+            return valid;
+
         }
 
         private bool ValidateContactData(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
@@ -535,7 +543,9 @@ namespace LeaveManagement.Controllers {
             if (editionPermissions == null)
                 editionPermissions = await GetEditionPermission(concernedEmployee);
             employeeCreationVM = await SetEmployeeCompanyAndManagerState(employeeCreationVM, editionPermissions);
-            employeeCreationVM.RolesListEnabled = !concernedEmployee.Id.Equals(currentUserData.Item1.Id);
+            employeeCreationVM.ProfileDataEnabled = editionPermissions.AllowEditProfile;
+            employeeCreationVM.ContactDataEnabled = editionPermissions.AllowEditContacts;
+            employeeCreationVM.RolesListEnabled = editionPermissions.AllowEditAccess; //!concernedEmployee.Id.Equals(currentUserData.Item1.Id);
             employeeCreationVM.RolesList = await GetListAllowedRoles(currentUserData.Item3);
             employeeCreationVM.Roles = UserManagerExtensions.FromUserRoles(concernedEmployeesRoles).ToList();
             employeeCreationVM.ManagerEnabled = editionPermissions.AllowChangeManager;
@@ -598,10 +608,14 @@ namespace LeaveManagement.Controllers {
             bool validation = await ValidateInput(consernedEmployee, employeeCreationVM, permissions);
             if (ModelState.ErrorCount == 0 && validation) {
                 //Reappliying company which was not changed
-                if (!permissions.AllowChangeCompany)
+                if (!permissions.AllowChangeCompany) {
                     employeeCreationVM.CompanyId = consernedEmployee.CompanyId;
-                if (!permissions.AllowChangeManager)
+                    employeeCreationVM.Company = consernedEmployee.Company;
+                }
+                if (!permissions.AllowChangeManager) {
                     employeeCreationVM.ManagerId = consernedEmployee.ManagerId;
+                    employeeCreationVM.Manager = _Mapper.Map<EmployeeCreationVM>(await _UnitOfWork.Employees.FindAsync(predicate: x => x.Id.Equals(employeeCreationVM.ManagerId)));
+                }
                 consernedEmployee = _Mapper.Map(employeeCreationVM, consernedEmployee);
                 bool result = await _UnitOfWork.Employees.UpdateAsync(consernedEmployee);
                 result &= await _UnitOfWork.Save();
@@ -678,7 +692,7 @@ namespace LeaveManagement.Controllers {
             var currentEmployeeRoles = await _UserManager.GetUserRolesAsync(User);
             var currentEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(currentUser.Id),
                 includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
-            ///Company admin can browse all
+            ///App admin can browse all
             if ((currentEmployeeRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator) {
                 if (companyId != null) {
                     var employeesForThisCompany = await _UnitOfWork.Employees.WhereAsync(
@@ -713,6 +727,7 @@ namespace LeaveManagement.Controllers {
         #endregion
 
         public async Task<ActionResult> Details(string userId) {
+            string returnUrl = HttpContext.Request.Headers["Referer"];
             var currentUserData = await GetCurrentUserData();
             if (currentUserData?.Item1 == null)
                 return NotFound();
@@ -728,6 +743,7 @@ namespace LeaveManagement.Controllers {
                     consernedEmployee = await _UnitOfWork.Employees.FindAsync(predicate: x => x.Id.Equals(userId),
                         includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
                 if (consernedEmployee != null) {
+                    ViewData["ReturnUrl"] = returnUrl;
                     EmployeeCreationVM employeeCreationVM = _Mapper.Map<EmployeeCreationVM>(consernedEmployee);
                     return View(employeeCreationVM);
                 }

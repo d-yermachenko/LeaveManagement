@@ -10,6 +10,10 @@ namespace LeaveManagement {
         public static string FormatEmployeeSNT(this EmployeePresentationDefaultViewModel employee) {
             return $"{employee.LastName.ToUpper()} {employee.FirstName}, {employee.Title}";
         }
+
+        public static string FormatEmployeeSNT(this EmployeeCreationVM employee) {
+            return $"{employee.LastName.ToUpper()} {employee.FirstName}, {employee.Title}";
+        }
     }
 
     

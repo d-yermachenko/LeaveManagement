@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Administration" xml:space="preserve">
+    <value>&lt;h2&gt;Администрирование&lt;/h2&gt;
+&lt;p&gt;Позволяет редактировать основную информацию. Правом доступа к этому разделу обладают только кадровые менеджеры и администраторы компании.&lt;/p&gt;
+&lt;h3&gt;Редактирование типов отпусков&lt;/h3&gt;
+&lt;p&gt;Позволяет управлять списком отпусков, что разрешено в вашей компании законодательством и коллективным договором: добавлять, удалять и редактировать.&lt;/p&gt;
+&lt;h3&gt;Управление списком сотрудников&lt;/h3&gt;
+&lt;p&gt;Позволяет вам управлять списком ваших сотрудников: добавлять, удалять и редактировать.&lt;/p&gt;</value>
+  </data>
+  <data name="Allocating leaves" xml:space="preserve">
+    <value>&lt;h2&gt;Назначение отпусков.&lt;/h2&gt;
+&lt;p&gt;Этот раздел доступен только менеджерам по персоналу или директорам компании.&lt;/p&gt;
+&lt;h3&gt;Обзор запросов&lt;/h3&gt;
+&lt;p&gt;Когда сотрудник делает запрос на отпуск, менеджер должен решить, принять или отклонить этот запрос на отпуск. Эта страница позволяет вам просматривать текущие запросы на отпуск.&lt;/p&gt;
+&lt;h3&gt;Назначение права на отпуск&lt;/h3&gt;
+&lt;p&gt;Позволяет дать Вашим сотрудникам право на отпуск. Есть две возможности для предоставления права: массовое предоставление и целевое предоставление.&lt;/p&gt;
+&lt;p&gt;Срок действия отпуска переходит в текущий период.&lt;/p&gt;
+&lt;h4&gt;Массовое предоставление&lt;/h4&gt;
+&lt;p&gt;Позволяет предоставить всем сотрудникам тип отпуска, выбранный на текущий период, если он еще не был сделан, и продолжительность отпуска, равную продолжительности по умолчанию.&lt;/p&gt;
+&lt;h4&gt;Целевое предоставление.&lt;/h4&gt;
+&lt;p&gt;Позволяет указать сотрудника, тип отпуска и его продолжительность, а также период.&lt;/p&gt;
+&lt;h3&gt;Детали&lt;/h3&gt;
+&lt;p&gt;Позволяет узнать количество дней, на которое имеет право каждый сотрудник компании.&lt;/p&gt;</value>
+  </data>
+  <data name="Applying for leave" xml:space="preserve">
+    <value>&lt;h2&gt;Запрос на отпуск.&lt;/h2&gt;
+&lt;p&gt;Если у Вас есть право на отпуск, на этой странице вы можете запросить отпуск.&lt;/p&gt;
+&lt;p&gt;Вам нужно будет выбрать тип отпуска, который вы хотите использовать для этого отбытия, дату начала и дату окончания отпуска. Вы также можете добавить небольшой комментарий который увидит Ваш менеджер.&lt;/p&gt;
+&lt;p&gt;Внизу страницы у вас есть сводка дневных остатков по каждому типу отпуска, существующему в вашей компании.&lt;/p&gt;</value>
+  </data>
+  <data name="Creating test company" xml:space="preserve">
+    <value>&lt;h1&gt;Создание тестовой компании&lt;/h1&gt;
+&lt;p&gt;
+    Эта демонстрационная возможность позволяет в несколько кликов и заполнив 3 поля ввода создать симуляцию компанию с 4 видами отпусков и 3-8ю сотрудниками. Эти данные генерируются автоматически и вы незамедлительно можете приступить к симуляции
+    В целях симуляции Вы можете использовать временные адреса электронной почты, вроде следующих
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href="https://temp-mail.org/"&gt;https://temp-mail.org/&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="https://www.fakemail.net/"&gt;https://www.fakemail.net/&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;и так далее&lt;/li&gt;
+    &lt;/ul&gt; 
+    Однако, рекомендуется сохранить полученное электронное письмо, т.к. без него нельзя будет восстановить доступ к симуляции.
+&lt;/p&gt;</value>
+  </data>
+  <data name="Disclaimer" xml:space="preserve">
+    <value>&lt;h1&gt;Отказ от ответственности&lt;/h1&gt;
+&lt;p&gt;Это приложение сделано как учебный и исследовательский проект. Он не предназначен для производственной эксплуатации. Автор не несет ответственности за утечку или потерю данных, а также за обслуживание и доступность приложения.&lt;/p&gt;
+&lt;p&gt;Приложение может быть отключено в любой момент, а данные могут быть удалены без уведомления.&lt;/p&gt;
+&lt;p&gt;В тестовых целях рекомендуется использовать вымышленные данные.&lt;/p&gt;
+&lt;p&gt;Есть много вещей, которые можно улучшить, но это приложение - всего лишь учебный проект.&lt;/p&gt;</value>
+  </data>
+  <data name="In brief" xml:space="preserve">
+    <value>&lt;h1&gt;Краткое описание&lt;/h1&gt;
+&lt;p&gt;Этот пример позволяет смоделировать управление отпуском в малом бизнесе. После ввода списка сотрудников и типов отпусков в вашей компании вы можете назначить отпуск своим сотрудникам и ответить на их запросы на отпуск, как только они будут созданы сотрудником.&lt;/p&gt;</value>
+  </data>
+  <data name="My (your) leaves" xml:space="preserve">
+    <value>&lt;h2&gt;Ваши запросы.&lt;/h2&gt;
+На этой странице вы можете ознакомиться с вашими запросами на отпуск. Как сотрудник, вы можете удалить заявку на отпуск, которая начинается позже, чем через три дня.</value>
+  </data>
+  <data name="Using leave management." xml:space="preserve">
+    <value>Управление отпусками</value>
+  </data>
+</root>

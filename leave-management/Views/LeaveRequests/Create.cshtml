@@ -1,11 +1,12 @@
-﻿@model LeaveManagement.ViewModels.LeaveRequest.CreateLeaveRequestVM
+﻿@using LeaveManagement.ViewModels.LeaveRequest;
+@model LeaveManagement.ViewModels.LeaveRequest.CreateLeaveRequestVM
 
 @{
     ViewData["Title"] = Localizer["Create leave request"];
+    ViewData[LeaveManagement.ManageNavPages.ActivePageSection] = LeaveManagement.ManageNavPages.LeaveRequest;
 }
 
 <h1>@Localizer["Create leave request"]</h1>
-
 <hr />
 <div class="row">
     <div class="col-md-8">
@@ -14,7 +15,7 @@
             <div class="form-group">
                 <label asp-for="LeaveTypes" class="control-label"></label>
                 <select asp-for="LeaveTypeId" class="form-control" asp-items="Model.LeaveTypes">
-                    <option disabled selected>@Html.PromptFor(mdl=>Model.LeaveTypes)</option>
+                    <option disabled selected>@Html.PromptFor(mdl => Model.LeaveTypes)</option>
                 </select>
             </div>
             <div class="row">
@@ -42,5 +43,10 @@
             </div>
         </form>
     </div>
+</div>
+<hr/>
+<h4>@Localizer["Allocayed leaves"]</h4>
+<div class="row">
+    @await Html.PartialAsync("_LeavesData", (IEnumerable<LeaveSold>)ViewBag.LeaveData);
 </div>
 

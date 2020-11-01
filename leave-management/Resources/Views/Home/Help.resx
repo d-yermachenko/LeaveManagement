@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Administration" xml:space="preserve">
+    <value>&lt;h3&gt;Administration&lt;/h3&gt;
+&lt;h4&gt;Editing leave types&lt;/h4&gt;
+&lt;p&gt;Creating, editing and removing leave types. All related allocations and requests will be updated in cascade. This part is available only for company administrators and HR managers.&lt;/p&gt;
+&lt;h4&gt;Editing employees&lt;/h4&gt;
+&lt;p&gt;Creating, editing and removing employees. All related allocations and requests will be updated in cascade. This part is available only for company administrators and HR managers.&lt;/p&gt;</value>
+  </data>
+  <data name="Allocating leaves" xml:space="preserve">
+    <value>&lt;h3&gt;Allocating leaves&lt;/h3&gt;
+&lt;p&gt;Allows allocate leave to your employees. There is two ways of leave allocation: Massive allocation and precise allocation&lt;/p&gt;
+&lt;p&gt;This part available only for Company administrators and HR managers&lt;/p&gt;
+&lt;h4&gt;Massive allocation&lt;/h4&gt;
+&lt;p&gt;Allocates leave of given type for all employees in the company. The default duration applied.&lt;/p&gt;
+&lt;h4&gt;Precise allocation (Allocate leaves)&lt;/h4&gt;
+&lt;p&gt;Allows you to choose the employee to allocate the leave. In same page you’re able to navigate to already allocated leaves to this employee and watch his details.&lt;/p&gt;
+&lt;p&gt;To allocate leave, click the button “allocate”. This action will navigate you to page, where you will choose leave type and duration to allocate.&lt;/p&gt;
+&lt;h4&gt;Details&lt;/h4&gt;
+&lt;p&gt;Allows to see all the allocations of all the employees.&lt;/p&gt;</value>
+  </data>
+  <data name="Applying for leave" xml:space="preserve">
+    <value>&lt;h2&gt;Applying for leave&lt;/h2&gt;
+&lt;p&gt;Click this action in menu and form will guide you for applying to live. You need to choose the type of vacations and give the period to leave. You can also type the comment to your validator.&lt;/p&gt;
+&lt;p&gt;In the bottom of the form there is statistics of your leaves allocations and request to give you an idea about sold of any leave type.&lt;/p&gt;</value>
+  </data>
+  <data name="Creating test company" xml:space="preserve">
+    <value>&lt;h1&gt;Creating test company&lt;/h1&gt;
+&lt;p&gt;
+    This DEMONSTRATION possibility allows to create the test company with 4 default fake leave types and with 3-8 fake employees. You need only the name of your test company and WORKING email address to receive all demo passwords. I suggest you to use temporary email, that you can instantly obtain from the sites like
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href="https://temp-mail.org/"&gt;https://temp-mail.org/&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="https://www.fakemail.net/"&gt;https://www.fakemail.net/&lt;/a&gt;
+    &lt;/ul&gt;
+    and many others.
+&lt;/p&gt;
+&lt;p&gt;After creatin the test company, you will receive the login data for your test employees. Then you can simulate the leave management on your company.&lt;/p&gt;</value>
+  </data>
+  <data name="Disclaimer" xml:space="preserve">
+    <value>&lt;h1&gt;Disclaimer&lt;/h1&gt;
+&lt;p&gt;This application is made like a study and tech research project. It is not concepted to be used in real company. You use it at your own risks, author is not responsible of any data leak or loose, if your use the application.&lt;/p&gt;
+&lt;p&gt;Application can be removed any time without any warning and data can be removed without any backup.&lt;/p&gt;
+&lt;p&gt;In the purpose of the test, I invite you to insert the fake and mock data.&lt;/p&gt;
+&lt;p&gt;There is lot of things to improve and change and customize the app, but it’s only demonstration.&lt;/p&gt;</value>
+  </data>
+  <data name="In brief" xml:space="preserve">
+    <value>&lt;h1&gt;In brief&lt;/h1&gt;
+&lt;p&gt;This example allows you to simulate the leave management in your company. You can ask the administrator to create your company or create your own test company and then edit leave types and test employees for your company. After editing the lists of employees and leave types for your country and company, you are able to allocate leave to your test employees. After leave was allocated, opens possibility to make the leave requests. Then manager is able to accept or reject your leave request.&lt;/p&gt;</value>
+  </data>
+  <data name="My (your) leaves" xml:space="preserve">
+    <value>&lt;h2&gt;My (your) leaves&lt;/h2&gt;
+&lt;p&gt;Information about past and current leave requests. It is possible to edit or remove the leave request before it was accepted. You can also remove your leave request in less than 3 (three) days before beginning.&lt;/p&gt;</value>
+  </data>
+  <data name="Using leave management." xml:space="preserve">
+    <value>Using leave management.</value>
+  </data>
+</root>
