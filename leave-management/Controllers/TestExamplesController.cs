@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace LeaveManagement.Controllers {
         private readonly IPasswordGenerator _PasswordGenerator;
         private readonly IEmailSender _EmailSender;
         private readonly int _FemaileNamesStartIndex;
+        private readonly ILogger _Logger;
 
         private const string CompanyRegistrationForm = "FakeCompanyRegistration";
         #region Constanst
@@ -44,7 +46,8 @@ namespace LeaveManagement.Controllers {
             UserManager<IdentityUser> userManager,
             ILeaveManagementCustomLocalizerFactory localizerFactory,
             IPasswordGenerator passwordGenerator,
-            IEmailSender emailSender
+            IEmailSender emailSender,
+            ILoggerFactory loggerFactory
             ) {
             _UnitOfWork = unitOfWork;
             _UserManager = userManager;
@@ -52,6 +55,7 @@ namespace LeaveManagement.Controllers {
             _PasswordGenerator = passwordGenerator;
             _EmailSender = emailSender;
             _FemaileNamesStartIndex = _Names.ToList().IndexOf("Emma");
+            _Logger = loggerFactory.CreateLogger<TestExamplesController>();
         }
 
         [HttpGet]
@@ -83,7 +87,7 @@ namespace LeaveManagement.Controllers {
                     messageBuilder = employeesData.Item2;
             }
             else {
-                ModelState.AddModelError("", _StringLocalizer[""]);
+                ModelState.AddModelError("", _StringLocalizer["Employees registration failed"]);
             }
             foreach (LeaveType leaveType in leaveTypes)
                 result &= await _UnitOfWork.LeaveTypes.CreateAsync(leaveType);
@@ -96,14 +100,26 @@ namespace LeaveManagement.Controllers {
                     subject: _StringLocalizer["Test company registration ({0})", registrationVm.CompanyName],
                     messageBuilder.ToString());
                 }
-                catch {
+
+                catch(AggregateException ae) {
+                    var aef = ae.Flatten();
+                    _Logger.LogError(aef.Message, aef);
+                    result &= false;
+                }
+                catch(Exception e) {
+                    _Logger.LogError(e.Message, e);
                     result &= false;
                 }
             }
+            else {
+                ModelState.AddModelError("", _StringLocalizer["Company creation failed"]);
+            }
             if (result)
                 return RedirectToAction("Index", "Home");
-            else
+            else {
+                ModelState.AddModelError("", _StringLocalizer["Email sending failed"]);
                 return View(CompanyRegistrationForm, registrationVm);
+            }
 
         }
 
@@ -159,7 +175,7 @@ namespace LeaveManagement.Controllers {
                 Company = company,
                 Manager = manager,
                 EmploymentDate = DateTime.Now.AddDays(randomizer.NextDouble() * daysFromCreation),
-                DateOfBirth = DateTime.Now.AddDays(Convert.ToDouble(randomizer.Next(19 * 365, 65 * 365))),
+                DateOfBirth = DateTime.Now.AddDays(-1D * Convert.ToDouble(randomizer.Next(19 * 365, 65 * 365))),
                 TaxRate = randomizer.Next().ToString()
             };
             string password = _PasswordGenerator.GeneratePassword();
