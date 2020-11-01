@@ -36,7 +36,8 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.AllocationEmployee)
-
+                </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -68,24 +69,30 @@
                     </a>
                 </td>
                 <td>
-                        @if (await _UserManager.IsCompanyPrivelegedUser(User))
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-block">
-                                <i class="fa fa-pencil"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-block btn-danger"
-                               onclick="return confirm('@Localizer["Are you sure you want to delete this allocation?"]')">
-                                <i class="fa fa-trash"></i>@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]
-                            </a>
-                        }
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-block btn-success">
-                                <i class="fa fa-sun-o"></i> @LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]
-                            </a>
+                    @if (await _UserManager.IsCompanyPrivelegedUser(User))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit"]">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete"]"
+                           onclick="return confirm('@Localizer["Are you sure you want to delete this allocation?"]')">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success" title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Details"]">
+                        <i class="fa fa-sun-o"></i>
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+@section Scripts{
+    <partial name="_DataTablesScripts" />
+}
+@section Styles{
+    <partial name="_DataTablesStyles" />
+}
 <div class="container container-fluid">
     <div class="row">
         <div class="col col-5">
@@ -95,9 +102,4 @@
         </div>
     </div>
 </div>
-@section Styles{
-    <partial name="_DataTablesStyles" />
-}
-@section Scripts{
-    <partial name="_DataTablesScripts" />
-}
+

@@ -30,7 +30,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="Title" placeholder="@Html.PromptFor(m => m.Title)" disabled>
+                                <input class="form-control" asp-for="Title" placeholder="@Html.PromptFor(m => m.Title)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.Title)">
@@ -49,7 +49,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="FirstName" placeholder="@Html.PromptFor(m => m.FirstName)" disabled>
+                                <input class="form-control" asp-for="FirstName" placeholder="@Html.PromptFor(m => m.FirstName)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.FirstName)">
@@ -69,7 +69,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="LastName" placeholder="@Html.PromptFor(m => m.LastName)" disabled>
+                                <input class="form-control" asp-for="LastName" placeholder="@Html.PromptFor(m => m.LastName)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.LastName)">
@@ -100,7 +100,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="DateOfBirth" placeholder="@Html.PromptFor(m => m.DateOfBirth)" disabled>
+                                <input class="form-control" asp-for="DateOfBirth" placeholder="@Html.PromptFor(m => m.DateOfBirth)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.DateOfBirth)">
@@ -120,7 +120,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="EmploymentDate" placeholder="@Html.PromptFor(m => m.EmploymentDate)" disabled>
+                                <input class="form-control" asp-for="EmploymentDate" placeholder="@Html.PromptFor(m => m.EmploymentDate)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.EmploymentDate)">
@@ -129,6 +129,26 @@
                             </div>
                         </div>
                         <span asp-validation-for="EmploymentDate" class="text-danger d-block"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <div class="input-group">
+                            @if (Model.ProfileDataEnabled)
+                            {
+                                <input class="form-control" asp-for="TaxRate" placeholder="@Html.PromptFor(m => m.TaxRate)">
+                            }
+                            else
+                            {
+                                <input class="form-control" asp-for="TaxRate" placeholder="@Html.PromptFor(m => m.TaxRate)" readonly>
+                            }
+                            <div class="input-group-append">
+                                <div class="input-group-text" title="@Html.DescriptionFor(m=>m.TaxRate)">
+                                    <span class="fa fa-building"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="TaxRate" class="text-danger d-block"></span>
                     </div>
                 </div>
             </div>
@@ -143,7 +163,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="PhoneNumber" placeholder="@Html.PromptFor(m=>m.PhoneNumber)" disabled>
+                                <input class="form-control" asp-for="PhoneNumber" placeholder="@Html.PromptFor(m=>m.PhoneNumber)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.PhoneNumber)">
@@ -163,7 +183,7 @@
                             }
                             else
                             {
-                                <input class="form-control" asp-for="ContactMail" placeholder="@Html.PromptFor(m => m.ContactMail)" disabled>
+                                <input class="form-control" asp-for="ContactMail" placeholder="@Html.PromptFor(m => m.ContactMail)" readonly>
                             }
                             <div class="input-group-append">
                                 <div class="input-group-text" title="@Html.DescriptionFor(m=>m.ContactMail)">
@@ -187,7 +207,7 @@
                             }
                             else
                             {
-                                <select asp-items="Model.Companies" class="form-control" asp-for="CompanyId" placeholder="@Html.PromptFor(m=>m.CompanyId)" disabled>
+                                <select asp-items="Model.Companies" class="form-control" asp-for="CompanyId" placeholder="@Html.PromptFor(m=>m.CompanyId)" readonly>
                                 </select>
                                 <input type="hidden" asp-for="CompanyId" />
                             }
@@ -213,8 +233,9 @@
                             }
                             else
                             {
-                                <select asp-items="Model.Managers" class="form-control" asp-for="ManagerId" placeholder="@Html.PromptFor(m=>m.Manager)" disabled>
+                                <select asp-items="Model.Managers" class="form-control" asp-for="ManagerId" readonly>
                                 </select>
+                                <input type="hidden" asp-for="ManagerId" />
                             }
 
                             <div class="input-group-append">
@@ -253,7 +274,7 @@
                     else
                     {
                         <select asp-items="Model.RolesList" asp-for="Roles" class="form-control" multiple="multiple"
-                                placeholder="@Html.DisplayNameFor(Model => Model.RolesList)" disabled>
+                                placeholder="@Html.DisplayNameFor(Model => Model.RolesList)" readonly>
                         </select>
                     }
                     <div class="input-group-append">

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,7 +8,6 @@ using LeaveManagement.Contracts;
 using LeaveManagement.Data.Entities;
 using LeaveManagement.ViewModels.Company;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace LeaveManagement.Controllers {
     [Authorize]
     public class CompanyController : Controller {
-        private readonly ICompanyRepository _CompanyRepository;
-        private readonly IEmployeeRepositoryAsync _EmpoyeeRepository;
-        private readonly ILeaveTypeRepositoryAsync _LeaveTypeRepository;
+        private readonly ILeaveManagementUnitOfWork _UnitOfWork;
         private readonly SignInManager<IdentityUser> _SignInManager;
         private readonly UserManager<IdentityUser> _UserManager;
         private readonly ILogger<CompanyController> _CompanyControllerLogger;
@@ -32,24 +28,21 @@ namespace LeaveManagement.Controllers {
         private const string EditionViewName = "Edit";
 
         public CompanyController(
-            ICompanyRepository companyRepository,
-            IEmployeeRepositoryAsync employeeRepository,
+           ILeaveManagementUnitOfWork unitOfWork,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             ILogger<CompanyController> logger,
             IStringLocalizerFactory localizerFactory,
             IMapper mapper,
-            IEmailSender emailSender,
-            ILeaveTypeRepositoryAsync leaveTypeRepository) {
-            _CompanyRepository = companyRepository;
-            _EmpoyeeRepository = employeeRepository;
+            IEmailSender emailSender
+            ) {
+            _UnitOfWork = unitOfWork;
             _UserManager = userManager;
             _SignInManager = signInManager;
             _CompanyControllerLogger = logger;
             _MessageLocalizer = localizerFactory.Create(this.GetType());
             _Mapper = mapper;
             _EmailSender = emailSender;
-            _LeaveTypeRepository = leaveTypeRepository;
         }
 
         // GET: CompanyController
@@ -61,7 +54,10 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to list the companies"]);
                 return Forbid();
             }
-            IEnumerable<CompanyVM> companies = _Mapper.Map<List<CompanyVM>>(await _CompanyRepository.WhereAsync(c => c.Active || showDisabled));
+            IEnumerable<CompanyVM> companies = _Mapper.Map<List<CompanyVM>>(await _UnitOfWork.Companies.WhereAsync(
+                filter: c => c.Active || showDisabled,
+                order: x => x.OrderBy(c => c.CompanyName),
+                includes: Array.Empty<System.Linq.Expressions.Expression<Func<Company, object>>>()));
             return View(companies);
         }
 
@@ -69,7 +65,8 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> Details(int id) {
             var currentUser = await _UserManager.GetUserAsync(User);
             UserRoles currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            var currentEmployee = await _EmpoyeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x => x.Id.Equals(currentUser.Id),
+                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { e=>e.Company, e=>e.Manager }) ;
             bool userAuthorizedToViewDetails = currentEmployee != null || currentEmployee?.CompanyId == id
                 || (await _UserManager.IsMemberOfOneAsync(currentUser, UserRoles.AppAdministrator));
             if (!userAuthorizedToViewDetails) {
@@ -77,7 +74,7 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
                 return Forbid();
             }
-            var companyData = await _CompanyRepository.FindByIdAsync(id);
+            var companyData = await _UnitOfWork.Companies.FindAsync(predicate: x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
@@ -118,9 +115,16 @@ namespace LeaveManagement.Controllers {
                     return Forbid();
                 }
                 Company company = _Mapper.Map<Company>(companyVM);
-                if (!(await _CompanyRepository.CreateAsync(company))) {
+                await _UnitOfWork.Companies.CreateAsync(company);
+                try {
+                    if (!(await _UnitOfWork.Save())) {
+                        ModelState.AddModelError("", _MessageLocalizer["Unabled to create the company due the server error"]);
+                        _CompanyControllerLogger.LogError("Unabled to create the company due the server error");
+                    }
+                }
+                catch(AggregateException ae) {
+                    _CompanyControllerLogger.LogError(ae.Flatten(), ae.Message);
                     ModelState.AddModelError("", _MessageLocalizer["Unabled to create the company due the server error"]);
-                    _CompanyControllerLogger.LogError("Unabled to create the company due the server error");
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -135,7 +139,7 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> Edit(int id) {
             var currentUser = await _UserManager.GetUserAsync(User);
             UserRoles currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            var currentEmployee = await _EmpoyeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(currentUser.Id));
             bool roleAllowsEditCompanyData = ((currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                 || (((currentUserRoles & UserRoles.CompanyAdministrator) == UserRoles.CompanyAdministrator) && currentEmployee?.CompanyId != id);
             if (!roleAllowsEditCompanyData) {
@@ -143,7 +147,7 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
                 return Forbid();
             }
-            var companyData = await _CompanyRepository.FindByIdAsync(id);
+            var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
@@ -161,7 +165,7 @@ namespace LeaveManagement.Controllers {
             try {
                 var currentUser = await _UserManager.GetUserAsync(User);
                 UserRoles currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-                var currentEmployee = await _EmpoyeeRepository.FindByIdAsync(currentUser.Id);
+                var currentEmployee = await _UnitOfWork.Employees.FindAsync(x=>id.Equals(currentUser.Id));
                 bool roleAllowsEditCompanyData = ((currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                     || (((currentUserRoles & UserRoles.CompanyAdministrator) == UserRoles.CompanyAdministrator) && currentEmployee?.CompanyId != id);
                 if (!roleAllowsEditCompanyData) {
@@ -169,7 +173,7 @@ namespace LeaveManagement.Controllers {
                     ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
                     return Forbid();
                 }
-                var companyData = await _CompanyRepository.FindByIdAsync(id);
+                var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id==id);
                 if (companyData == null) {
                     _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                     ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
@@ -179,7 +183,8 @@ namespace LeaveManagement.Controllers {
                     mappingOptions.Items["Id"] = id;
                     mappingOptions.Items["Active"] = companyData.Active;
                 });
-                if (await _CompanyRepository.UpdateAsync(companyData))
+                await _UnitOfWork.Companies.UpdateAsync(companyData);
+                if (await _UnitOfWork.Save())
                     return RedirectToAction(nameof(Index));
                 else {
                     ModelState.AddModelError("", _MessageLocalizer["Unabled to create the company due the server error"]);
@@ -198,7 +203,7 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> DisableCompany(int id) {
             var currentUser = await _UserManager.GetUserAsync(User);
             UserRoles currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            var currentEmployee = await _EmpoyeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(currentUser.Id));
             bool roleAllowsEditCompanyData = ((currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                 || (((currentUserRoles & UserRoles.CompanyAdministrator) == UserRoles.CompanyAdministrator) && currentEmployee?.CompanyId != id);
             if (!roleAllowsEditCompanyData) {
@@ -206,7 +211,7 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
                 return Forbid();
             }
-            var companyData = await _CompanyRepository.FindByIdAsync(id);
+            var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
@@ -214,13 +219,13 @@ namespace LeaveManagement.Controllers {
             }
 
             bool operationResult = true;
-            var employeesOfTheCompany = await _EmpoyeeRepository.WhereAsync(emp => emp.CompanyId == id);
+            var employeesOfTheCompany = await _UnitOfWork.Employees.WhereAsync(emp => emp.CompanyId == id);
             StringBuilder lockedEmployees = new StringBuilder();
             foreach (var employee in employeesOfTheCompany) {
                 if (!await (_UserManager.IsMemberOfOneAsync(employee, UserRoles.CompanyAdministrator))) {
                     employee.LockoutEnabled = true;
                     employee.LockoutEnd = DateTime.MaxValue;
-                    operationResult &= await _EmpoyeeRepository.UpdateAsync(employee);
+                    operationResult &= await _UnitOfWork.Employees.UpdateAsync(employee);
                     if (operationResult)
                         lockedEmployees.Append($"{{ id:{employee.Id}, \nuserName: {employee.UserName} }}");
                     else
@@ -229,8 +234,9 @@ namespace LeaveManagement.Controllers {
             }
             if (operationResult) {
                 companyData.Active = false;
-                operationResult &= await _CompanyRepository.UpdateAsync(companyData);
+                operationResult &= await _UnitOfWork.Companies.UpdateAsync(companyData);
             }
+            operationResult &= await _UnitOfWork.Save();
             if (!operationResult) {
                 ModelState.AddModelError("", "Unabled to lock company.");
                 await SendNotificationToAppAdmins($"Unable to lock company #{id}, list of the employees which was locked:\n {lockedEmployees}",
@@ -246,7 +252,7 @@ namespace LeaveManagement.Controllers {
         public async Task<ActionResult> EnableCompany(int id) {
             var currentUser = await _UserManager.GetUserAsync(User);
             UserRoles currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            var currentEmployee = await _EmpoyeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x=>x.Id==currentUser.Id);
             bool roleAllowsEditCompanyData = ((currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                 || (((currentUserRoles & UserRoles.CompanyAdministrator) == UserRoles.CompanyAdministrator) && currentEmployee?.CompanyId != id);
             if (!roleAllowsEditCompanyData) {
@@ -254,7 +260,7 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
                 return Forbid();
             }
-            var companyData = await _CompanyRepository.FindByIdAsync(id);
+            var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id==id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
@@ -262,26 +268,15 @@ namespace LeaveManagement.Controllers {
             }
 
             bool operationResult = true;
-            var employeesOfTheCompany = await _EmpoyeeRepository.WhereAsync(emp => emp.CompanyId == id);
-            StringBuilder lockedEmployees = new StringBuilder();
-            foreach (var employee in employeesOfTheCompany) {
-                if (!await (_UserManager.IsMemberOfOneAsync(employee, UserRoles.CompanyAdministrator))) {
-                    employee.LockoutEnabled = companyData.EnableLockoutForEmployees;
-                    employee.LockoutEnd = DateTime.Now;
-                    operationResult &= await _EmpoyeeRepository.UpdateAsync(employee);
-                    if (operationResult)
-                        lockedEmployees.Append($"{{ id:{employee.Id}, \nuserName: {employee.UserName} }}");
-                    else
-                        break;
-                }
-            }
+            operationResult &= await DisableEmployeesForTheCompany(companyData);
             if (operationResult) {
                 companyData.Active = true;
-                operationResult &= await _CompanyRepository.UpdateAsync(companyData);
+                operationResult &= await _UnitOfWork.Companies.UpdateAsync(companyData);
             }
+            operationResult &= await _UnitOfWork.Save();
             if (!operationResult) {
                 ModelState.AddModelError("", "Unabled to lock company.");
-                await SendNotificationToAppAdmins($"Unable to lock company #{id}, list of the employees which was locked:\n {lockedEmployees}",
+                await SendNotificationToAppAdmins($"Unable to lock company #{id} ({companyData.CompanyName})",
                     subject: $"Company {companyData.CompanyName} deactivating emergency");
                 return RedirectToAction(nameof(Details), new { id });
             }
@@ -289,10 +284,30 @@ namespace LeaveManagement.Controllers {
                 return RedirectToAction(nameof(Index), new { showDisabled = true });
         }
 
+        private async Task<bool> DisableEmployeesForTheCompany(Company companyData) {
+            if (companyData == null)
+                return false;
+            bool result = true;
+            var employeesOfTheCompany = await _UnitOfWork.Employees.WhereAsync(emp => emp.CompanyId == companyData.Id);
+            StringBuilder lockedEmployees = new StringBuilder();
+            foreach (var employee in employeesOfTheCompany) {
+                if (!await(_UserManager.IsMemberOfOneAsync(employee, UserRoles.CompanyAdministrator))) {
+                    employee.LockoutEnabled = companyData.EnableLockoutForEmployees;
+                    employee.LockoutEnd = DateTime.Now;
+                    result &= await _UnitOfWork.Employees.UpdateAsync(employee);
+                    if (result)
+                        lockedEmployees.Append($"{{ id:{employee.Id}, \nuserName: {employee.UserName} }}");
+                    else
+                        break;
+                }
+            }
+            return result;
+        }
+
         public async Task<ActionResult> PermanentDeleteCompany(int id) {
             var currentUser = await _UserManager.GetUserAsync(User);
             UserRoles currentUserRoles = await _UserManager.GetUserRolesAsync(currentUser);
-            var currentEmployee = await _EmpoyeeRepository.FindByIdAsync(currentUser.Id);
+            var currentEmployee = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(currentUser.Id));
             bool roleAllowsEditCompanyData = ((currentUserRoles & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
                 || (((currentUserRoles & UserRoles.CompanyAdministrator) == UserRoles.CompanyAdministrator) && currentEmployee?.CompanyId != id);
             if (!roleAllowsEditCompanyData) {
@@ -300,41 +315,30 @@ namespace LeaveManagement.Controllers {
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
                 return Forbid();
             }
-            var companyData = await _CompanyRepository.FindByIdAsync(id);
+            var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
                 return NotFound();
             }
             bool operationResult = true;
-            var leaveTypesToRemove = await _LeaveTypeRepository.WhereAsync(lt => lt.CompanyId == id);
+            var leaveTypesToRemove = await _UnitOfWork.LeaveTypes.WhereAsync(filter: lt => lt.CompanyId == id);
             foreach (var leaveType in leaveTypesToRemove) {
-                operationResult &= await _LeaveTypeRepository.DeleteAsync(leaveType);
-                if (!operationResult) {
-                    await SendNotificationToAppAdmins($"Failed to remove leave type #{leaveType.Id}", "Company removing emergency");
-                }
+                (await _UnitOfWork.LeaveAllocations.WhereAsync(filter: x => x.AllocationLeaveTypeId == leaveType.Id))?.
+                    ToList().ForEach( async (el) => {
+                        operationResult &= operationResult ? await _UnitOfWork.LeaveAllocations.DeleteAsync(el) : false;
+                    });
+                (await _UnitOfWork.LeaveRequest.WhereAsync(filter: x => x.LeaveTypeId == leaveType.Id))?.
+                    ToList().ForEach(async (el) => {
+                        operationResult &= operationResult ? await _UnitOfWork.LeaveRequest.DeleteAsync(el) : false;
+                    });
+                operationResult &= operationResult ? await _UnitOfWork.LeaveTypes.DeleteAsync(leaveType) : false;
             }
-            if (!operationResult) {
-                ModelState.AddModelError("", _MessageLocalizer["Failed to remove leave type. Administrator was notified about this problem"]);
-                return await Details(companyData.Id);
-            }
-            var employeesOfTheCompany = await _EmpoyeeRepository.WhereAsync(emp => emp.CompanyId == id);
-            StringBuilder removedEmployees = new StringBuilder();
-            foreach (var employee in employeesOfTheCompany) {
-                operationResult &= await _EmpoyeeRepository.DeleteAsync(employee);
-                if (operationResult)
-                    removedEmployees.Append($"{{ id:{employee.Id}, \nuserName: {employee.UserName} }}");
-                else {
-                    await SendNotificationToAppAdmins($"Failed to remove employee {employee?.Id} while permanently removing company {companyData.Id}",
-                        $"Emergency for the company #{id} ({companyData.CompanyName})");
-                    break;
-                }
-            }
-            if (!operationResult) {
-                ModelState.AddModelError("", _MessageLocalizer["Failed to remove employees. Administrator was notified about this problem, he will remove the rests of data in more bref delays"]);
-                return await Details(companyData.Id);
-            }
-            operationResult &= await _CompanyRepository.DeleteAsync(companyData);
+            (await _UnitOfWork.Employees.WhereAsync(x => x.CompanyId == id)).ToList().ForEach(async (empl) => {
+                operationResult &= operationResult ? await _UnitOfWork.Employees.DeleteAsync(empl) : false;
+            });
+            operationResult &= await _UnitOfWork.Companies.DeleteAsync(companyData);
+            operationResult &= await _UnitOfWork.Save();
             if (!operationResult) {
                 await SendNotificationToAppAdmins($"Failed to remove company data while permanently removing company {companyData.Id}",
                             $"Emergency for the company #{id} ({companyData.CompanyName})");
@@ -343,18 +347,41 @@ namespace LeaveManagement.Controllers {
             }
             if ((currentUserRoles & UserRoles.AppAdministrator) != UserRoles.AppAdministrator)
                 await _SignInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
         public async Task SendNotificationToAppAdmins(string message, string subject) {
             var users = await _UserManager.GetUsersInRoleAsync(UserRoles.AppAdministrator.ToString());
             foreach (var user in users) {
-                var employee = await _EmpoyeeRepository.FindByIdAsync(user.Id);
+                var employee = await _UnitOfWork.Employees.FindAsync(x=>x.Id.Equals(user.Id));
                 string email = !String.IsNullOrWhiteSpace(employee?.ContactMail) ? employee?.ContactMail : (user.EmailConfirmed ? user.Email : String.Empty);
                 if (!String.IsNullOrWhiteSpace(email))
                     await _EmailSender.SendEmailAsync(email, subject, message);
             }
 
         }
+
+        #region Disposing
+
+        public new void Dispose() {
+            Dispose(true);
+            //GC.SuppressFinalize(this);
+        }
+
+        private bool _Disposed = false;
+
+        protected override void Dispose(bool disposing) {
+            if (_Disposed)
+                return;
+
+            if (disposing) {
+                _UnitOfWork.Dispose();
+            }
+            base.Dispose(disposing);
+
+            _Disposed = true;
+        }
+
+        #endregion
     }
 }

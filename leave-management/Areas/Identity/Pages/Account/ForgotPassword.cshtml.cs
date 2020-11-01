@@ -13,43 +13,37 @@ using Microsoft.AspNetCore.WebUtilities;
 using LeaveManagement.Contracts;
 using System.Linq;
 
-namespace LeaveManagement.Areas.Identity.Pages.Account
-{
+namespace LeaveManagement.Areas.Identity.Pages.Account {
     [AllowAnonymous]
-    public class ForgotPasswordModel : PageModel
-    {
+    public class ForgotPasswordModel : PageModel {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
-        private readonly IEmployeeRepositoryAsync _EmployeeRepository;
+        private readonly ILeaveManagementUnitOfWork _UnitOfWork;
 
-        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender, IEmployeeRepositoryAsync employeeRepository)
-        {
+        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender, ILeaveManagementUnitOfWork unitOfWork) {
             _userManager = userManager;
             _emailSender = emailSender;
-            _EmployeeRepository = employeeRepository;
+            _UnitOfWork = unitOfWork;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public class InputModel
-        {
+        public class InputModel {
             [Required]
             [EmailAddress]
             public string Email { get; set; }
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (ModelState.IsValid)
-            {
+        public async Task<IActionResult> OnPostAsync() {
+            if (ModelState.IsValid) {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                {
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user))) {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
                 }
-                var employee = (await _EmployeeRepository.WhereAsync(x=>x.Email.Equals(Input.Email) || (x.ContactMail?.Equals(Input.Email)??false))).FirstOrDefault();
+                var employee = (await _UnitOfWork.Employees.WhereAsync(x => x.Email.Equals(Input.Email)
+                    || ((!string.IsNullOrWhiteSpace(x.ContactMail)) && x.ContactMail.Equals(Input.Email)))).FirstOrDefault();
                 // For more information on how to enable account confirmation and password reset please 
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -60,7 +54,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
                 string email = Input.Email;
-                if(employee != null) {
+                if (employee != null) {
                     if (!String.IsNullOrWhiteSpace(employee.ContactMail))
                         email = employee.ContactMail;
                 }

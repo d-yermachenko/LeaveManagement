@@ -13,7 +13,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ResourcesDebug": "ResourcesRelease",
-        "ASPNETCORE_ENVIRONMENT": "Azure"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "leave_management": {

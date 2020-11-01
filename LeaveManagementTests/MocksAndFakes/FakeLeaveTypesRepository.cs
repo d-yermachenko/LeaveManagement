@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace LeaveManagementTests.MocksAndFakes {
-    public class FakeLeaveTypesRepository : ILeaveTypeRepositoryAsync {
+    public class FakeLeaveTypesRepository  {
 
         private ConcurrentDictionary<int, LeaveType> _LeaveTypeStorage;
 

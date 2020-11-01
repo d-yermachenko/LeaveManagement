@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,8 +11,8 @@ namespace LeaveManagement.Code {
     public class RouteCultureProvider : IRequestCultureProvider {
         public Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext) {
             return Task.FromResult(new ProviderCultureResult(new Microsoft.Extensions.Primitives.StringSegment(
-                    httpContext.GetRouteValue("culture")?.ToString()??String.Empty
-                )));
+                    httpContext.GetRouteValue("culture")?.ToString() ?? CultureInfo.CurrentCulture.Name
+                ))) ;
         }
     }
 

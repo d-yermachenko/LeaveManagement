@@ -35,7 +35,6 @@
 
   <ItemGroup>
     <Folder Include="Resources\Views\LeaveAllocation\" />
-    <Folder Include="Resources\Views\Company\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\lib\dataTables\" />
   </ItemGroup>

@@ -39,7 +39,7 @@ namespace LeaveManagementTests.Units.Code {
         public void TestStringArrayToUserRolesWrongValuesCustom() {
             UserRoles expected = UserRoles.AppAdministrator | UserRoles.HRManager;
             string[] stringValues = new string[] { "HRManager", "Administrator", "CustomRole" };
-            UserRoles obtained = LeaveManagementExtensions.ToUserRoles(stringValues);
+            UserRoles obtained = UserManagerExtensions.ToUserRoles(stringValues);
             Assert.AreEqual(expected, obtained);
         }
 

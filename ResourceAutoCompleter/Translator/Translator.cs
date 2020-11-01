@@ -27,7 +27,6 @@ namespace ResourceAutoCompleter.Translator {
             Tuple<string, string>[] result = new Tuple<string, string>[toLanguagecodes.Length];
 
             string address = _TranslatorConfiguration.EndpointAddress+ _TranslatorConfiguration.TranslationMethodName;
-            string subscriptionKey = _TranslatorConfiguration.Key;
 
             object[] body = new object[] { new { Text = inputText } };
             var requestBody = JsonConvert.SerializeObject(body);
