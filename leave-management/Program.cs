@@ -22,7 +22,8 @@ namespace LeaveManagement {
                 logger.AddConfiguration(hostingContext.Configuration.GetSection("Logging"))
                 .AddConsole()
                 .AddDebug()
-                .AddEventSourceLogger();
+                .AddEventSourceLogger()
+                .AddAzureWebAppDiagnostics();
             });
     }
 }
