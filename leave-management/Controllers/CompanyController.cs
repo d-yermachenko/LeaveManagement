@@ -47,18 +47,21 @@ namespace LeaveManagement.Controllers {
 
         // GET: CompanyController
         [HttpGet]
-        public async Task<ActionResult> Index(bool showDisabled = false) {
+        public async Task<ActionResult> IndexAction(bool showDisabled = false) {
             var currentUser = await _UserManager.GetUserAsync(User);
             if (!(await _UserManager.IsMemberOfOneAsync(currentUser, UserRoles.AppAdministrator))) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
-                ModelState.AddModelError("", _MessageLocalizer["Your not allowed to list the companies"]);
-                return Forbid();
+                return Unauthorized(_MessageLocalizer["Your not allowed to list the companies"]);
             }
             IEnumerable<CompanyVM> companies = _Mapper.Map<List<CompanyVM>>(await _UnitOfWork.Companies.WhereAsync(
                 filter: c => c.Active || showDisabled,
                 order: x => x.OrderBy(c => c.CompanyName),
                 includes: Array.Empty<System.Linq.Expressions.Expression<Func<Company, object>>>()));
-            return View(companies);
+            return Ok(companies);
+        }
+
+        public async Task<ActionResult> Index(bool showDisabled = false) {
+
         }
 
         // GET: CompanyController/Details/5
