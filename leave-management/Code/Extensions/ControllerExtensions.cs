@@ -23,7 +23,7 @@ namespace LeaveManagement.Extensions {
         }
 
         public static IActionResult DisplayView(this Controller controller, string viewName, RedirectToActionResult result) {
-            return controller.RedirectToAction(result.ActionName, result.ControllerName, result.Fragment, );
+            return controller.RedirectToAction(result.ActionName, result.ControllerName, result.Fragment);
         }
 
         public static IActionResult DisplayView(this Controller controller, string viewName, BadRequestResult result) {
