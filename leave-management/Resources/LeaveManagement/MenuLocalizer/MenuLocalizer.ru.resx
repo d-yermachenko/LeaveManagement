@@ -141,6 +141,10 @@
     <value>Создать анкету сотрудника</value>
     <comment>Create employee</comment>
   </data>
+  <data name="Details" xml:space="preserve">
+    <value>Детали</value>
+    <comment>Details</comment>
+  </data>
   <data name="Edit profile" xml:space="preserve">
     <value>Редактировать анкету</value>
     <comment>Edit profile</comment>
@@ -148,6 +152,10 @@
   <data name="Employees" xml:space="preserve">
     <value>Сотрудники</value>
     <comment>Employees</comment>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Справка</value>
+    <comment>Help</comment>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Домой</value>
@@ -164,6 +172,10 @@
   </data>
   <data name="Leave types" xml:space="preserve">
     <value>Типы отсутствий</value>
+  </data>
+  <data name="Massive allocation" xml:space="preserve">
+    <value>Массовое распределение</value>
+    <comment>Massive allocation</comment>
   </data>
   <data name="My leaves" xml:space="preserve">
     <value>Мои отпуска</value>

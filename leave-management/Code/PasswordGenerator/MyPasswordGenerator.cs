@@ -113,7 +113,7 @@ namespace LeaveManagement.PasswordGenerator {
             return passwordCharsets;
         }
 
-        private HashSet<int> GetFreePositionsIndexes(string[] array) {
+        private static HashSet<int> GetFreePositionsIndexes(string[] array) {
             if ((array?.Length ?? 0) == 0)
                 return new HashSet<int>();
             HashSet<int> freePositions = new HashSet<int>();

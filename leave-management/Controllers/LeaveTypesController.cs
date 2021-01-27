@@ -82,8 +82,9 @@ namespace LeaveManagement.Controllers {
             var entry = await _UnitOfWork.LeaveTypes.FindAsync(x=>x.Id ==id,
                 includes: new System.Linq.Expressions.Expression<Func<LeaveType, object>>[] { x => x.Company});
             if (entry == null) {
-                string errorMessage = _ControllerLocalizer["Impossible to find leave type #{0}. Please check the adress", id];
-                return StatusCode(StatusCodes.Status404NotFound, errorMessage);
+                string errorMessage = _ControllerLocalizer["Impossible to find leave type #{0}. Please check the address", id];
+                ModelState.AddModelError("", errorMessage);
+                return NotFound(errorMessage);
             }
             var viewModel = _Mapper.Map<LeaveType, LeaveTypeNavigationViewModel>(entry);
             return View(viewModel);

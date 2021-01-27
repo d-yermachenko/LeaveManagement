@@ -27,8 +27,8 @@ namespace LeaveManagement.Controllers {
 
         private const string CompanyRegistrationForm = "FakeCompanyRegistration";
         #region Constanst
-        private string[] _Names = new string[] { "Gabriel", "Raphaël", "Léo", "Louis", "Lucas", "Adam", "Arthur", "Jules", "Hugo", "Paul", "Nathan", "Gabin", "Noé", "Victor", "Martin", "Mathis", "Axel", "Léon", "Antoine", "Marius", "Valentin", "Clément", "Baptiste", "Samuel", "Augustin", "Emma", "Jade", "Louise", "Alice", "Chloé", "Inès", "Lina", "Léa", "Rose", "Léna", "Anna", "Ambre", "Julia", "Manon", "Juliette", "Lou", "Zoé", "Camille", "Eva", "Agathe", "Jeanne", "Lucie", "Sarah", "Romane", "Charlotte" };
-        private string[] _Surname = new string[] { "MARTIN","BERNARD","THOMAS","PETIT","ROBERT","RICHARD","DURAND","DUBOIS","MOREAU","LAURENT","SIMON","MICHEL",
+        private readonly string[] _Names = new string[] { "Gabriel", "Raphaël", "Léo", "Louis", "Lucas", "Adam", "Arthur", "Jules", "Hugo", "Paul", "Nathan", "Gabin", "Noé", "Victor", "Martin", "Mathis", "Axel", "Léon", "Antoine", "Marius", "Valentin", "Clément", "Baptiste", "Samuel", "Augustin", "Emma", "Jade", "Louise", "Alice", "Chloé", "Inès", "Lina", "Léa", "Rose", "Léna", "Anna", "Ambre", "Julia", "Manon", "Juliette", "Lou", "Zoé", "Camille", "Eva", "Agathe", "Jeanne", "Lucie", "Sarah", "Romane", "Charlotte" };
+        private readonly string[] _Surname = new string[] { "MARTIN","BERNARD","THOMAS","PETIT","ROBERT","RICHARD","DURAND","DUBOIS","MOREAU","LAURENT","SIMON","MICHEL",
 "LEFEBVRE","LEROY","ROUX","DAVID","BERTRAND","MOREL","FOURNIER","GIRARD","BONNET","DUPONT","LAMBERT","FONTAINE","ROUSSEAU","VINCENT","MULLER","LEFEVRE","FAURE","ANDRE",
 "MERCIER","BLANC","GUERIN","BOYER","GARNIER","CHEVALIER","FRANCOIS","LEGRAND","GAUTHIER","GARCIA","PERRIN","ROBIN","CLEMENT","MORIN","NICOLAS","HENRY","ROUSSEL","MATHIEU",
 "GAUTIER","MASSON","MARCHAND","DUVAL","DENIS","DUMONT","MARIE","LEMAIRE","NOEL","MEYER","DUFOUR","MEUNIER","BRUN","BLANCHARD","GIRAUD","JOLY","RIVIERE","LUCAS","BRUNET",
@@ -201,13 +201,13 @@ namespace LeaveManagement.Controllers {
             return await Task.FromResult(Tuple.Create(result, password));
         }
 
-        private string GetCompanyNormalizedName(string companyName) => companyName?.Replace("&", " And ")?.Replace(' ', '_').ToLower();
+        private static string GetCompanyNormalizedName(string companyName) => companyName?.Replace("&", " And ")?.Replace(' ', '_').ToLower();
 
         private async Task<Tuple<bool, StringBuilder>> RegisterEmployees(Company company, CompanyQuickRegistrationVm registrationVm, Random randomizer) {
             bool employeesCreationResult = true;
             var managerData = await CreateMasterEmployeeAndPassword(company, registrationVm, randomizer);
             employeesCreationResult &= await _UnitOfWork.Employees.RegisterEmployeeAsync(_UserManager, managerData.Item1, managerData.Item2);
-            employeesCreationResult &= employeesCreationResult ? await _UnitOfWork.Employees.SetEmployeesRoles(_UserManager, managerData.Item1, UserRoles.CompanyAdministrator) : false;
+            employeesCreationResult &= employeesCreationResult && await _UnitOfWork.Employees.SetEmployeesRoles(_UserManager, managerData.Item1, UserRoles.CompanyAdministrator);
             Tuple<Employee, string>[] ordinaryEmployees = new Tuple<Employee, string>[randomizer.Next(2, 8)];
             for (int i = 0; i < ordinaryEmployees.Length && employeesCreationResult; i++) {
                 ordinaryEmployees[i] = await CreateOrdinaryEmployeeAndPassword(company, randomizer, manager: managerData.Item1);

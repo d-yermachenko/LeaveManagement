@@ -117,10 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Date of apply" xml:space="preserve">
+    <value>Date de demande</value>
+    <comment>Date of apply</comment>
+  </data>
   <data name="Duration" xml:space="preserve">
-    <value />
+    <value>Durée</value>
   </data>
   <data name="Duration of leave" xml:space="preserve">
     <value>Jours d'absence</value>
+  </data>
+  <data name="Employee" xml:space="preserve">
+    <value>Employé</value>
+    <comment>Employee</comment>
+  </data>
+  <data name="Leave type" xml:space="preserve">
+    <value>Type de congé</value>
+    <comment>Leave type</comment>
+  </data>
+  <data name="Period of leave" xml:space="preserve">
+    <value>Période de congé</value>
+    <comment>Period of leave</comment>
   </data>
 </root>

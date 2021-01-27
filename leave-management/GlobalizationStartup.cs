@@ -33,8 +33,7 @@ namespace LeaveManagement {
 
             services.Configure<RouteOptions>(options => {
                 options.ConstraintMap.Add("culture", typeof(LanguageRouteConstraint));
-            }
-            );
+            });
         }
 
         public static readonly CultureInfo[] SupportedCultures = new CultureInfo[] {
@@ -60,7 +59,7 @@ namespace LeaveManagement {
 
 
             IRequestCultureProvider[] cultureProviders = new IRequestCultureProvider[] {
-                new RouteCultureProvider(),
+                new RouteDataRequestCultureProvider (),
                 new QueryStringRequestCultureProvider(),
                 new CookieRequestCultureProvider(),
                 new AcceptLanguageHeaderRequestCultureProvider()

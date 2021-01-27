@@ -8,7 +8,7 @@ namespace LeaveManagement {
     public class OperationFailedException : System.Exception {
         public string Operation { get; protected internal set; }
 
-        private string GetOperation() {
+        private static string GetOperation() {
             return new StackTrace().GetFrame(2).GetMethod().Name;
         }
 

@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Actionned at" xml:space="preserve">
+    <value>Actionné à</value>
+    <comment>Actionned at</comment>
+  </data>
   <data name="Author of this leave type" xml:space="preserve">
     <value>Auteur de ce type de congé</value>
     <comment>Author of this leave type</comment>
@@ -134,11 +138,23 @@
   <data name="Expected value: text" xml:space="preserve">
     <value>Valeur attendue: texte</value>
   </data>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+    <comment>Id</comment>
+  </data>
   <data name="Id of leave type" xml:space="preserve">
     <value>Code de type de l'absence</value>
   </data>
   <data name="Insert leave type name, please" xml:space="preserve">
     <value>Saisisez le nom de type de absence</value>
+  </data>
+  <data name="Leave Type - name required" xml:space="preserve">
+    <value>Type de congé - nom requis</value>
+    <comment>Leave Type - name required</comment>
+  </data>
+  <data name="Must be more or equals to -1 and less that the nubmer of days" xml:space="preserve">
+    <value>Doit être plus ou égal à -1 et moins que le nubmer de jours</value>
+    <comment>Must be more or equals to -1 and less that the nubmer of days</comment>
   </data>
   <data name="Name of the type of leave" xml:space="preserve">
     <value>Nom de type de vacances</value>

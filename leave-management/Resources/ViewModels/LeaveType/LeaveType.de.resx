@@ -118,36 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Date of creation" xml:space="preserve">
-    <value>Дата создания</value>
-  </data>
-  <data name="Date when this leave type was created" xml:space="preserve">
-    <value>Дата, когда данный тип отутствия был создан</value>
+    <value>Erstellungsdatum</value>
+    <comment>Date of creation</comment>
   </data>
   <data name="Default number of days" xml:space="preserve">
-    <value>Количество дней по умолчанию</value>
+    <value>Standardanzahl der Tage</value>
     <comment>Default number of days</comment>
   </data>
   <data name="Id of leave type" xml:space="preserve">
-    <value>Код типа отсутствия</value>
+    <value>Id des Urlaubstyps</value>
+    <comment>Id of leave type</comment>
   </data>
   <data name="Insert leave type name, please" xml:space="preserve">
-    <value>Введите название типа отсутствия</value>
+    <value>Geben Sie den Namen des Leave-Typs ein, bitte</value>
+    <comment>Insert leave type name, please</comment>
   </data>
   <data name="Leave Type - name required" xml:space="preserve">
-    <value>Тип отпуска - требуется имя</value>
+    <value>Leave Type - Name erforderlich</value>
     <comment>Leave Type - name required</comment>
   </data>
   <data name="Must be more or equals to -1 and less that the nubmer of days" xml:space="preserve">
-    <value>Должно быть больше или равно -1 и меньше, что nubmer дней</value>
+    <value>Muss mehr oder gleich -1 und weniger sein, dass der Nubmer der Tage</value>
     <comment>Must be more or equals to -1 and less that the nubmer of days</comment>
   </data>
   <data name="Name of the type of leave" xml:space="preserve">
-    <value>Название</value>
-  </data>
-  <data name="Name required" xml:space="preserve">
-    <value>Обязательное поле: Название</value>
-  </data>
-  <data name="What you will see in the history of absences" xml:space="preserve">
-    <value>Название типа отсутсвия</value>
+    <value>Name des Urlaubstyps</value>
+    <comment>Name of the type of leave</comment>
   </data>
 </root>

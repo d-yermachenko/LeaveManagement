@@ -29,7 +29,7 @@ namespace LeaveManagement.PasswordGenerator {
             _Options.IncludeSpaces,
             _Options.LengthOfPassword);
 
-        private string GeneratePassword(bool includeLowercase = true,
+        private static string GeneratePassword(bool includeLowercase = true,
             bool includeUppercase = true,
             bool includeNumeric = true,
             bool includeSpecial = true,

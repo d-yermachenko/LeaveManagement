@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Impossible to find leave type #{0}. Please check the address" xml:space="preserve">
+    <value>Impossible de trouver le type de congé #{0}. S’il vous plaît vérifier l’adresse</value>
+    <comment>Impossible to find leave type #18. Please check the address</comment>
+  </data>
   <data name="Model state invalid" xml:space="preserve">
     <value>Etat de modele n'est pas valide</value>
   </data>

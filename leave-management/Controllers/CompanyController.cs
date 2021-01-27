@@ -60,9 +60,7 @@ namespace LeaveManagement.Controllers {
             return Ok(companies);
         }
 
-        public async Task<ActionResult> Index(bool showDisabled = false) {
-
-        }
+        public async Task<ActionResult> Index(bool showDisabled = false) => await IndexAction(showDisabled);
 
         // GET: CompanyController/Details/5
         public async Task<ActionResult> Details(int id) {
@@ -329,16 +327,16 @@ namespace LeaveManagement.Controllers {
             foreach (var leaveType in leaveTypesToRemove) {
                 (await _UnitOfWork.LeaveAllocations.WhereAsync(filter: x => x.AllocationLeaveTypeId == leaveType.Id))?.
                     ToList().ForEach( async (el) => {
-                        operationResult &= operationResult ? await _UnitOfWork.LeaveAllocations.DeleteAsync(el) : false;
+                        operationResult &= operationResult && await _UnitOfWork.LeaveAllocations.DeleteAsync(el);
                     });
                 (await _UnitOfWork.LeaveRequest.WhereAsync(filter: x => x.LeaveTypeId == leaveType.Id))?.
                     ToList().ForEach(async (el) => {
-                        operationResult &= operationResult ? await _UnitOfWork.LeaveRequest.DeleteAsync(el) : false;
+                        operationResult &= operationResult && await _UnitOfWork.LeaveRequest.DeleteAsync(el);
                     });
-                operationResult &= operationResult ? await _UnitOfWork.LeaveTypes.DeleteAsync(leaveType) : false;
+                operationResult &= operationResult && await _UnitOfWork.LeaveTypes.DeleteAsync(leaveType);
             }
             (await _UnitOfWork.Employees.WhereAsync(x => x.CompanyId == id)).ToList().ForEach(async (empl) => {
-                operationResult &= operationResult ? await _UnitOfWork.Employees.DeleteAsync(empl) : false;
+                operationResult &= operationResult && await _UnitOfWork.Employees.DeleteAsync(empl);
             });
             operationResult &= await _UnitOfWork.Companies.DeleteAsync(companyData);
             operationResult &= await _UnitOfWork.Save();

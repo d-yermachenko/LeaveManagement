@@ -178,7 +178,7 @@ namespace LeaveManagement.Controllers {
 
             var employees = await _UnitOfWork.Employees.WhereAsync(filter: empl => empl.CompanyId == leaveType.CompanyId,
                 order: o => o.OrderBy(x => x.LastName).ThenBy(y => y.FirstName),
-                includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { });
+                includes: Array.Empty<Expression<Func<Employee, object>>>());
             bool savingResult = true;
             foreach (var employee in employees) {
                 var hasAlreadyAllocations = (await _UnitOfWork.LeaveAllocations.WhereAsync(q =>

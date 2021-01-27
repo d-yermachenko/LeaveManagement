@@ -117,37 +117,72 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Date of creation" xml:space="preserve">
-    <value>Дата создания</value>
+  <data name="Administration" xml:space="preserve">
+    <value>Verwaltung</value>
+    <comment>Administration</comment>
   </data>
-  <data name="Date when this leave type was created" xml:space="preserve">
-    <value>Дата, когда данный тип отутствия был создан</value>
+  <data name="Allocate leaves" xml:space="preserve">
+    <value>Zuweisen von Blättern</value>
+    <comment>Allocate leaves</comment>
   </data>
-  <data name="Default number of days" xml:space="preserve">
-    <value>Количество дней по умолчанию</value>
-    <comment>Default number of days</comment>
+  <data name="Apply for leave" xml:space="preserve">
+    <value>Beantragen Sie Urlaub</value>
+    <comment>Apply for leave</comment>
   </data>
-  <data name="Id of leave type" xml:space="preserve">
-    <value>Код типа отсутствия</value>
+  <data name="Change email" xml:space="preserve">
+    <value>E-Mail ändern</value>
+    <comment>Change email</comment>
   </data>
-  <data name="Insert leave type name, please" xml:space="preserve">
-    <value>Введите название типа отсутствия</value>
+  <data name="Change password" xml:space="preserve">
+    <value>Kennwort ändern</value>
+    <comment>Change password</comment>
   </data>
-  <data name="Leave Type - name required" xml:space="preserve">
-    <value>Тип отпуска - требуется имя</value>
-    <comment>Leave Type - name required</comment>
+  <data name="Create employee" xml:space="preserve">
+    <value>Mitarbeiter erstellen</value>
+    <comment>Create employee</comment>
   </data>
-  <data name="Must be more or equals to -1 and less that the nubmer of days" xml:space="preserve">
-    <value>Должно быть больше или равно -1 и меньше, что nubmer дней</value>
-    <comment>Must be more or equals to -1 and less that the nubmer of days</comment>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+    <comment>Details</comment>
   </data>
-  <data name="Name of the type of leave" xml:space="preserve">
-    <value>Название</value>
+  <data name="Edit profile" xml:space="preserve">
+    <value>Profil bearbeiten</value>
+    <comment>Edit profile</comment>
   </data>
-  <data name="Name required" xml:space="preserve">
-    <value>Обязательное поле: Название</value>
+  <data name="Employees" xml:space="preserve">
+    <value>Mitarbeiter</value>
+    <comment>Employees</comment>
   </data>
-  <data name="What you will see in the history of absences" xml:space="preserve">
-    <value>Название типа отсутсвия</value>
+  <data name="Help" xml:space="preserve">
+    <value>Hilfe</value>
+    <comment>Help</comment>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Startseite</value>
+    <comment>Home</comment>
+  </data>
+  <data name="Leave management" xml:space="preserve">
+    <value>Verlassen des Managements</value>
+    <comment>Leave management</comment>
+  </data>
+  <data name="Leave Management1" xml:space="preserve">
+    <value>Leave Management</value>
+    <comment>Leave Management</comment>
+  </data>
+  <data name="Leave types" xml:space="preserve">
+    <value>Verlassen von Typen</value>
+    <comment>Leave types</comment>
+  </data>
+  <data name="Massive allocation" xml:space="preserve">
+    <value>Massive Zuweisung</value>
+    <comment>Massive allocation</comment>
+  </data>
+  <data name="My leaves" xml:space="preserve">
+    <value>Meine Blätter</value>
+    <comment>My leaves</comment>
+  </data>
+  <data name="Review requests" xml:space="preserve">
+    <value>Überprüfungsanforderungen</value>
+    <comment>Review requests</comment>
   </data>
 </root>

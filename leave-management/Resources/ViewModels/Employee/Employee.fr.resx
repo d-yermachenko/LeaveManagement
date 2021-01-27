@@ -125,6 +125,10 @@
     <value>Accepter toutes les conditions</value>
     <comment>Agree to all conditions</comment>
   </data>
+  <data name="Company" xml:space="preserve">
+    <value>Société</value>
+    <comment>Company</comment>
+  </data>
   <data name="Confirm password" xml:space="preserve">
     <value>Confirmer le mot de passe</value>
     <comment>Confirm password</comment>
@@ -132,6 +136,14 @@
   <data name="Confirm your password" xml:space="preserve">
     <value>Confirmez votre mot de passe</value>
     <comment>Confirm your password</comment>
+  </data>
+  <data name="Contact mail" xml:space="preserve">
+    <value>Courrier de contact</value>
+    <comment>Contact mail</comment>
+  </data>
+  <data name="Contact mail can be used as alternative mail" xml:space="preserve">
+    <value>Le courrier de contact peut être utilisé comme courrier alternatif</value>
+    <comment>Contact mail can be used as alternative mail</comment>
   </data>
   <data name="Date of birth" xml:space="preserve">
     <value>Date de naissance</value>
@@ -157,6 +169,10 @@
     <value>Titre de l’employé</value>
     <comment>Employee title</comment>
   </data>
+  <data name="Employees' manager" xml:space="preserve">
+    <value>Gestionnaire des employés</value>
+    <comment>Employees' manager</comment>
+  </data>
   <data name="Employement date" xml:space="preserve">
     <value>Date d’emploi</value>
     <comment>Employement date</comment>
@@ -172,6 +188,10 @@
   <data name="Enter phone number" xml:space="preserve">
     <value>Entrez le numéro de téléphone</value>
     <comment>Enter phone number</comment>
+  </data>
+  <data name="Enter tax rate" xml:space="preserve">
+    <value>Inscrire le taux d’imposition</value>
+    <comment>Enter tax rate</comment>
   </data>
   <data name="Enter user name" xml:space="preserve">
     <value>Entrez le nom d’utilisateur</value>
@@ -225,9 +245,29 @@
     <value>Numéro de téléphone requis</value>
     <comment>Phone number required</comment>
   </data>
+  <data name="Please assign employee to the company" xml:space="preserve">
+    <value>S’il vous plaît affecter l’employé à l’entreprise</value>
+    <comment>Please assign employee to the company</comment>
+  </data>
+  <data name="Please enter contact mail" xml:space="preserve">
+    <value>S’il vous plaît entrer le courrier de contact</value>
+    <comment>Please enter contact mail</comment>
+  </data>
+  <data name="Principal email" xml:space="preserve">
+    <value>Courriel principal</value>
+    <comment>Principal email</comment>
+  </data>
   <data name="Roles" xml:space="preserve">
     <value>Rôles</value>
     <comment>Roles</comment>
+  </data>
+  <data name="Tax of employee" xml:space="preserve">
+    <value>Impôt de l’employé</value>
+    <comment>Tax of employee</comment>
+  </data>
+  <data name="Tax rate" xml:space="preserve">
+    <value>Taux d’imposition</value>
+    <comment>Tax rate</comment>
   </data>
   <data name="The main user name which will be displayed like your login" xml:space="preserve">
     <value>Le nom d’utilisateur principal qui s’affichera comme votre connexion</value>
@@ -244,6 +284,10 @@
   <data name="The {0} must be at least {2} and at max {1} characters long." xml:space="preserve">
     <value>Le {0} doit être au moins {2} et au maximum {1} caractères longs.</value>
     <comment>The Password must be at least 6 and at max 100 characters long.</comment>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titre</value>
+    <comment>Title</comment>
   </data>
   <data name="User name" xml:space="preserve">
     <value>Nom d’utilisateur</value>

@@ -105,10 +105,11 @@ namespace LeaveManagement.Code.CustomLocalization {
 
         private void InitMappers() {
             if (ConventionalResourceMappers == null) {
-                ConventionalResourceMappers = new ConcurrentBag<Func<Type, Tuple<string, string>>>();
-                ConventionalResourceMappers.Add(LeaveManagementViewModelDataAnnotationsMapper);
-                ConventionalResourceMappers.Add(LeaveManagementControllerMapper);
-                ConventionalResourceMappers.Add(LeaveManagementIdentityMapper);
+                ConventionalResourceMappers = new ConcurrentBag<Func<Type, Tuple<string, string>>> {
+                    LeaveManagementViewModelDataAnnotationsMapper,
+                    LeaveManagementControllerMapper,
+                    LeaveManagementIdentityMapper
+                };
             }
         }
 

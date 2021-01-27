@@ -22,7 +22,6 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly ILeaveManagementUnitOfWork _UnitOfWork;
-        private readonly IStringLocalizerFactory _stringLocalizerFactory;
         private readonly IStringLocalizer _stringLocalizer;
 
         public LoginModel(SignInManager<IdentityUser> signInManager,
@@ -34,7 +33,6 @@ namespace LeaveManagement.Areas.Identity.Pages.Account {
             _signInManager = signInManager;
             _logger = logger;
             _UnitOfWork = unitOfWork;
-            _stringLocalizerFactory = stringLocalizerFactory;
             _stringLocalizer = stringLocalizerFactory.Create(typeof(LoginModel));
         }
 

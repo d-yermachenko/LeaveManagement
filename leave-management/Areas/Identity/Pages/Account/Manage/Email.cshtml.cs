@@ -18,7 +18,6 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
     public partial class EmailModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IStringLocalizer _MessageLocalizer;
 
@@ -29,7 +28,7 @@ namespace LeaveManagement.Areas.Identity.Pages.Account.Manage
             ILeaveManagementCustomLocalizerFactory localizerFactory)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
+            //_signInManager = signInManager;
             _emailSender = emailSender;
             _MessageLocalizer = localizerFactory.StringIdentityLocalizer;
         }

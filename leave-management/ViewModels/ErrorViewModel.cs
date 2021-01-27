@@ -8,6 +8,8 @@ namespace LeaveManagement.Models {
 
         public string ErrorTitle { get; set; }
 
+        public int ErrorCode { get; set; }
+
         public string ErrorMessage { get; set; }
 
         public bool ErrorDescribed => !String.IsNullOrWhiteSpace(ErrorTitle) && !String.IsNullOrWhiteSpace(ErrorMessage);

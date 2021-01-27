@@ -72,7 +72,7 @@
                     </div>
                 </form>
 
-                <a asp-page="Login.cshtml" class="text-center">@RegisterLocalizer["I already have a membership"]</a>
+                <a asp-route-culture="@Request.RouteValues["culture"]" asp-page="Login.cshtml"  class="text-center">@RegisterLocalizer["I already have a membership"]</a>
             </div>
             <!-- /.form-box -->
         </div><!-- /.card -->

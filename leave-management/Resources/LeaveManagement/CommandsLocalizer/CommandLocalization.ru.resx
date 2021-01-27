@@ -151,11 +151,27 @@
   <data name="Delete" xml:space="preserve">
     <value>Удалить</value>
   </data>
+  <data name="Delete employee" xml:space="preserve">
+    <value>Удалить сотрудника</value>
+    <comment>Delete employee</comment>
+  </data>
   <data name="Details" xml:space="preserve">
     <value>Подробнее</value>
   </data>
+  <data name="Display leave allocations" xml:space="preserve">
+    <value>Отображение выделений отпусков</value>
+    <comment>Display leave allocations</comment>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Править</value>
+  </data>
+  <data name="Edit employee" xml:space="preserve">
+    <value>Редактировать сотрудника</value>
+    <comment>Edit employee</comment>
+  </data>
+  <data name="Go back" xml:space="preserve">
+    <value>Вернуться</value>
+    <comment>Go back</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Сохранить</value>

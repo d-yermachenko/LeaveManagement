@@ -117,37 +117,72 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Date of creation" xml:space="preserve">
-    <value>Дата создания</value>
+  <data name="404 Error Page" xml:space="preserve">
+    <value>404 Fehlerseite</value>
+    <comment>404 Error Page</comment>
   </data>
-  <data name="Date when this leave type was created" xml:space="preserve">
-    <value>Дата, когда данный тип отутствия был создан</value>
+  <data name="Allocate leave" xml:space="preserve">
+    <value>Zuweisen von Urlaub</value>
+    <comment>Allocate leave</comment>
   </data>
-  <data name="Default number of days" xml:space="preserve">
-    <value>Количество дней по умолчанию</value>
-    <comment>Default number of days</comment>
+  <data name="Allocate {0}" xml:space="preserve">
+    <value>Zuweisen von {0}</value>
+    <comment>Allocate Ancienity benefits</comment>
   </data>
-  <data name="Id of leave type" xml:space="preserve">
-    <value>Код типа отсутствия</value>
+  <data name="Allocate {0} to all employees" xml:space="preserve">
+    <value>Zuweisen {0} zu allen Mitarbeitern</value>
+    <comment>Allocate Ancienity benefits to all employees</comment>
   </data>
-  <data name="Insert leave type name, please" xml:space="preserve">
-    <value>Введите название типа отсутствия</value>
+  <data name="Are you sure you want to allocate this leave type to all employees?" xml:space="preserve">
+    <value>Möchten Sie diesen Urlaubstyp wirklich allen Mitarbeitern zuweisen?</value>
+    <comment>Are you sure you want to allocate this leave type to all employees?</comment>
   </data>
-  <data name="Leave Type - name required" xml:space="preserve">
-    <value>Тип отпуска - требуется имя</value>
-    <comment>Leave Type - name required</comment>
+  <data name="Back to List" xml:space="preserve">
+    <value>Zurück zur Liste</value>
+    <comment>Back to List</comment>
   </data>
-  <data name="Must be more or equals to -1 and less that the nubmer of days" xml:space="preserve">
-    <value>Должно быть больше или равно -1 и меньше, что nubmer дней</value>
-    <comment>Must be more or equals to -1 and less that the nubmer of days</comment>
+  <data name="Confirm deleting?" xml:space="preserve">
+    <value>Löschen bestätigen?</value>
+    <comment>Confirm deleting?</comment>
   </data>
-  <data name="Name of the type of leave" xml:space="preserve">
-    <value>Название</value>
+  <data name="Create New" xml:space="preserve">
+    <value>Neue erstellen</value>
+    <comment>Create New</comment>
   </data>
-  <data name="Name required" xml:space="preserve">
-    <value>Обязательное поле: Название</value>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+    <comment>Delete</comment>
   </data>
-  <data name="What you will see in the history of absences" xml:space="preserve">
-    <value>Название типа отсутсвия</value>
+  <data name="Delete employee" xml:space="preserve">
+    <value>Mitarbeiter löschen</value>
+    <comment>Delete employee</comment>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+    <comment>Details</comment>
+  </data>
+  <data name="Display leave allocations" xml:space="preserve">
+    <value>Anzeigen von Urlaubszuweisungen</value>
+    <comment>Display leave allocations</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Edit employee" xml:space="preserve">
+    <value>Bearbeiten von Mitarbeitern</value>
+    <comment>Edit employee</comment>
+  </data>
+  <data name="Oops! Page not found." xml:space="preserve">
+    <value>Oops! Seite wurde nicht gefunden.</value>
+    <comment>Oops! Page not found.</comment>
+  </data>
+  <data name="The object you looking is unavalaible" xml:space="preserve">
+    <value>Das Objekt, das Sie suchen, ist unavalaible</value>
+    <comment>The object you looking is unavalaible</comment>
+  </data>
+  <data name="We could not find the page you were looking for." xml:space="preserve">
+    <value>Wir konnten die gesuchte Seite nicht finden.</value>
+    <comment>We could not find the page you were looking for.</comment>
   </data>
 </root>

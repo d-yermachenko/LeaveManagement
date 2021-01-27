@@ -117,37 +117,128 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Date of creation" xml:space="preserve">
-    <value>Дата создания</value>
+  <data name="Accepted requests" xml:space="preserve">
+    <value>Akzeptierte Anfragen</value>
+    <comment>Accepted requests</comment>
   </data>
-  <data name="Date when this leave type was created" xml:space="preserve">
-    <value>Дата, когда данный тип отутствия был создан</value>
+  <data name="Approuved" xml:space="preserve">
+    <value>Approuved</value>
+    <comment>Approuved</comment>
   </data>
-  <data name="Default number of days" xml:space="preserve">
-    <value>Количество дней по умолчанию</value>
-    <comment>Default number of days</comment>
+  <data name="Comment" xml:space="preserve">
+    <value>Kommentar</value>
+    <comment>Comment</comment>
   </data>
-  <data name="Id of leave type" xml:space="preserve">
-    <value>Код типа отсутствия</value>
+  <data name="Date of beginning" xml:space="preserve">
+    <value>Datum des Beginns</value>
+    <comment>Date of beginning</comment>
   </data>
-  <data name="Insert leave type name, please" xml:space="preserve">
-    <value>Введите название типа отсутствия</value>
+  <data name="Date of ending" xml:space="preserve">
+    <value>Datum der Endung</value>
+    <comment>Date of ending</comment>
   </data>
-  <data name="Leave Type - name required" xml:space="preserve">
-    <value>Тип отпуска - требуется имя</value>
-    <comment>Leave Type - name required</comment>
+  <data name="Days that you can request for leave" xml:space="preserve">
+    <value>Tage, die Sie urlaubsbewilliberend beantragen können</value>
+    <comment>Days that you can request for leave</comment>
   </data>
-  <data name="Must be more or equals to -1 and less that the nubmer of days" xml:space="preserve">
-    <value>Должно быть больше или равно -1 и меньше, что nubmer дней</value>
-    <comment>Must be more or equals to -1 and less that the nubmer of days</comment>
+  <data name="End date" xml:space="preserve">
+    <value>Enddatum</value>
+    <comment>End date</comment>
   </data>
-  <data name="Name of the type of leave" xml:space="preserve">
-    <value>Название</value>
+  <data name="End date is required" xml:space="preserve">
+    <value>Enddatum ist erforderlich</value>
+    <comment>End date is required</comment>
   </data>
-  <data name="Name required" xml:space="preserve">
-    <value>Обязательное поле: Название</value>
+  <data name="Leave Type is required" xml:space="preserve">
+    <value>Leave-Typ ist erforderlich</value>
+    <comment>Leave Type is required</comment>
   </data>
-  <data name="What you will see in the history of absences" xml:space="preserve">
-    <value>Название типа отсутсвия</value>
+  <data name="List of requests without any sorting" xml:space="preserve">
+    <value>Liste der Anfragen ohne Sortierung</value>
+    <comment>List of requests without any sorting</comment>
+  </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>Moderator</value>
+    <comment>Moderator</comment>
+  </data>
+  <data name="Number of days in not still reviewed request" xml:space="preserve">
+    <value>Anzahl der Tage in nicht noch überprüfter Anforderung</value>
+    <comment>Number of days in not still reviewed request</comment>
+  </data>
+  <data name="Number of days, that was approuved" xml:space="preserve">
+    <value>Anzahl der Tage, die approuved</value>
+    <comment>Number of days, that was approuved</comment>
+  </data>
+  <data name="Number of days, which was approuved, and period of leave began" xml:space="preserve">
+    <value>Anzahl der Tage, die approuved wurde, und Die Zeit des Urlaubs begann</value>
+    <comment>Number of days, which was approuved, and period of leave began</comment>
+  </data>
+  <data name="Number of days, which were rejected" xml:space="preserve">
+    <value>Anzahl der Tage, die abgelehnt wurden</value>
+    <comment>Number of days, which were rejected</comment>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Ausstehende</value>
+    <comment>Pending</comment>
+  </data>
+  <data name="Pending requests" xml:space="preserve">
+    <value>Ausstehende Anforderungen</value>
+    <comment>Pending requests</comment>
+  </data>
+  <data name="Please select leaveType" xml:space="preserve">
+    <value>Bitte wählen Sie leaveType</value>
+    <comment>Please select leaveType</comment>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Abgelehnt</value>
+    <comment>Rejected</comment>
+  </data>
+  <data name="Rejected requests requests" xml:space="preserve">
+    <value>Abgelehnte Anforderungen</value>
+    <comment>Rejected requests requests</comment>
+  </data>
+  <data name="Requested at" xml:space="preserve">
+    <value>Angefordert unter</value>
+    <comment>Requested at</comment>
+  </data>
+  <data name="Requesting employee" xml:space="preserve">
+    <value>Anfordern des Mitarbeiters</value>
+    <comment>Requesting employee</comment>
+  </data>
+  <data name="Requests to handle by manager" xml:space="preserve">
+    <value>Anfragen, die vom Manager bearbeitet werden sollen</value>
+    <comment>Requests to handle by manager</comment>
+  </data>
+  <data name="Requests, accepted by manager. Employee can take his leave in indicated period" xml:space="preserve">
+    <value>Anfragen, die vom Manager akzeptiert werden. Mitarbeiter kann seinen Urlaub in der angegebenen Zeit nehmen</value>
+    <comment>Requests, accepted by manager. Employee can take his leave in indicated period</comment>
+  </data>
+  <data name="Requests, rejected by manager. Employee cant leave the company in indicated period" xml:space="preserve">
+    <value>Anfragen, die vom Manager abgelehnt werden. Mitarbeiter können das Unternehmen in der angegebenen Frist nicht verlassen</value>
+    <comment>Requests, rejected by manager. Employee cant leave the company in indicated period</comment>
+  </data>
+  <data name="Sold of days" xml:space="preserve">
+    <value>Verkauft von Tagen</value>
+    <comment>Sold of days</comment>
+  </data>
+  <data name="Start date" xml:space="preserve">
+    <value>Startdatum</value>
+    <comment>Start date</comment>
+  </data>
+  <data name="Start date is required" xml:space="preserve">
+    <value>Startdatum ist erforderlich</value>
+    <comment>Start date is required</comment>
+  </data>
+  <data name="Total number of leave requests" xml:space="preserve">
+    <value>Gesamtzahl der Urlaubsanträge</value>
+    <comment>Total number of leave requests</comment>
+  </data>
+  <data name="Used" xml:space="preserve">
+    <value>gebraucht</value>
+    <comment>Used</comment>
+  </data>
+  <data name="Your allocation" xml:space="preserve">
+    <value>Ihre Zuordnung</value>
+    <comment>Your allocation</comment>
   </data>
 </root>

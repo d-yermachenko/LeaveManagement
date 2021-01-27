@@ -141,6 +141,10 @@
     <value>Créer un employé</value>
     <comment>Create employee</comment>
   </data>
+  <data name="Details" xml:space="preserve">
+    <value>Détails</value>
+    <comment>Details</comment>
+  </data>
   <data name="Edit profile" xml:space="preserve">
     <value>Modifier le profil</value>
     <comment>Edit profile</comment>
@@ -148,6 +152,10 @@
   <data name="Employees" xml:space="preserve">
     <value>Employés</value>
     <comment>Employees</comment>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Aide</value>
+    <comment>Help</comment>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Page maison</value>
@@ -167,6 +175,10 @@
   </data>
   <data name="Leave types" xml:space="preserve">
     <value>Types des congés</value>
+  </data>
+  <data name="Massive allocation" xml:space="preserve">
+    <value>Allocation massive</value>
+    <comment>Massive allocation</comment>
   </data>
   <data name="My leaves" xml:space="preserve">
     <value>Mes feuilles</value>

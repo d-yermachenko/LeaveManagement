@@ -56,10 +56,10 @@ namespace ResourceAutoCompleter.Translator {
                         result[i] = Tuple.Create(translation.To, translation.Text);
                     }
                 }
-                catch(Exception e) {
+                catch(Exception) {
                     JObject responce = JsonConvert.DeserializeObject<JObject>(translationResponce);
                     _Logger?.LogError(translationResponce);
-                    throw e;
+                    throw;
                 }
                 
                 
@@ -79,7 +79,7 @@ namespace ResourceAutoCompleter.Translator {
             StringBuilder queryBuilder = new StringBuilder();
             for(int i = 0; i < queryParams.Count; i++) {
                 if (i != 0)
-                    queryBuilder.Append("&");
+                    queryBuilder.Append('&');
                 var pair = queryParams[i];
                 queryBuilder.Append($"{pair.Key}={pair.Value}");
             }

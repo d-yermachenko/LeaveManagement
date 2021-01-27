@@ -7,19 +7,12 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LeaveManagement.Code {
-    public class RouteCultureProvider : IRequestCultureProvider {
-        public Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext) {
-            return Task.FromResult(new ProviderCultureResult(new Microsoft.Extensions.Primitives.StringSegment(
-                    httpContext.GetRouteValue("culture")?.ToString() ?? CultureInfo.CurrentCulture.Name
-                ))) ;
-        }
-    }
+namespace LeaveManagement.Code.CustomLocalization {
 
     public class LanguageRouteConstraint : IRouteConstraint {
         public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values, RouteDirection routeDirection) {
 
-            if (!values.ContainsKey("culture"))
+            if (!httpContext.Request.RouteValues.ContainsKey("culture"))
                 return false;
 
             var culture = values["culture"].ToString();

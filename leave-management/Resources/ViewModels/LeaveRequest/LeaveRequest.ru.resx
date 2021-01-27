@@ -120,6 +120,10 @@
   <data name="Accepted requests" xml:space="preserve">
     <value>Одобренные запросы</value>
   </data>
+  <data name="Actionned at" xml:space="preserve">
+    <value>Применено в</value>
+    <comment>Actionned at</comment>
+  </data>
   <data name="Approuved" xml:space="preserve">
     <value>Одобрено</value>
     <comment>Approuved</comment>
@@ -146,6 +150,10 @@
   <data name="End date is required" xml:space="preserve">
     <value>Дата окончания - обязательное поле</value>
     <comment>End date is required</comment>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Идентификатор</value>
+    <comment>Id</comment>
   </data>
   <data name="Leave type" xml:space="preserve">
     <value>Тип отпуска</value>
