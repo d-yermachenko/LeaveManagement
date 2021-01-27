@@ -38,7 +38,7 @@ namespace ResourceAutoCompleter {
             get {
                 var result = _RealLocalizer[name];
                 if (result.ResourceNotFound)
-                    WriteNotFoundString(name, result.Value, result.Value);
+                    result = WriteNotFoundString(result);
                 return result;
             }
 
@@ -50,29 +50,37 @@ namespace ResourceAutoCompleter {
 
         }
 
-        private void WriteNotFoundString(string name, string value, string comment) {
+        private LocalizedString WriteNotFoundString(LocalizedString localizedString) {
             string[] excludedCultures = _ResourceConfiguration.ExcludeCultures?.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             if (excludedCultures.Contains(_Culture.Name))
-                return;
+                return localizedString;
+            LocalizedString result = localizedString;
+            string translation = localizedString.Value;
             string resourcesPath = GetResourcePath();
             List<Tuple<string, string, string>> entries;
             if (System.IO.File.Exists(resourcesPath))
                 entries = ReadResxData(resourcesPath);
             else
                 entries = new List<Tuple<string, string, string>>();
-            if (!entries.Any(ent => ent.Item1 == name)) {
+            if (!entries.Any(ent => ent.Item1 == localizedString.Name)) {
                 if(!(_Culture?.Name.StartsWith("en")??true) && _ResourceConfiguration.TranslateResources && _ResourcesTranslator != null) {
                     try {
-                        var translationData = _ResourcesTranslator.TranslateText(value, "en", new string[] { _Culture.TwoLetterISOLanguageName.ToLower() });
-                        value = translationData.Result.First().Item2;
+                        var translationData = _ResourcesTranslator.TranslateText(localizedString.Value, "en", new string[] { _Culture.TwoLetterISOLanguageName.ToLower() });
+                        translation = translationData.Result.First().Item2;
+                        result = new LocalizedString(localizedString.Name, translation);
                     }
                     catch (Exception) {
                         ;
                     }
                 }
-                entries.Add(new Tuple<string, string, string>(name, value, comment));
+                entries.Add(new Tuple<string, string, string>(localizedString.Name, translation, localizedString.Name));
+            }
+            else {
+                var entry = entries.First(x => x.Item1.Equals(localizedString.Name));
+                result = new LocalizedString(entry.Item1, entry.Item2);
             }
             WriteResXData(resourcesPath, entries);
+            return result;
         }
 
         private List<Tuple<string, string, string>> ReadResxData(string fileName) {
@@ -98,7 +106,7 @@ namespace ResourceAutoCompleter {
 
         }
 
-        private void WriteResXData(string fileName, List<Tuple<string, string, string>> tuples) {
+        private static void WriteResXData(string fileName, List<Tuple<string, string, string>> tuples) {
             string[] entries = new string[tuples.Count];
             for (int i = 0; i < tuples.Count; i++) {
                 entries[i] = $"{tuples[i].Item1}\t{tuples[i].Item2}\t{tuples[i].Item3}";
@@ -111,7 +119,7 @@ namespace ResourceAutoCompleter {
             get {
                 var result = _RealLocalizer[name, arguments];
                 if (result.ResourceNotFound)
-                    WriteNotFoundString(name, result.Name, result.Value);
+                    result= WriteNotFoundString(result);
                 return result;
             }
         }
@@ -120,7 +128,6 @@ namespace ResourceAutoCompleter {
             return _RealLocalizer.GetAllStrings(includeParentCultures);
         }
 
-        [Obsolete]
-        public IStringLocalizer WithCulture(CultureInfo culture) => _RealLocalizer.WithCulture(culture);
+
     }
 }

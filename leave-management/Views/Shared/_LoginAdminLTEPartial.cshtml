@@ -21,19 +21,19 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">
+                    <a class="nav-link" asp-area="Identity" asp-route-culture="@Context.Request.RouteValues["culture"]" asp-page="/Account/Manage/ChangePassword">
                         <i class="nav-icon fa fa-user-secret"></i>
                         <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Change password"]</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Email">
+                    <a class="nav-link" asp-route-culture="@Context.Request.RouteValues["culture"]" asp-area="Identity" asp-page="/Account/Manage/Email">
                         <i class="nav-icon fa fa-envelope-open"></i>
                         <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Change email"]</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <form asp-area="Identity" class="form-inline" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <form asp-area="Identity" class="form-inline" asp-route-culture="@Context.Request.RouteValues["culture"]" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                         <button type="submit" class="nav-link btn btn-link text-white">
                             <i class="nav-icon fa fa-sign-out"></i>
                             <p> @Localizer["Logout"]</p>
@@ -46,7 +46,7 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+            <a class="nav-link" asp-area="Identity" asp-route-culture="@Context.Request.RouteValues["culture"]" asp-page="/Account/Login">
                 <i class="nav-icon fa fa-sign-in"></i>
                 <p>@LeaveManagementLocalizerFactory.MenuLocalizer["Login"]</p>
             </a>

@@ -49,7 +49,7 @@
                 </form>
 
                 <p class="mb-1">
-                    <a id="forgot-password" asp-page="ForgotPassword">@CustomLocalizerFactory.StringIdentityLocalizer["I forgot my password"]</a>
+                    <a id="forgot-password" asp-route-culture="@Request.RouteValues["culture"]" asp-page="ForgotPassword">@CustomLocalizerFactory.StringIdentityLocalizer["I forgot my password"]</a>
                 </p>
 
                 <p class="mb-0">

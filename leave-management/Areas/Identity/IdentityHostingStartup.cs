@@ -15,12 +15,13 @@ namespace LeaveManagement.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
-                /*services.AddMvc()
+                services.AddMvc()
                 .AddViewLocalization()
-                .AddDataAnnotationsLocalization();*/
+                .AddDataAnnotationsLocalization();
             });
 
-
         }
+
+
     }
 }

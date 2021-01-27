@@ -20,7 +20,6 @@ using System.Dynamic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Resources;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 namespace LeaveManagement.Controllers {
@@ -62,7 +61,7 @@ namespace LeaveManagement.Controllers {
 
         string ReturnUrl = "";
         #region Service methods
-        private async Task<UserRoles> GetAllowedRolesAsync(UserRoles currentUserMembership, bool self) {
+        private static async Task<UserRoles> GetAllowedRolesAsync(UserRoles currentUserMembership, bool self) {
             return await Task.Run(() => {
                 UserRoles result = UserRoles.None;
                 if ((currentUserMembership & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)
@@ -355,7 +354,7 @@ namespace LeaveManagement.Controllers {
 
         #region Getting data about actually connected user
         Tuple<IdentityUser, Employee, UserRoles> _IdentityData = null;
-        object identityDataLock = new object();
+        readonly object identityDataLock = new object();
 
 
         private async Task<Tuple<IdentityUser, Employee, UserRoles>> GetCurrentUserData() {
@@ -453,7 +452,7 @@ namespace LeaveManagement.Controllers {
         }
 
         #region Validation
-        private bool ValidateProfileEdition(Employee consernedEmployee, EmployeeCreationVM employeeVM, bool allow) {
+        private static bool ValidateProfileEdition(Employee consernedEmployee, EmployeeCreationVM employeeVM, bool allow) {
             bool valid = true;
             valid &= allow || (consernedEmployee.Title?.Equals(employeeVM.Title) ?? false);
             valid &= allow || (consernedEmployee.FirstName?.Equals(employeeVM.FirstName) ?? false);
@@ -479,14 +478,14 @@ namespace LeaveManagement.Controllers {
             return result || isAppAdministrator;
         }
 
-        private bool ValidateManagerData(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
+        private static bool ValidateManagerData(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
             var valid =  allow || employee.ManagerId == employeeVM.ManagerId;
             valid &= allow || (employee.EmploymentDate.Date.Equals(employeeVM.EmploymentDate));
             return valid;
 
         }
 
-        private bool ValidateContactData(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
+        private static bool ValidateContactData(Employee employee, EmployeeCreationVM employeeVM, bool allow) {
             bool valid = true;
             valid &= allow || employee.PhoneNumber.Equals(employeeVM.PhoneNumber);
             valid &= allow || employee.ContactMail.Equals(employeeVM.ContactMail);
@@ -655,9 +654,7 @@ namespace LeaveManagement.Controllers {
             return updateResult;
         }
 
-        public async Task<IActionResult> UpdateIdentityUser(IdentityUser user) {
-            return await Task.Run(() =>Redirect("~/Identity/Account/Manage/Index"));
-        }
+        public async Task<IActionResult> UpdateIdentityUser(IdentityUser user) => await Task.Run(() =>Redirect("~/Identity/Account/Manage/Index"));
         #endregion
 
         #region Index
@@ -738,7 +735,7 @@ namespace LeaveManagement.Controllers {
                 || ((currentUserData.Item3 & UserRoles.AppAdministrator) == UserRoles.AppAdministrator)) {
                 Employee consernedEmployee;
                 if (currentUserData.Item1.Id.Equals(userId))
-                    consernedEmployee = currentUserData.Item2 != null ? currentUserData.Item2 : null;
+                    consernedEmployee = currentUserData.Item2 ?? null;
                 else
                     consernedEmployee = await _UnitOfWork.Employees.FindAsync(predicate: x => x.Id.Equals(userId),
                         includes: new System.Linq.Expressions.Expression<Func<Employee, object>>[] { x => x.Company, x => x.Manager });
@@ -770,7 +767,7 @@ namespace LeaveManagement.Controllers {
             if (!result)
                 return RedirectToAction(nameof(Details), new { userId = employeeId });
             else
-                return RedirectToAction(nameof(Index), new {companyId = companyId } );
+                return RedirectToAction(nameof(Index), new { companyId } );
         }
 
         #region Changing password

@@ -52,8 +52,12 @@ namespace LeaveManagement {
             })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddControllersWithViews(options=> {
+                options.Filters.Add(typeof(Filters.HttpErrorFilter));
+            });
+            services.AddRazorPages(options => {
+                options.Conventions.Add(new CustomLocalization.CultureTemplatePageRouteModelConvention());
+            });
             /*services.Configure<PasswordHasherOptions>(options =>
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2
             );*/
@@ -85,7 +89,17 @@ namespace LeaveManagement {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseStatusCodePages();
+            app.UseStatusCodePagesWithRedirects("/Error/{0}");
+            /*app.UseStatusCodePages (context => {
+                var request = context.HttpContext.Request;
+                var response = context.HttpContext.Response;
+
+                if (response.StatusCode == (int)StatusCodes.Status404NotFound) {
+                    response.Redirect($"/Error/{response.StatusCode}");
+                }
+                return Task.CompletedTask;
+            });*/
+
             var logger = app.ApplicationServices.GetService<ILogger>();
             var seedingTask = applicationDbContext.Database.MigrateAsync().ContinueWith(task => SeedData.Seed(userManager, roleManagement, logger).Wait()
             , TaskContinuationOptions.OnlyOnRanToCompletion);
@@ -100,7 +114,6 @@ namespace LeaveManagement {
                     name: "LocalizedDefault",
                     pattern: $"{{{GlobalizationStartup.CultureRoutePartName}}}/{{controller}}/{{action}}/{{id?}}",
                     defaults: new { culture = GlobalizationStartup.DefaultCulture.Name, controller = "Home", action = "Index" });
-                endpoints.MapControllerRoute(name: "default", pattern: "{*catchall}", defaults: new { controller = "Home", action = "RedirectToDefaultLanguage", culture = GlobalizationStartup.DefaultCulture.Name });
                 endpoints.MapRazorPages();
             });
             GlobalizationStartup.Configure(app, env);
