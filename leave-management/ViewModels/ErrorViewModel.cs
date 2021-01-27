@@ -15,5 +15,6 @@ namespace LeaveManagement.Models {
         public string StartUrl { get; set; }
 
         public string StartText { get; set; }
+        public int ErrorCode { get; internal set; }
     }
 }
