@@ -12,14 +12,14 @@ namespace LeaveManagementTests.Units.Code {
         [TestMethod]
         public void TestUserRolesToString() {
             UserRoles roles = UserRoles.AppAdministrator | UserRoles.HRManager;
-            string expected = "HRManager, Administrator";
+            string expected = $"{nameof(UserRoles.HRManager)}, {nameof(UserRoles.AppAdministrator)}";
             Assert.AreEqual(expected, roles.ToString());
         }
 
         [TestMethod]
         public void TestStringToUserRoles() {
             UserRoles expected = UserRoles.AppAdministrator | UserRoles.HRManager;
-            string etringValues = "HRManager,Administrator";
+            string etringValues = $"{nameof(UserRoles.HRManager)},{nameof(UserRoles.AppAdministrator)}";
             UserRoles obtained = (UserRoles)Enum.Parse(typeof(UserRoles), etringValues);
             Assert.AreEqual(expected, obtained);
         }
@@ -38,7 +38,7 @@ namespace LeaveManagementTests.Units.Code {
         [TestMethod]
         public void TestStringArrayToUserRolesWrongValuesCustom() {
             UserRoles expected = UserRoles.AppAdministrator | UserRoles.HRManager;
-            string[] stringValues = new string[] { "HRManager", "Administrator", "CustomRole" };
+            string[] stringValues = new string[] { nameof(UserRoles.AppAdministrator), nameof(UserRoles.HRManager), "InexistantRole", "ImaginedRole" };
             UserRoles obtained = UserManagerExtensions.ToUserRoles(stringValues);
             Assert.AreEqual(expected, obtained);
         }

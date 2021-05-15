@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using LeaveManagement.Code;
 
 namespace LeaveManagement.Controllers {
     [Authorize]
@@ -79,7 +80,7 @@ namespace LeaveManagement.Controllers {
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
-                return NotFound();
+                return NotFound(_MessageLocalizer["Company not found"]);
             }
             CompanyVM companyVM = _Mapper.Map<CompanyVM>(companyData);
             if ((currentUserRoles & (UserRoles.AppAdministrator | UserRoles.CompanyAdministrator)) == 0)
@@ -95,7 +96,7 @@ namespace LeaveManagement.Controllers {
             if (!roleAllowsCreateCompany) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to create the company record");
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to create the companies"]);
-                return Forbid();
+                return Forbid(_MessageLocalizer["Your not allowed to create the companies"]);
             }
             CompanyVM companyVM = new CompanyVM() { Id = 0, CompanyRegistrationDate = DateTime.Now, Active=true };
             ViewData["Action"] = nameof(Create);
@@ -113,7 +114,7 @@ namespace LeaveManagement.Controllers {
                 if (!roleAllowsCreateCompany) {
                     _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to create company record");
                     ModelState.AddModelError("", _MessageLocalizer["Your not allowed to create the companies"]);
-                    return Forbid();
+                    return Forbid(_MessageLocalizer["Your not allowed to create the companies"]);
                 }
                 Company company = _Mapper.Map<Company>(companyVM);
                 await _UnitOfWork.Companies.CreateAsync(company);
@@ -146,13 +147,13 @@ namespace LeaveManagement.Controllers {
             if (!roleAllowsEditCompanyData) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
-                return Forbid();
+                return Forbid(_MessageLocalizer["Your not allowed to show the details of this company"]);
             }
             var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
-                return NotFound();
+                return NotFound(_MessageLocalizer["Company not found"]);
             }
             CompanyVM companyVM = _Mapper.Map<CompanyVM>(companyData);
             ViewData["Action"] = nameof(Edit);
@@ -172,13 +173,13 @@ namespace LeaveManagement.Controllers {
                 if (!roleAllowsEditCompanyData) {
                     _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
                     ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
-                    return Forbid();
+                    return Forbid(_MessageLocalizer["Your not allowed to show the details of this company"]);
                 }
                 var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id==id);
                 if (companyData == null) {
                     _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                     ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
-                    return NotFound();
+                    return NotFound(_MessageLocalizer["Company not found"]);
                 }
                 companyData = _Mapper.Map<CompanyVM, Company>(companyVM, companyData, mappingOptions=> {
                     mappingOptions.Items["Id"] = id;
@@ -210,13 +211,13 @@ namespace LeaveManagement.Controllers {
             if (!roleAllowsEditCompanyData) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
-                return Forbid();
+                return Forbid(_MessageLocalizer["Your not allowed to show the details of this company"]);
             }
             var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
-                return NotFound();
+                return NotFound(_MessageLocalizer["Company not found"]);
             }
 
             bool operationResult = true;
@@ -259,13 +260,13 @@ namespace LeaveManagement.Controllers {
             if (!roleAllowsEditCompanyData) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
-                return Forbid();
+                return Forbid(_MessageLocalizer["Your not allowed to show the details of this company"]);
             }
             var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id==id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
-                return NotFound();
+                return NotFound(_MessageLocalizer["Company not found"]);
             }
 
             bool operationResult = true;
@@ -314,13 +315,13 @@ namespace LeaveManagement.Controllers {
             if (!roleAllowsEditCompanyData) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
-                return Forbid();
+                return Forbid(_MessageLocalizer["Your not allowed to show the details of this company"]);
             }
             var companyData = await _UnitOfWork.Companies.FindAsync(x=>x.Id == id);
             if (companyData == null) {
                 _CompanyControllerLogger.LogWarning($"Company {id} was not found");
                 ModelState.AddModelError("", _MessageLocalizer["Company not found"]);
-                return NotFound();
+                return NotFound(_MessageLocalizer["Company not found"]);
             }
             bool operationResult = true;
             var leaveTypesToRemove = await _UnitOfWork.LeaveTypes.WhereAsync(filter: lt => lt.CompanyId == id);

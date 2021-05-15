@@ -16,8 +16,6 @@ namespace LeaveManagement.EmailSender {
         private readonly SmtpSettings _Settings;
         private readonly ILogger<IEmailSender> _Logger;
 
-
-
         public SmtpEmailSender(Func<SmtpSettings> configure,
             ILogger<IEmailSender> logger) {
             _Settings = configure.Invoke();

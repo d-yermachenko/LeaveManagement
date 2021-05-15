@@ -38,10 +38,10 @@ namespace LeaveManagement.Controllers {
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() => Problem();
-        /*{
+        public IActionResult Error() //=> Problem();
+        {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }*/
+        }
 
         public static void DisplayProblem(ILogger logger, Controller controller, string errorTitle, string errorMessage, Exception exception = null) {
             if (exception != null)

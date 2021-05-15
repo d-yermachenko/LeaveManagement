@@ -162,11 +162,11 @@ namespace LeaveManagement.Controllers {
             var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
-                return Forbid();
+                return Forbid(_ControllerLocalizer["Your account not belongs to employees"]);
             }
             if (!await _UserManager.IsCompanyPrivelegedUser(currentEmployee)) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your role not allows you to administrate leave requests"]);
-                return Forbid();
+                return Forbid(_ControllerLocalizer["Your role not allows you to administrate leave requests"]);
             }
             var leaveRequest = await _UnitOfWork.LeaveRequest.FindAsync(x => x.Id == requestId,
                 includes: new System.Linq.Expressions.Expression<Func<LeaveRequest, object>>[] {
@@ -187,11 +187,11 @@ namespace LeaveManagement.Controllers {
             var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
-                return Forbid();
+                return Forbid(_ControllerLocalizer["Your account not belongs to employees"]);
             }
             if (!await _UserManager.IsCompanyPrivelegedUser(currentEmployee)) {
                 ModelState.AddModelError("", _ControllerLocalizer["You not authorized to review leave requests"]);
-                Forbid();
+                Forbid(_ControllerLocalizer["You not authorized to review leave requests"]);
             }
             var leaveRequest = await _UnitOfWork.LeaveRequest.FindAsync(x => x.Id == requestId);
             if (leaveRequest == null) {
@@ -199,7 +199,7 @@ namespace LeaveManagement.Controllers {
             }
             if (leaveRequest.RequestingEmployee?.CompanyId != currentEmployee.CompanyId) {
                 ModelState.AddModelError("", _ControllerLocalizer["You attempt to review leave request which belongs to other company "]);
-                Forbid();
+                Forbid(_ControllerLocalizer["You attempt to review leave request which belongs to other company "]);
             }
 
             var approuve = viewModel.Approuved;
@@ -327,11 +327,11 @@ namespace LeaveManagement.Controllers {
             var currentEmployee = await _UnitOfWork.Employees.GetEmployeeAsync(User);
             if (currentEmployee == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Your account not belongs to employees"]);
-                return Forbid();
+                return Forbid(_ControllerLocalizer["Your account not belongs to employees"]);
             }
             if (request == null) {
                 ModelState.AddModelError("", _ControllerLocalizer["Leave request not found"]);
-                return NotFound();
+                return NotFound(_ControllerLocalizer["Leave request not found"]);
             }
 
             bool userAutorizedRemoveRequest = await _UserManager.IsCompanyPrivelegedUser(User) || request.RequestingEmployeeId.Equals(currentEmployee.Id);
@@ -340,7 +340,7 @@ namespace LeaveManagement.Controllers {
             bool datePermits = request.StartDate.CompareTo(DateTime.Now.AddDays(3)) >= 1;
             if (!userAutorizedRemoveRequest) {
                 ModelState.AddModelError("", _ControllerLocalizer["You cant cancel this request"]);
-                return Unauthorized();
+                return Forbid(_ControllerLocalizer["You cant cancel this request"]);
             }
             if (!statePermits || !datePermits) {
                 if (!statePermits)

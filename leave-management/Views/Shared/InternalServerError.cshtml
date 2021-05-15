@@ -23,11 +23,15 @@
             <h2 class="headline text-danger">500</h2>
 
             <div class="error-content">
-                <h3><i class="fas fa-exclamation-triangle text-danger"></i> Oops! Something went wrong.</h3>
-
+                <h3><i class="fa fa-exclamation-triangle text-danger"></i> Oops! Something went wrong.</h3>
+                @if (!String.IsNullOrWhiteSpace(Model?.ErrorMessage))
+                {
+                    <p>@Model.ErrorMessage</p>
+                }
+                <p>We will work on fixing that right away.</p>
                 <p>
                     @Model.ErrorMessage
-                    We will work on fixing that right away.
+                    
                     Meanwhile, you may <a href="../../index.html">return to dashboard</a> or try using the search form.
                 </p>
 

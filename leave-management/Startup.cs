@@ -89,8 +89,8 @@ namespace LeaveManagement {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseStatusCodePagesWithRedirects("/Error/{0}");
-            /*app.UseStatusCodePages (context => {
+            //app.UseStatusCodePagesWithRedirects("/Error/{0}");
+            app.UseStatusCodePages (context => {
                 var request = context.HttpContext.Request;
                 var response = context.HttpContext.Response;
 
@@ -98,7 +98,7 @@ namespace LeaveManagement {
                     response.Redirect($"/Error/{response.StatusCode}");
                 }
                 return Task.CompletedTask;
-            });*/
+            });
 
             var logger = app.ApplicationServices.GetService<ILogger>();
             var seedingTask = applicationDbContext.Database.MigrateAsync().ContinueWith(task => SeedData.Seed(userManager, roleManagement, logger).Wait()

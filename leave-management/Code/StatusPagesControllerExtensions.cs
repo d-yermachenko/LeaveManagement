@@ -13,12 +13,25 @@ namespace LeaveManagement.Code {
 
         public bool IsDefault { get; set; }
 
+        public uint StatusCode { get; set; }
+
+        public string StatusCodeDescription { get; set; }
+
     }
 
     public static class StatusPagesControllerExtensions {
         public const string ForbidView = "Forbid";
 
         public static ViewResult ForbidDisplay(this Controller controller,
+            string header = "Operation forbidden", string message = "The operation you trying to execute is forbidden for your actual status") {
+            MessageViewModel viewModel = new MessageViewModel() {
+                Header = header,
+                Message = message
+            };
+            return controller.View(ForbidView, viewModel);
+        }
+
+        public static ViewResult UnauthorizedDisplay(this Controller controller,
             string header = "Operation forbidden", string message = "The operation you trying to execute is forbidden for your actual status") {
             MessageViewModel viewModel = new MessageViewModel() {
                 Header = header,

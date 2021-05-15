@@ -13,61 +13,97 @@ namespace LeaveManagement.Filters {
     public class HttpErrorFilter : IAsyncActionFilter {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next) {
             var resultContext = await next();
-            if (!(resultContext.Result is ObjectResult))
+            ErrorViewModel errorModel = GetErrorViewModel(resultContext.Result as dynamic);
+            if (errorModel == null)
                 return;
-            ObjectResult objectResult = (ObjectResult)resultContext.Result;
-            if (objectResult.StatusCode == null)
-                return;
-            int statusCode = (int)objectResult.StatusCode;
-            switch (statusCode) {
-                case StatusCodes.Status404NotFound:
-                    resultContext.Result = GetNotFoundView(objectResult.Value.ToString(), ((Controller)resultContext.Controller).ViewData);
-                    break;
-                case StatusCodes.Status403Forbidden:
-                    resultContext.Result = GetForbiddenView(objectResult.Value.ToString(), ((Controller)resultContext.Controller).ViewData);
-                    break;
-                case StatusCodes.Status500InternalServerError:
-                    resultContext.Result = GetInternalServerErrorView(objectResult.Value.ToString(), ((Controller)resultContext.Controller).ViewData);
-                    break;
-            }
+            resultContext.Result = GetErrorView(errorModel, (resultContext.Controller as Controller)?.ViewData);
         }
 
-        public IActionResult GetNotFoundView(string message, ViewDataDictionary viewDataDictionary) {
+
+        private ErrorViewModel GetErrorViewModel(ObjectResult result) {
+            return new ErrorViewModel() {
+                ErrorCode = result.StatusCode?? StatusCodes.Status500InternalServerError,
+                ErrorMessage = result.Value.ToString()
+            };
+        }
+
+
+        private ErrorViewModel GetErrorViewModel(ViewResult result) {
+            return null;
+        }
+
+        public IActionResult GetErrorView(ErrorViewModel errorModel, ViewDataDictionary viewDataDictionary) {
+            if (errorModel == null)
+                return GetUnpredictedResult(errorModel, viewDataDictionary);
+            return errorModel?.ErrorCode switch {
+                StatusCodes.Status404NotFound => GetNotFoundView(errorModel, viewDataDictionary),
+                StatusCodes.Status403Forbidden => GetForbiddenView(errorModel, viewDataDictionary),
+                StatusCodes.Status500InternalServerError => GetInternalServerErrorView(errorModel, viewDataDictionary),
+                StatusCodes.Status400BadRequest => GetInternalServerErrorView(errorModel, viewDataDictionary),
+                StatusCodes.Status401Unauthorized => GetNotAuthorizedResult(errorModel, viewDataDictionary),
+                StatusCodes.Status501NotImplemented => GetNotImplementedResult(errorModel, viewDataDictionary),
+                _ => GetUnpredictedResult(errorModel, viewDataDictionary)
+
+            };
+        }
+
+        public IActionResult GetNotFoundView(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
             return new ViewResult() {
                 ViewName = "NotFoundError",
                 ViewData = new ViewDataDictionary(viewDataDictionary) {
-                    Model = new ErrorViewModel() {
-                        ErrorCode = StatusCodes.Status404NotFound,
-                        ErrorMessage = message
-                    }
+                    Model = errorViewModel
                 }
             };
         }
 
-        public IActionResult GetForbiddenView(string message, ViewDataDictionary viewDataDictionary) {
+        public IActionResult GetForbiddenView(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
             return new ViewResult() {
                 ViewName = "ForbiddenError",
                 ViewData = new ViewDataDictionary(viewDataDictionary) {
-                    Model = new ErrorViewModel() {
-                        ErrorCode = StatusCodes.Status403Forbidden,
-                        ErrorMessage = message
-
-                    }
+                    Model = errorViewModel
                 }
             };
         }
 
-        public IActionResult GetInternalServerErrorView(string message, ViewDataDictionary viewDataDictionary) {
+        public IActionResult GetInternalServerErrorView(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
             return new ViewResult() {
                 ViewName = "InternalServerError",
                 ViewData = new ViewDataDictionary(viewDataDictionary) {
-                    Model = new ErrorViewModel() {
-                        ErrorCode = StatusCodes.Status403Forbidden,
-                        ErrorMessage = message
-
-                    }
+                    Model = errorViewModel
                 }
             };
         }
+
+        public IActionResult GetBadRequestView(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
+            return new ViewResult() {
+                ViewName = "BadRequestError",
+                ViewData = new ViewDataDictionary(viewDataDictionary) {
+                    Model = errorViewModel
+                }
+            };
+        }
+
+        public IActionResult GetNotAuthorizedResult(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
+            return new RedirectToRouteResult(new { });
+        }
+
+        public IActionResult GetNotImplementedResult(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
+            return new ViewResult() {
+                ViewName = "InternalServerError",
+                ViewData = new ViewDataDictionary(viewDataDictionary) {
+                    Model = errorViewModel
+                }
+            };
+        }
+
+        public IActionResult GetUnpredictedResult(ErrorViewModel errorViewModel, ViewDataDictionary viewDataDictionary) {
+            return new ViewResult() {
+                ViewName = "SomeUnknownError",
+                ViewData = new ViewDataDictionary(viewDataDictionary) {
+                    Model = errorViewModel
+                }
+            };
+        }
+
     }
 }

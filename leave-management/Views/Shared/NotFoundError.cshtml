@@ -30,10 +30,15 @@
 
                 <p>
                     @_Localizer.CommandsLocalizer["We could not find the page you were looking for."]
-                    @Model.ErrorMessage
+
+                    
                 </p>
-
-
+                @if (!String.IsNullOrWhiteSpace(Model?.ErrorMessage))
+                {
+                    <p>
+                        @Model.ErrorMessage
+                    </p>
+                }
             </div>
             <!-- /.error-content -->
         </div>

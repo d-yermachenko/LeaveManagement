@@ -112,7 +112,7 @@ namespace LeaveManagement.Controllers {
             }
             if (leaveTypeObj.CompanyId != consernedEmployee.CompanyId) {
                 ModelState.AddModelError("", _Localizer["You're forbidden to create allocation because it belongs to other company"]);
-                return Forbid();
+                return Unauthorized();
             }
             int period = leave.Period;
             var newLeaveAllocation = new LeaveAllocation() {
@@ -163,10 +163,11 @@ namespace LeaveManagement.Controllers {
             }
             catch (Exception e) {
                 _Logger.LogError(e, e.Message, leaveTypeId);
+                throw;
             }
             if (leaveType == null) {
                 ModelState.AddModelError("", _Localizer["Leave type not found"]);
-                return NotFound();
+                return NotFound(_Localizer["Leave type not found"]);
             }
             if (leaveType.CompanyId != currentEmployee.CompanyId) {
                 ModelState.AddModelError("", _Localizer["Leave type you try allocate is not leave type from your company"]);
@@ -350,7 +351,7 @@ namespace LeaveManagement.Controllers {
                 leaveAllocation = await _UnitOfWork.LeaveAllocations.FindAsync(x => x.Id == id,
                     includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationEmployee, x => x.AllocationLeaveType });
                 if (leaveAllocation == null)
-                    return NotFound();
+                    return NotFound(_Localizer["Leave allocation not found"]);
 
                 if (!(await _UserManager.IsCompanyPrivelegedUser(User) || (await GetCurrentEmployeeAsync()).Id.Equals(leaveAllocation.AllocationEmployeeId)))
                     return Forbid();
@@ -379,12 +380,10 @@ namespace LeaveManagement.Controllers {
                 leaveAllocation = await _UnitOfWork.LeaveAllocations.FindAsync(predicate: x => x.Id == id,
                     includes: new System.Linq.Expressions.Expression<Func<LeaveAllocation, object>>[] { x => x.AllocationEmployee, x => x.AllocationLeaveType });
                 if (leaveAllocation == null)
-                    return NotFound();
+                    return NotFound(_Localizer["Leave allocation not found"]);
                 if (leaveAllocation.AllocationLeaveType?.CompanyId == null)
                     return BadRequest();
                 var leaveAllocationView = _Mapper.Map<LeaveAllocationEditionViewModel>(leaveAllocation);
-                if (leaveAllocation.AllocationLeaveType?.CompanyId == null)
-                    return BadRequest();
                 int companyId = leaveAllocation.AllocationLeaveType.CompanyId;
                 var lists = await GetListLeaveTypesAndEmployees(companyId, leaveAllocation.AllocationEmployeeId, leaveAllocation.AllocationLeaveTypeId);
                 leaveAllocationView.AllocationLeaveTypes = lists.Item1;
@@ -474,7 +473,7 @@ namespace LeaveManagement.Controllers {
         [HttpGet]
         public async Task<ActionResult> Delete(int id) {
             if (!await _UserManager.IsCompanyPrivelegedUser(User))
-                return Forbid();
+                return Forbid(_Localizer["You are not authorized to perform this action"]);
             object redirectData = null;
             ActionResult result;
             try {

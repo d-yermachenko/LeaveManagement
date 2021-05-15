@@ -22,7 +22,7 @@ namespace LeaveManagementTests.Units.Code {
                 () => new LeaveManagement.PasswordGenerator.MyPasswordGeneratorOptions() { LengthOfPassword = 10, MinSpecial = 4, MinSpaces = 0 });
             string password = myPasswordGenerator.GeneratePassword();
             System.Diagnostics.Trace.WriteLine(password);
-            Assert.AreEqual(15, password.Length);
+            Assert.AreEqual(10, password.Length);
         }
     }
 }

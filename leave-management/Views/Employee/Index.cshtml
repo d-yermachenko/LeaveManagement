@@ -78,10 +78,13 @@
                        title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Edit employee"]">
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a class="btn btn-outline-danger" asp-action="RemoveEmployee" asp-route-employeeId="@item.Id"
-                       title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete employee"]">
-                        <i class="fa fa-remove"></i>
-                    </a>
+                    <form>
+                        <button type="submit" class="btn btn-outline-danger" asp-action="RemoveEmployee" asp-route-employeeId="@item.Id"
+                           title="@LeaveManagementLocalizerFactory.CommandsLocalizer["Delete employee"]">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </form>
+                    
 
                 </td>
             </tr>
