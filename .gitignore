@@ -136,6 +136,7 @@ ClientBin/
 *.publishsettings
 modulesbin/
 tempbin/
+/keys/key-*.xml
 
 # EPiServer Site file (VPP)
 AppData/
@@ -157,7 +158,7 @@ UpgradeLog*.htm
 
 # Temp files when opening LibreOffice on ubuntu
 .~lock.*
- 
+
  # svn
  .svn
 
