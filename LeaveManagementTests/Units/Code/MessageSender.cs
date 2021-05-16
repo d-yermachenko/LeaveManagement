@@ -16,7 +16,7 @@ namespace LeaveManagementTests.Units.Code {
                 settings.SmtpPort = 465;
                 settings.SenderLogin = "dmi.yermachenko@gmail.com";
                 settings.SenderDisplayName = "dmi yermachenko";
-                settings.SenderPassword = "Gxk~KE7A('@44)Q'";
+                settings.SenderPassword = "password";
                 settings.SenderEmail = "dmi.yermachenko@gmail.com";
                 return settings;
             }, null);
