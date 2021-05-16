@@ -44,6 +44,7 @@ namespace LeaveManagement {
                 .PersistKeysToFileSystem(new System.IO.DirectoryInfo(Configuration.GetValue<string>("KeysFolder")));
             services.AddTransient<ILeaveManagementUnitOfWork, LeaveManagementUnitOfWork>();
             services.AddTransient<IVisualNotificationService, VisualNotificationService>();
+            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddAutoMapper(typeof(Mappings.LeaveManagementMappings));
             GlobalizationStartup.ConfigureServices(services);
 
@@ -72,6 +73,7 @@ namespace LeaveManagement {
                 )
             );
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,14 +84,13 @@ namespace LeaveManagement {
             ApplicationDbContext applicationDbContext) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //app.UseStatusCodePagesWithRedirects("/Error/{0}");
             app.UseStatusCodePages (context => {
                 var request = context.HttpContext.Request;
                 var response = context.HttpContext.Response;

@@ -27,6 +27,12 @@ namespace LeaveManagement.Filters {
             };
         }
 
+        private ErrorViewModel GetErrorViewModel(NotFoundResult result) {
+            return new ErrorViewModel() {
+                ErrorCode =  StatusCodes.Status404NotFound
+            };
+        }
+
 
         private ErrorViewModel GetErrorViewModel(ViewResult result) {
             return null;

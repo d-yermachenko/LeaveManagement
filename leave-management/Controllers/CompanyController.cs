@@ -58,7 +58,7 @@ namespace LeaveManagement.Controllers {
                 filter: c => c.Active || showDisabled,
                 order: x => x.OrderBy(c => c.CompanyName),
                 includes: Array.Empty<System.Linq.Expressions.Expression<Func<Company, object>>>()));
-            return Ok(companies);
+            return View(companies);
         }
 
         public async Task<ActionResult> Index(bool showDisabled = false) => await IndexAction(showDisabled);
@@ -74,7 +74,7 @@ namespace LeaveManagement.Controllers {
             if (!userAuthorizedToViewDetails) {
                 _CompanyControllerLogger.LogWarning($"User {currentUser.UserName} was forbidden to browse companies");
                 ModelState.AddModelError("", _MessageLocalizer["Your not allowed to show the details of this company"]);
-                return Forbid();
+                return Forbid(_MessageLocalizer["Your not allowed to show the details of this company"]);
             }
             var companyData = await _UnitOfWork.Companies.FindAsync(predicate: x=>x.Id == id);
             if (companyData == null) {
