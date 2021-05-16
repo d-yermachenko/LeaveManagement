@@ -28,10 +28,12 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
 
 
 - task: AzureRmWebAppDeployment@4
@@ -41,4 +43,4 @@ steps:
     appType: 'webApp'
     WebAppName: 'dyo-leave-management'
     PublishProfilePath: "leave-management/Properties/PublishProfiles/dyo-leave-management - Web Deploy.pubxml"
-    
+
