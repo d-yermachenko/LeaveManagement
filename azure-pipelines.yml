@@ -33,4 +33,10 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: PublishBuildArtifacts@1
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure leave management application(6a7b0937-77ed-47c1-9cda-ecb4c8a04828)'
+    appType: 'webApp'
+    WebAppName: 'dyo-leave-management'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
