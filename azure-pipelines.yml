@@ -36,11 +36,5 @@ steps:
 
 
 
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'Azure leave management application(6a7b0937-77ed-47c1-9cda-ecb4c8a04828)'
-    appType: 'webApp'
-    WebAppName: 'dyo-leave-management'
-    PublishProfilePath: "leave-management/Properties/PublishProfiles/dyo-leave-management - Web Deploy.pubxml"
+- task: PublishBuildArtifacts@1
 
